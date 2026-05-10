@@ -1,0 +1,127 @@
+import { Button } from "@/components/ui/button";
+import { Plus, ShoppingBag } from "lucide-react";
+import { motion } from "motion/react";
+import { useState } from "react";
+import { useCart } from "../hooks/useCart";
+import type { Product } from "../types/product";
+
+const CARD_IMAGE = "/assets/generated/hero-crochet.dim_1600x900.jpg";
+
+const FAN_FAVOURITE_IDS = new Set([
+  "strawberry-costumed-bunny",
+  "bucket-hat",
+  "heart-pillow",
+  "wall-hanging",
+]);
+
+interface ProductCardProps {
+  product: Product;
+  onClick?: () => void;
+  index?: number;
+}
+
+export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
+  const addItem = useCart((s) => s.addItem);
+  const [added, setAdded] = useState(false);
+
+  const isFanFavourite = FAN_FAVOURITE_IDS.has(product.id);
+
+  function handleAddToCart(e: React.MouseEvent) {
+    e.stopPropagation();
+    addItem(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  }
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: index * 0.08, ease: "easeOut" }}
+      className="group cursor-pointer"
+      onClick={onClick}
+      data-ocid={`product.card.${index + 1}`}
+    >
+      <div
+        className="bg-card rounded-2xl overflow-hidden border border-border/50 flex flex-col shadow-soft"
+        style={{
+          transition: "transform 220ms ease, box-shadow 220ms ease",
+        }}
+        onMouseEnter={(e) => {
+          const el = e.currentTarget as HTMLDivElement;
+          el.style.transform = "translateY(-4px) scale(1.015)";
+          el.style.boxShadow = "0 12px 32px rgba(58, 58, 58, 0.13)";
+        }}
+        onMouseLeave={(e) => {
+          const el = e.currentTarget as HTMLDivElement;
+          el.style.transform = "";
+          el.style.boxShadow = "";
+        }}
+      >
+        {/* Image */}
+        <div className="relative aspect-square overflow-hidden bg-muted">
+          <img
+            src={CARD_IMAGE}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
+          />
+
+          {/* Fan Favourite badge */}
+          {isFanFavourite && (
+            <span
+              className="absolute top-2.5 left-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-body font-medium leading-none select-none pointer-events-none"
+              style={{
+                background: "oklch(0.97 0.015 5 / 0.92)",
+                color: "oklch(0.56 0.12 5)",
+                border: "1px solid oklch(0.82 0.07 5 / 0.5)",
+                backdropFilter: "blur(4px)",
+                WebkitBackdropFilter: "blur(4px)",
+              }}
+            >
+              ✨ Fan Favourite
+            </span>
+          )}
+
+          {/* Quick add overlay */}
+          <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-smooth" />
+        </div>
+
+        {/* Details */}
+        <div className="p-4 flex flex-col gap-2 flex-1">
+          <h3 className="font-display text-base font-semibold text-foreground line-clamp-1 leading-snug">
+            {product.name}
+          </h3>
+          <p className="text-muted-foreground text-xs line-clamp-2 font-body leading-relaxed">
+            {product.description}
+          </p>
+
+          <div className="flex items-center justify-between mt-auto pt-2 gap-2">
+            <span className="font-body font-semibold text-foreground text-sm">
+              ₹{product.price}
+            </span>
+            <Button
+              size="sm"
+              variant={added ? "secondary" : "default"}
+              className="rounded-xl text-xs h-8 px-3 gap-1 transition-smooth"
+              onClick={handleAddToCart}
+              data-ocid={`product.add_button.${index + 1}`}
+            >
+              {added ? (
+                <>
+                  <Plus className="w-3 h-3" />
+                  Added!
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-3 h-3" />
+                  Add
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </motion.article>
+  );
+}

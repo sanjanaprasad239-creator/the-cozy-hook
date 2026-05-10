@@ -1,0 +1,39 @@
+type Review = 
+ record {
+   authorName: text;
+   id: nat;
+   productId: text;
+   rating: nat;
+   reviewText: text;
+   timestamp: int;
+ };
+type Product = 
+ record {
+   category: text;
+   description: text;
+   features: vec text;
+   id: text;
+   imagePath: text;
+   name: text;
+   price: nat;
+ };
+type AdminSettings = 
+ record {
+   featuredProductIds: vec text;
+   heroTagline: text;
+   heroTitle: text;
+ };
+service : {
+  addReview: (productId: text, rating: nat, reviewText: text, authorName:
+   text) -> (nat);
+  adminLogin: (password: text) -> (bool);
+  deleteReview: (reviewId: nat, adminPassword: text) -> (bool);
+  getAdminSettings: () -> (AdminSettings) query;
+  getAllReviews: () -> (vec Review) query;
+  getProductById: (id: text) -> (opt Product) query;
+  getProducts: () -> (vec Product) query;
+  getProductsByCategory: (category: text) -> (vec Product) query;
+  getReviewsByProduct: (productId: text) -> (vec Review) query;
+  setFeaturedProducts: (ids: vec text) -> ();
+  updateHeroText: (title: text, tagline: text) -> ();
+}
