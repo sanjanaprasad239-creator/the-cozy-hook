@@ -1,17 +1,17 @@
-import { j as jsxRuntimeExports, m as motion } from "./index-DU0cLvqb.js";
+import { j as jsxRuntimeExports, m as motion } from "./index-CjLMAHmo.js";
 const timelineEvents = [
   {
-    year: "2021",
+    year: "2024",
     title: "The First Stitch",
     description: "It all began on a quiet winter evening with a single crochet hook and a ball of soft cream yarn. What started as stress relief quickly became a deep, meditative love."
   },
   {
-    year: "2022",
+    year: "2025",
     title: "Gifting with Heart",
     description: "Friends and family started asking for handmade pieces. Each gifted plushie, keychain, and wearable carried a little note — 'made with love'. The joy on their faces was unforgettable."
   },
   {
-    year: "2023",
+    year: "2026",
     title: "The Cozy Hook is Born",
     description: "What was once a hobby became a small, passionate studio. The Cozy Hook launched with a simple mission: to bring warmth, softness, and care into everyday life through handmade crochet."
   },

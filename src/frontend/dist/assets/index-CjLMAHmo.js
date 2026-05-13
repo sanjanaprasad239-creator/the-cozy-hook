@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-XN4CNUbS.js","assets/ProductCard-B8bqh1k0.js","assets/plus-DmVQ5_Nq.js","assets/products-C6QqLREO.js","assets/useAdmin-a8aPAObD.js","assets/useQueries-D56-wHfC.js","assets/CollectionPage-BgKGoG8J.js","assets/ProductPage-L8v6nHah.js","assets/label-D2I4yTIY.js","assets/textarea-zbb6V2Zu.js","assets/index-BNlQ_qQq.js","assets/AdminPage-_72QMuVv.js","assets/separator-DaOGi473.js","assets/CartPage-D0ZQonpJ.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-DW3snFlO.js","assets/ProductCard-BP5rtQsQ.js","assets/plus-COJ9U2Vt.js","assets/products-C6QqLREO.js","assets/useAdmin-BrCw6xJR.js","assets/useQueries-Dqypv5H1.js","assets/CollectionPage-Dhn023a4.js","assets/ProductPage-CpvArur-.js","assets/label-CmASRgtq.js","assets/textarea-B2HIUtDA.js","assets/index-CbtCnWby.js","assets/AdminPage-CV6eSdHW.js","assets/separator-CZFrrl2k.js","assets/CartPage-bWUKynxF.js"])))=>i.map(i=>d[i]);
 var __defProp = Object.defineProperty;
 var __typeError = (msg) => {
   throw TypeError(msg);
@@ -38630,30 +38630,30 @@ function Layout({ children }) {
   ] });
 }
 const HomePage = reactExports.lazy(
-  () => __vitePreload(() => import("./HomePage-XN4CNUbS.js"), true ? __vite__mapDeps([0,1,2,3,4,5]) : void 0).then((m) => ({ default: m.HomePage }))
+  () => __vitePreload(() => import("./HomePage-DW3snFlO.js"), true ? __vite__mapDeps([0,1,2,3,4,5]) : void 0).then((m) => ({ default: m.HomePage }))
 );
 const CollectionPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CollectionPage-BgKGoG8J.js"), true ? __vite__mapDeps([6,1,2,3]) : void 0).then((m) => ({
+  () => __vitePreload(() => import("./CollectionPage-Dhn023a4.js"), true ? __vite__mapDeps([6,1,2,3]) : void 0).then((m) => ({
     default: m.CollectionPage
   }))
 );
 const ProductPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ProductPage-L8v6nHah.js"), true ? __vite__mapDeps([7,1,2,8,9,10,5,3]) : void 0).then((m) => ({ default: m.ProductPage }))
+  () => __vitePreload(() => import("./ProductPage-CpvArur-.js"), true ? __vite__mapDeps([7,1,2,8,9,10,5,3]) : void 0).then((m) => ({ default: m.ProductPage }))
 );
 const OurStoryPage = reactExports.lazy(
-  () => __vitePreload(() => import("./OurStoryPage-CdYHdrGR.js"), true ? [] : void 0).then((m) => ({ default: m.OurStoryPage }))
+  () => __vitePreload(() => import("./OurStoryPage-lYSfzJ14.js"), true ? [] : void 0).then((m) => ({ default: m.OurStoryPage }))
 );
 const JournalPage = reactExports.lazy(
-  () => __vitePreload(() => import("./JournalPage-DHPwVBzC.js"), true ? [] : void 0).then((m) => ({ default: m.JournalPage }))
+  () => __vitePreload(() => import("./JournalPage-BVsTahR7.js"), true ? [] : void 0).then((m) => ({ default: m.JournalPage }))
 );
 const ContactPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ContactPage-ChnvV2p8.js"), true ? [] : void 0).then((m) => ({ default: m.ContactPage }))
+  () => __vitePreload(() => import("./ContactPage-DcmVvC53.js"), true ? [] : void 0).then((m) => ({ default: m.ContactPage }))
 );
 const AdminPage = reactExports.lazy(
-  () => __vitePreload(() => import("./AdminPage-_72QMuVv.js"), true ? __vite__mapDeps([11,8,12,10,3,4]) : void 0).then((m) => ({ default: m.AdminPage }))
+  () => __vitePreload(() => import("./AdminPage-CV6eSdHW.js"), true ? __vite__mapDeps([11,8,12,10,3,4]) : void 0).then((m) => ({ default: m.AdminPage }))
 );
 const CartPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CartPage-D0ZQonpJ.js"), true ? __vite__mapDeps([13,8,12,9,2]) : void 0).then((m) => ({ default: m.CartPage }))
+  () => __vitePreload(() => import("./CartPage-bWUKynxF.js"), true ? __vite__mapDeps([13,8,12,9,2]) : void 0).then((m) => ({ default: m.CartPage }))
 );
 function PageLoader() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center min-h-[40vh]", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-1.5", children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
