@@ -53,7 +53,7 @@ const KB = {
     string,
     { name: string; price: number; highlight?: boolean; custom?: boolean }[]
   >,
-  delivery: { charge: 49, freeAbove: 999, days: "5–7 business days" },
+  delivery: { charge: 49, freeAbove: 999, days: "5\u20137 business days" },
   contact: {
     whatsapp: "918660099085",
     email: "sanjanaprasad239@gmail.com",
@@ -100,7 +100,7 @@ function fmt(
   return items
     .map(
       (p) =>
-        `• ${p.name} — ₹${p.price}${p.highlight ? " ✨" : ""}${p.custom ? " (Custom)" : ""}`,
+        `\u2022 ${p.name} \u2014 \u20b9${p.price}${p.highlight ? " \u2728" : ""}${p.custom ? " (Custom)" : ""}`,
     )
     .join("\n");
 }
@@ -110,11 +110,64 @@ function norm(s: string): string {
   return s
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9₹\s]/g, " ")
+    .replace(/[^a-z0-9\u20b9\s]/g, " ")
     .replace(/\s+/g, " ");
 }
 
-/** Fuzzy word overlap: does query share ≥1 word token with product name? */
+/** Expand common contractions and shorthand */
+function expand(s: string): string {
+  return s
+    .replace(/what'?s/g, "what is")
+    .replace(/how'?s/g, "how is")
+    .replace(/it'?s/g, "it is")
+    .replace(/i'?m/g, "i am")
+    .replace(/don'?t/g, "do not")
+    .replace(/can'?t/g, "cannot")
+    .replace(/won'?t/g, "will not")
+    .replace(/isn'?t/g, "is not")
+    .replace(/aren'?t/g, "are not")
+    .replace(/\bwatsapp\b/g, "whatsapp")
+    .replace(/\bwapp\b/g, "whatsapp")
+    .replace(/\bwhats app\b/g, "whatsapp")
+    .replace(/\bgpay\b/g, "google pay")
+    .replace(/\bphnpe\b/g, "phonepe")
+    .replace(/\bptm\b/g, "paytm")
+    .replace(/\bbtao\b/g, "bata")
+    .replace(/\bkitna\b/g, "how much")
+    .replace(/\bkya price\b/g, "what is the price")
+    .replace(/\bkitna hai\b/g, "how much is it")
+    .replace(/\bkya rate\b/g, "what is the rate")
+    .replace(/\biska rate\b/g, "what is its price")
+    .replace(/\bbhai\b/g, "")
+    .replace(/\byaar\b/g, "")
+    .replace(/\bboss\b/g, "")
+    .replace(/\bji\b/g, "")
+    .replace(/\bna\b/g, "")
+    .replace(/\bplz\b/g, "please")
+    .replace(/\bpls\b/g, "please")
+    .replace(/\bu\b/g, "you")
+    .replace(/\bur\b/g, "your")
+    .replace(/\br\b/g, "are")
+    .replace(/\bwanna\b/g, "want to")
+    .replace(/\bgonna\b/g, "going to")
+    .replace(/\bgimme\b/g, "give me")
+    .replace(/\blemme\b/g, "let me")
+    .replace(/\baight\b/g, "alright")
+    .replace(/\bw8\b/g, "wait")
+    .replace(/\bwts\b/g, "what is")
+    .replace(/\bbtw\b/g, "by the way")
+    .replace(/\bidk\b/g, "i do not know")
+    .replace(/\bimo\b/g, "in my opinion")
+    .replace(/\bfyi\b/g, "for your information")
+    .replace(/\basap\b/g, "as soon as possible")
+    .replace(/\bprice bata\b/g, "tell me the price")
+    .replace(/\bprice btao\b/g, "tell me the price")
+    .replace(/\bcost kitna\b/g, "how much does it cost")
+    .replace(/\bkab milega\b/g, "when will i get it")
+    .replace(/\bkaise order\b/g, "how to order");
+}
+
+/** Fuzzy word overlap: does query share >=1 word token with product name? */
 function fuzzyMatch(query: string, productName: string): boolean {
   const qTokens = norm(query)
     .split(" ")
@@ -125,10 +178,8 @@ function fuzzyMatch(query: string, productName: string): boolean {
 
 function findProductsByQuery(query: string) {
   const q = norm(query);
-  // Exact substring match first
   const exact = allProducts().filter((p) => q.includes(norm(p.name)));
   if (exact.length > 0) return exact;
-  // Fuzzy token match
   return allProducts().filter((p) => fuzzyMatch(q, p.name));
 }
 
@@ -144,223 +195,2315 @@ function categoryProducts(cat: string) {
   return key ? { key, items: KB.products[key] } : null;
 }
 
-// ─── Intent Detectors ──────────────────────────────────────────────────────
-const IS_GREETING =
-  /^(hi+|hello+|hey+|hiya|howdy|sup|what'?s? ?up|wassup|whatsup|yo+|gm|gn|good (morning|afternoon|evening|night)|namaste|hola|how are (you|u|r you|r u)|how'?s? ?it going|whats good|start|begin|hii+|helo|hai|heyy+|helloo+)/;
-
-const IS_FAREWELL =
-  /\b(bye+|goodbye|good ?bye|see (you|ya|u)|cya|later|take care|ttyl|gtg|gotta go|(ok|okay|alright|thanks|thank you|ty) bye)\b/;
-
-const IS_THANKS =
-  /\b(thank(s| you| u)?|thx|ty|thnx+|tysm|thank you so much|thanks a (lot|bunch|ton)|many thanks|appreciate it|cheers)\b/;
-
-const IS_ABOUT =
-  /\b(about|who are (you|u)|who r (you|u)|what is (this|the cozy hook)|tell me about|your (brand|story)|brand story|who (made|runs|started|created) this|founder|owner|origin|sanjana|handmade|what do you do|cozy hook|your mission|about you)\b/;
-
-const IS_ALL_PRODUCTS =
-  /\b(what do you (sell|have|offer|make|carry)|all products|everything|full (list|collection|catalog|catalogue)|show (me )?all|what'?s? ?(available|in stock)|what can i buy|show me your products|what kind of (stuff|things|items)|what items|product list|all items|everything you have|your products|full range|whole collection|catalog|show catalog)\b/;
-
-const IS_PLUSHIES =
-  /\b(plush(ie)?s?|soft toys?|stuffed (animals?|toys?)|cuddly toys?|teddy|plush|fluffy toys?|cute toys?|toy animals?|kids? toys?|baby toys?|show plushies|all plushies|plushie list)\b/;
-
-const IS_KEYCHAINS =
-  /\b(keychains?|key chains?|key rings?|keyring|bag tag|hanging charms?|all keychains|show keychains|keychain list|what keychains?)\b/;
-
-const IS_WEARABLES =
-  /\b(wearables?|clothes|clothing|wear|fashion|things to wear|clothing accessories|hairbands?|hats?|headbands?|headwear|gloves?|bandanas?|wearable items?|wearable list|show wearables?)\b/;
-
-const IS_HOME_DECOR =
-  /\b(home ?decor?|home decoration|home accessories|decoration|house decor|interior|for home|room decor|home stuff|room accessories|home items?|room items?|wall hanging|coasters?|table items?|hanging plant|home list|show decor)\b/;
-
-const IS_ACCESSORIES =
-  /\b(accessories|accessory|fashion accessories|style|extras|add-ons|beauty|hair accessories|phone accessories|bag accessories|pouches?|bookmarks?|scrunchies|show accessories|accessories list)\b/;
-
-const IS_FAN_FAVES =
-  /\b(fan fav(ou?rite)?s?|fan fav|most loved|popular products?|best sell(ing|er)s?|trending|what people love|top (picks|products?)|loved by all|most popular|bestseller|recommended|bestsellers?)\b/;
-
-const IS_DELIVERY =
-  /\b(deliver(y|ies)?|shipping|ship|courier|dispatch|freight|how much (for )?deliver(y|ing)?|deliver(y|ing)? (charges?|fees?|cost)|shipping (charges?|fees?|cost)|free deliver(y|ing)?|free shipping|deliver(y|ing)? limit|above what amount|pan ?india|nationwide|all india|where do you deliver|deliver in india|do you deliver|will you deliver)\b/;
-
-const IS_DELIVERY_TIME =
-  /\b(how (long|many days)|when (will it|does it|do i) (arrive?|get|come|reach)|deliver(y|ing)? time|shipping time|eta|delivery days?|how long (to|for) (ship|deliver)|standard deliver(y|ing)?|express deliver(y|ing)?|estimated? time|estimated? deliver(y|ing)?)\b/;
-
-const IS_ORDERING =
-  /\b(how (to|do i|can i) (order|buy|purchase|get|shop)|place (an? )?order|ordering process|order process|steps? (to order|to buy)|buying process|checkout|how does it work|order now|add to cart|how to shop|shopping process|can i order|want to order|ordering steps?|i want to (buy|order|get))\b/;
-
-const IS_PAYMENT =
-  /\b(pay(ment)?|how to pay|payment method|payment options?|accepted payments?|cash|upi|gpay|phonepe|paytm|card|debit card|credit card|net banking|online payment|cash on deliver(y|ing)?|cod|pay on deliver(y|ing)?|razorpay|stripe|wallet|mode of payment|payment gateway|do you accept|transaction|pay online|any payment|how do i pay)\b/;
-
-const IS_WHATSAPP =
-  /\b(whatsapp|wa\.me|whatsapp (number|contact)|wa number|order on whatsapp|message on whatsapp|send on whatsapp|chat on whatsapp|reach on whatsapp|your (number|whatsapp)|wp( number)?|contact number|contact whatsapp)\b/;
-
-const IS_CUSTOM =
-  /\b(custom(is|iz|)?e?|custom (order|colour|color|size|plushie|keychain|design|made)|customis|customiz|personaliz|personalise|personalised|personalized|bespoke|special order|made to order|specific (color|colour|design)|your choice|make (for|it) me|can you make|special request|tailor(ed| made)?|name (on it|keychain)|initials?|initial letter|letter keychain|name keychain|personalised gift|can i choose|my own design|own design|custom request)\b/;
-
-const IS_RETURNS =
-  /\b(return|refund|exchange|replac(e|ement)|damaged?|defect(ive)?|broken|wrong (item|order)|return policy|refund policy|can i return|what if damaged|if i don'?t like|change my mind|cancel(lation)?|can i cancel|money back|guarantee)\b/;
-
-const IS_PACKAGING =
-  /\b(packag(ing|e)|packed?|gift ?wrap(ping)?|present(ation)?|unboxing|how is it packed|will it be safe|safely packed|secure packaging|gift packaging|is it gift wrapped|can you gift wrap|box(ing)?|packing)\b/;
-
-const IS_CARE =
-  /\b(care( instructions)?|how to (wash|clean)|wash(ing)?( instructions)?|cleaning|dry(ing)?|maintain|maintenance|hand ?wash|machine wash|how to care|handle|take care of|care guide|product care|delicate|gentle wash)\b/;
-
-const IS_MATERIALS =
-  /\b(material|yarn|thread|fabric|what is it made of|made of|what (material|yarn)|quality|cotton|wool|acrylic|crochet yarn|fi?ber?|is it soft|is it safe|baby safe|child safe|hypoallergen(ic)?|non.?toxic|safe for (kids?|babies?|children?)|allerg(y|ic)|pet safe)\b/;
-
-const IS_SIZE =
-  /\b(size?|dimension|how (big|small|large|long|tall)|measure(ment)?|cm|inch(es)?|mm|millim(eter|etre)|height|width|length|scale|actual size|fits?|size chart)\b/;
-
-const IS_GIFTS =
-  /\b(gift|present|gifting|what to gift|birthday gift|anniversary (gift)?|valentine'?s?|christmas|diwali|festive|special occasion|for (her|him|kids?|baby|friend|boyfriend|girlfriend|mom|dad|sister|brother)|best gift|good gift|recommend (a )?gift|gift suggestion|surprise gift|gift ideas?)\b/;
-
-const IS_RECOMMEND =
-  /\b(recommend(ation)?|suggest(ion)?|what should i (buy|get)|which is (best|good)|what (is|are) (popular|trending)|top picks?|top products?|what (is|are) your fav(ou?rite)?|what do people buy|most (bought|ordered)|worth (buying|it)|value for money|what to buy)\b/;
-
-const IS_BULK =
-  /\b(bulk( order)?|wholesale|large quantity|multiple|many pieces|event|wedding|party|corporate|gifting event|birthday party|bulk discount|group order|multiple orders|order (many|10|20|50|100)|big order|want (10|20|50|100)|lots? of orders?)\b/;
-
-const IS_DISCOUNT =
-  /\b(discount|offer|coupon|sale|promo( code)?|deal|code|voucher|cashback|any (offer|discount)|special offer|seasonal offer|festive offer)\b/;
-
-const IS_AVAILABILITY =
-  /\b(available|availability|in stock|out of stock|stock|when back|when available|when restocked|restock(ed)?|not available|sold out|do you have|can i get)\b/;
-
-const IS_GALLERY =
-  /\b(picture|photo|image|gallery|can i see|see|view|show me|what does it look like|see pictures?|photo gallery|product photo)\b/;
-
-const IS_PRICING_GENERAL =
-  /\b(price|pricing|cost|rate|fee|how much|rupee|₹|rates?|prices?|price list|price range|all prices|show prices|how much (does each|do)|quote)\b/;
-
-const IS_TRACKING =
-  /\b(track(ing)?|order status|where is (my|the) (order|parcel|package)|when will i get|dispatched|shipped|out for delivery|track (my )?order|parcel|delivery update|order update|when does it come|track package)\b/;
-
-const IS_HOW_IT_WORKS =
-  /\b(how does it work|how do you work|explain|tell me how|steps?|process|walk me through|how does (ordering|the shop) work|how (is|are) (this|they) made|handmade process|how do i use this|how does (buying|shopping) work)\b/;
-
-const IS_CONTACT =
-  /\b(contact( us)?|reach (you|us)|how to (reach|contact)|email( address)?|phone( number)?|call|your (email|phone|contact)|contact details?|reach out|get in touch|connect)\b/;
-
-const IS_PRICE_CHEAP =
-  /\b(cheapest|most affordable|lowest price|budget friendly|pocket friendly|inexpensive|minimum price|bargain)\b/;
-
-const IS_PRICE_EXPENSIVE =
-  /\b(expensive|priciest|premium|highest price|most costly|top priced)\b/;
+// ─── Random response picker ────────────────────────────────────────────────
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
 // ─── Price range extractor ─────────────────────────────────────────────────
 function extractUnder(q: string): number | null {
   const m = q.match(
-    /(?:under|below|less than|within|upto?|up to|max(?:imum)?)\s*[₹rups.]*\s*(\d+)/,
+    /(?:under|below|less than|within|upto?|up to|max(?:imum)?|not more than|no more than)\s*[\u20b9rups.]*\s*(\d+)/,
   );
   return m ? Number.parseInt(m[1]) : null;
 }
 
 function extractAbove(q: string): number | null {
   const m = q.match(
-    /(?:above|over|more than|atleast|at least|min(?:imum)?)\s*[₹rups.]*\s*(\d+)/,
+    /(?:above|over|more than|atleast|at least|min(?:imum)?|starting from|from)\s*[\u20b9rups.]*\s*(\d+)/,
   );
   return m ? Number.parseInt(m[1]) : null;
 }
 
-// ─── Category detector ─────────────────────────────────────────────────────
-function detectCategory(q: string): string | null {
-  if (IS_PLUSHIES.test(q)) return "Plushies";
-  if (IS_KEYCHAINS.test(q)) return "Keychains";
-  if (IS_WEARABLES.test(q)) return "Wearables";
-  if (IS_HOME_DECOR.test(q)) return "Home Decor";
-  if (IS_ACCESSORIES.test(q)) return "Accessories";
-  // Also detect from product keywords in context
-  if (/\b(whale|octopus|bear|frog|duck|strawberry|costumed bunny)\b/.test(q))
-    return "Plushies";
-  if (
-    /\b(bouquet|gradient flower|cake roll|bow|cherry|starfish|heart key|bunny key|sunflower|initial letter)\b/.test(
-      q,
-    )
-  )
-    return "Keychains";
-  if (/\b(hairband|gloves|bucket|bandana|daisy)\b/.test(q)) return "Wearables";
-  if (/\b(hanging plant|heart pillow|coaster|table mat|wall)\b/.test(q))
-    return "Home Decor";
-  if (/\b(tulip|scrunch|bookmark|phone charm|pouch|bag charm)\b/.test(q))
-    return "Accessories";
+function extractBetween(q: string): [number, number] | null {
+  const m = q.match(
+    /(?:between|from|ranging from)?\s*[\u20b9rups.]*\s*(\d+)\s*(?:to|and|-)\s*[\u20b9rups.]*\s*(\d+)/,
+  );
+  if (m) {
+    const lo = Number.parseInt(m[1]);
+    const hi = Number.parseInt(m[2]);
+    return lo < hi ? [lo, hi] : [hi, lo];
+  }
   return null;
 }
 
-// ─── Intent Engine ─────────────────────────────────────────────────────────
-function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
-  const q = norm(raw);
-  const newCtx: Partial<ConversationContext> = {};
+// ─── Intent scoring system ─────────────────────────────────────────────────
+// Each intent has a list of keyword tokens. The engine scores each intent
+// by counting how many tokens from the query match the keyword list.
+// The highest-scoring intent above a threshold wins.
+// This approach covers thousands of phrasings via keyword combination.
 
-  // ── 1. Greetings ──────────────────────────────────────────────────────────
-  if (IS_GREETING.test(q))
-    return {
-      text: "Hi there! 👋 Welcome to The Cozy Hook — your favourite handmade crochet boutique. 🧶\n\nI can help you with products, prices, delivery, custom orders, and more. What would you like to know?",
-      newCtx: { lastIntent: "greeting" },
-    };
+const INTENT_KEYWORDS: Record<string, string[]> = {
+  GREETING: [
+    "hi",
+    "hii",
+    "hiii",
+    "hiiii",
+    "hello",
+    "helloo",
+    "helo",
+    "heloo",
+    "hey",
+    "heyy",
+    "heyyy",
+    "hiya",
+    "howdy",
+    "sup",
+    "wassup",
+    "whatsup",
+    "yo",
+    "gm",
+    "gn",
+    "hai",
+    "helo",
+    "namaste",
+    "namaskar",
+    "vanakkam",
+    "salam",
+    "assalamu",
+    "bonjour",
+    "hola",
+    "ciao",
+    "aloha",
+    "good morning",
+    "good afternoon",
+    "good evening",
+    "good night",
+    "good day",
+    "how are you",
+    "how are u",
+    "how r you",
+    "how r u",
+    "how is it going",
+    "how it going",
+    "whats good",
+    "what good",
+    "how do you do",
+    "how are things",
+    "what is up",
+    "start",
+    "begin",
+    "open",
+    "wake up",
+    "anyone there",
+    "hello there",
+    "hi there",
+    "hey there",
+    "good to see",
+    "nice to meet",
+    "pleased to meet",
+    "greetings",
+    "salutations",
+    "ahoy",
+    "yooo",
+    "supp",
+    "watsup",
+    "wasssup",
+    "hwdy",
+    "heyyo",
+    "heya",
+    "morning",
+    "afternoon",
+    "evening",
+    "night",
+    "hi assistant",
+    "hello assistant",
+    "hey assistant",
+    "hi bot",
+    "hello bot",
+    "hey bot",
+    "hi there cozy",
+    "hello cozy",
+    "test",
+    "testing",
+    "is this working",
+    "are you there",
+    "you there",
+    "anybody there",
+  ],
 
-  // ── 2. Farewells ─────────────────────────────────────────────────────────
-  if (IS_FAREWELL.test(q))
-    return {
-      text: "Goodbye! 🌸 Thank you for visiting The Cozy Hook. Come back anytime — we'd love to see you again! 💕",
-      newCtx: { lastIntent: "farewell" },
-    };
+  FAREWELL: [
+    "bye",
+    "byee",
+    "byeee",
+    "goodbye",
+    "good bye",
+    "goodnight",
+    "see you",
+    "see ya",
+    "see u",
+    "cya",
+    "later",
+    "laters",
+    "take care",
+    "ttyl",
+    "gtg",
+    "gotta go",
+    "got to go",
+    "have to go",
+    "need to go",
+    "leaving",
+    "closing",
+    "done",
+    "finish",
+    "finished",
+    "all done",
+    "signing off",
+    "log off",
+    "exit",
+    "quit",
+    "i am done",
+    "i am leaving",
+    "talk later",
+    "chat later",
+    "see you later",
+    "see you soon",
+    "until next time",
+    "adieu",
+    "au revoir",
+    "cheerio",
+    "toodles",
+    "peace out",
+    "ok bye",
+    "okay bye",
+    "alright bye",
+    "thanks bye",
+    "thank you bye",
+    "bye bye",
+    "byebye",
+    "ciao",
+    "hasta la vista",
+    "farewell",
+    "so long",
+    "ta ta",
+    "tata",
+  ],
 
-  // ── 3. Thank you ─────────────────────────────────────────────────────────
-  if (IS_THANKS.test(q))
-    return {
-      text: "You're so welcome! 🥰 It's our pleasure. Is there anything else I can help you with?",
-      newCtx: { lastIntent: "thanks" },
-    };
+  THANKS: [
+    "thank",
+    "thanks",
+    "thankyou",
+    "thank you",
+    "thx",
+    "ty",
+    "thnx",
+    "thnks",
+    "thnkz",
+    "tysm",
+    "tyvm",
+    "ty so much",
+    "thank you so much",
+    "thanks a lot",
+    "thanks a bunch",
+    "thanks a ton",
+    "many thanks",
+    "much appreciated",
+    "appreciate it",
+    "appreciate that",
+    "grateful",
+    "gratitude",
+    "cheers",
+    "you are awesome",
+    "you are helpful",
+    "so helpful",
+    "very helpful",
+    "great help",
+    "good help",
+    "nice help",
+    "helpful response",
+    "you are the best",
+    "you are amazing",
+    "wonderful",
+    "fantastic response",
+    "brilliant",
+    "super helpful",
+    "really helpful",
+    "this helped",
+    "that helped",
+    "thats helpful",
+    "that was helpful",
+    "you helped me",
+    "helped a lot",
+    "big thanks",
+    "huge thanks",
+    "thousand thanks",
+    "million thanks",
+    "shukriya",
+    "dhanyawad",
+    "shukriya bhai",
+    "bahut shukriya",
+    "abhar",
+    "bahut achha",
+  ],
 
-  // ── 4. About / Brand ─────────────────────────────────────────────────────
-  if (IS_ABOUT.test(q))
-    return {
-      text: "The Cozy Hook is a handmade crochet boutique founded by Sanjana Prasad. 🧶\n\nEvery single piece is hand-crafted with love and care — from tiny keychains to cozy plushies and beautiful home decor. What started as a passion project has grown into a curated collection of 34 unique crochet creations.\n\nEach item is made to order, so you're getting something truly special! 💕",
-      newCtx: { lastIntent: "brand" },
-    };
+  ABOUT: [
+    "about",
+    "who are you",
+    "who r you",
+    "what is this",
+    "what is the cozy hook",
+    "tell me about",
+    "brand story",
+    "your story",
+    "our story",
+    "who made this",
+    "who runs this",
+    "who started this",
+    "who created this",
+    "founder",
+    "owner",
+    "origin story",
+    "sanjana",
+    "sanjana prasad",
+    "handmade",
+    "what do you do",
+    "cozy hook",
+    "your mission",
+    "about you",
+    "about the shop",
+    "about the brand",
+    "about this store",
+    "about your store",
+    "what is your brand",
+    "who is behind",
+    "who is the maker",
+    "artisan",
+    "maker",
+    "creator",
+    "your background",
+    "company info",
+    "company details",
+    "store info",
+    "shop info",
+    "business info",
+    "your company",
+    "your shop",
+    "your business",
+    "where are you from",
+    "based in",
+    "located in",
+    "india",
+    "history",
+    "how long have you",
+    "when did you start",
+    "when was this started",
+    "what do you make",
+    "what do you sell here",
+    "is this a small business",
+    "small business",
+    "home business",
+    "cottage",
+    "passion project",
+  ],
 
-  // ── 5. All products / categories overview ────────────────────────────────
-  if (IS_ALL_PRODUCTS.test(q))
-    return {
-      text: "Here's our full collection at The Cozy Hook! 🧶\n\n🧸 Plushies (7 items) — from ₹249\n🔑 Keychains (11 items) — from ₹99\n👗 Wearables (5 items) — from ₹149\n🏡 Home Decor (5 items) — from ₹299\n🎀 Accessories (6 items) — from ₹79\n\nAsk me about any category for the full list and prices! ✨",
-      newCtx: { lastIntent: "all_products" },
-    };
+  ALL_PRODUCTS: [
+    "all products",
+    "everything",
+    "full list",
+    "complete list",
+    "product list",
+    "full collection",
+    "entire collection",
+    "whole collection",
+    "all collection",
+    "show all",
+    "show everything",
+    "what do you sell",
+    "what do you have",
+    "what do you offer",
+    "what do you make",
+    "what can i buy",
+    "show me all",
+    "what is available",
+    "what items",
+    "catalog",
+    "catalogue",
+    "all items",
+    "everything you have",
+    "your products",
+    "full range",
+    "complete range",
+    "all your products",
+    "what kinds",
+    "what types",
+    "list all",
+    "show catalog",
+    "what stuff",
+    "your stuff",
+    "ur stuff",
+    "what things",
+    "what items do you have",
+    "what do you carry",
+    "all of it",
+    "the whole lot",
+    "complete catalog",
+    "browse all",
+    "see all",
+    "view all",
+    "explore",
+    "full menu",
+    "all menu",
+    "what are you selling",
+    "item list",
+    "product range",
+    "everything available",
+    "tell me what you have",
+    "list everything",
+    "show products",
+    "your range",
+  ],
 
-  // ── 6. Fan Favourites ────────────────────────────────────────────────────
-  if (IS_FAN_FAVES.test(q)) {
-    const faves = allProducts().filter((p) => p.highlight);
-    return {
-      text: `Our fan favourites right now ✨\n\n${fmt(faves)}\n\nThese sell out the fastest — grab yours before they're gone! 💕`,
-      newCtx: { lastIntent: "favourites" },
-    };
+  PLUSHIES: [
+    "plushie",
+    "plushies",
+    "plush",
+    "soft toy",
+    "soft toys",
+    "stuffed animal",
+    "stuffed toy",
+    "stuffed animals",
+    "stuffed toys",
+    "cuddly toy",
+    "cuddly toys",
+    "cuddly",
+    "squishy",
+    "squishies",
+    "fluffy toy",
+    "fluffy toys",
+    "cute toy",
+    "cute toys",
+    "toy animal",
+    "kids toy",
+    "baby toy",
+    "huggable",
+    "squeezable",
+    "big plush",
+    "small plush",
+    "crochet plush",
+    "crochet toy",
+    "amigurumi",
+    "whale plushie",
+    "whale toy",
+    "whale plush",
+    "whale stuffed",
+    "the whale",
+    "that whale",
+    "octopus plushie",
+    "octopus toy",
+    "octopus plush",
+    "the octopus",
+    "that octopus",
+    "bear plushie",
+    "bear toy",
+    "bear plush",
+    "teddy bear",
+    "teddy",
+    "the bear",
+    "that bear",
+    "frog plushie",
+    "frog toy",
+    "frog plush",
+    "the frog",
+    "that frog",
+    "froggy",
+    "frog stuffed",
+    "duck plushie",
+    "duck toy",
+    "duck plush",
+    "cowboy duck",
+    "the duck",
+    "that duck",
+    "ducky",
+    "bunny plushie",
+    "bunny toy",
+    "bunny plush",
+    "rabbit plushie",
+    "rabbit toy",
+    "the bunny",
+    "that bunny",
+    "bunny stuffed",
+    "rabbit stuffed",
+    "rabbit plush",
+    "strawberry bunny",
+    "strawberry costumed",
+    "strawberry plushie",
+    "the strawberry",
+    "that strawberry",
+    "costumed bunny",
+    "fancy bunny",
+    "dressed bunny",
+    "whale",
+    "octopus",
+    "bear",
+    "frog",
+    "duck",
+    "bunny",
+    "strawberry",
+    "show plushies",
+    "all plushies",
+    "list plushies",
+    "plushie list",
+    "plushie prices",
+    "plushie collection",
+    "plushie range",
+    "what plushies",
+    "which plushies",
+  ],
+
+  KEYCHAINS: [
+    "keychain",
+    "keychains",
+    "key chain",
+    "key chains",
+    "keyring",
+    "key ring",
+    "keyrings",
+    "key rings",
+    "fob",
+    "key fob",
+    "bag tag",
+    "bag tags",
+    "hanging charm",
+    "mini charm",
+    "crochet keychain",
+    "crochet key",
+    "mini bouquet",
+    "bouquet keychain",
+    "flower bouquet keychain",
+    "the bouquet",
+    "gradient flower",
+    "gradient flower keychain",
+    "flower keychain",
+    "the gradient",
+    "cake roll",
+    "cake roll keychain",
+    "roll keychain",
+    "the cake roll",
+    "bow keychain",
+    "bow key",
+    "the bow",
+    "thin bow",
+    "bow thin",
+    "slim bow",
+    "cherry keychain",
+    "cherry key",
+    "the cherry",
+    "starfish keychain",
+    "starfish key",
+    "star fish",
+    "the starfish",
+    "heart keychain",
+    "heart key",
+    "the heart keychain",
+    "bunny keychain",
+    "bunny key",
+    "rabbit keychain",
+    "rabbit key",
+    "sunflower keychain",
+    "sunflower key",
+    "the sunflower",
+    "initial letter",
+    "letter keychain",
+    "initial keychain",
+    "personalised keychain",
+    "name keychain",
+    "custom keychain",
+    "initials keychain",
+    "alphabet keychain",
+    "show keychains",
+    "all keychains",
+    "list keychains",
+    "keychain list",
+    "keychain prices",
+    "keychain collection",
+    "what keychains",
+    "which keychains",
+  ],
+
+  WEARABLES: [
+    "wearable",
+    "wearables",
+    "wear",
+    "clothing",
+    "clothes",
+    "fashion",
+    "things to wear",
+    "items to wear",
+    "apparel",
+    "garment",
+    "outfit",
+    "hairband",
+    "hair band",
+    "head band",
+    "headband",
+    "hair accessory band",
+    "the hairband",
+    "hair tie",
+    "hair ribbon",
+    "fingerless gloves",
+    "gloves",
+    "fingerless",
+    "the gloves",
+    "crochet gloves",
+    "hand warmers",
+    "wrist warmers",
+    "half gloves",
+    "bucket hat",
+    "hat",
+    "cap",
+    "crochet hat",
+    "the hat",
+    "the bucket hat",
+    "sun hat",
+    "beach hat",
+    "slouchy hat",
+    "beret",
+    "bandana",
+    "the bandana",
+    "crochet bandana",
+    "headscarf",
+    "neckerchief",
+    "daisy headband",
+    "daisy hair band",
+    "the daisy",
+    "daisy band",
+    "flower headband",
+    "flower band",
+    "daisy head",
+    "show wearables",
+    "all wearables",
+    "list wearables",
+    "wearable list",
+    "wearable prices",
+    "what wearables",
+    "which wearables",
+    "wearable collection",
+  ],
+
+  HOME_DECOR: [
+    "home decor",
+    "home decoration",
+    "home accessories",
+    "home items",
+    "house decor",
+    "house decoration",
+    "interior",
+    "for home",
+    "for the house",
+    "room decor",
+    "room decoration",
+    "home stuff",
+    "room stuff",
+    "room items",
+    "hanging plant",
+    "plant hanging",
+    "crochet plant",
+    "the plant",
+    "that plant",
+    "wall plant",
+    "potted plant",
+    "plant decor",
+    "boho plant",
+    "heart pillow",
+    "pillow",
+    "cushion",
+    "the pillow",
+    "heart cushion",
+    "crochet pillow",
+    "the heart pillow",
+    "decorative pillow",
+    "sofa pillow",
+    "coaster set",
+    "coasters",
+    "coaster",
+    "the coasters",
+    "crochet coaster",
+    "drink coaster",
+    "cup coaster",
+    "table coaster",
+    "table mat",
+    "table mats",
+    "placemat",
+    "placemats",
+    "the table mat",
+    "crochet mat",
+    "dining mat",
+    "kitchen mat",
+    "wall hanging",
+    "wall art",
+    "the wall hanging",
+    "crochet wall",
+    "wall decor",
+    "wall decoration",
+    "boho wall",
+    "macrame",
+    "tapestry",
+    "show decor",
+    "all decor",
+    "list decor",
+    "home decor list",
+    "decor prices",
+    "what decor",
+    "which decor",
+    "decor collection",
+  ],
+
+  ACCESSORIES: [
+    "accessories",
+    "accessory",
+    "fashion accessories",
+    "style accessories",
+    "extras",
+    "add ons",
+    "beauty accessories",
+    "hair accessories",
+    "phone accessories",
+    "bag accessories",
+    "small accessories",
+    "tulip hair",
+    "tulip accessory",
+    "tulip",
+    "the tulip",
+    "flower hair clip",
+    "hair clip",
+    "floral clip",
+    "flower clip",
+    "scrunchie",
+    "scrunchies",
+    "hair scrunchie",
+    "hair tie scrunchie",
+    "the scrunchies",
+    "elastic hair",
+    "ponytail tie",
+    "hair elastic",
+    "bookmark",
+    "bookmarks",
+    "book mark",
+    "book marks",
+    "the bookmark",
+    "reading marker",
+    "page marker",
+    "page holder",
+    "book accessory",
+    "phone charm",
+    "phone charms",
+    "the phone charm",
+    "mobile charm",
+    "phone decoration",
+    "phone accessory",
+    "phone tag",
+    "mobile tag",
+    "mini pouch",
+    "mini pouches",
+    "pouch",
+    "pouches",
+    "the pouch",
+    "small bag",
+    "little bag",
+    "coin pouch",
+    "crochet pouch",
+    "crochet bag",
+    "bag charm",
+    "bag charms",
+    "the bag charm",
+    "handbag charm",
+    "purse charm",
+    "bag pendant",
+    "bag decoration",
+    "bag tag charm",
+    "show accessories",
+    "all accessories",
+    "list accessories",
+    "accessories list",
+    "accessories prices",
+    "what accessories",
+    "which accessories",
+  ],
+
+  FAN_FAVES: [
+    "fan favourite",
+    "fan fav",
+    "fan favorites",
+    "fan favs",
+    "most loved",
+    "popular",
+    "best seller",
+    "bestseller",
+    "bestsellers",
+    "best sellers",
+    "trending",
+    "top picks",
+    "top products",
+    "top items",
+    "what people love",
+    "loved by all",
+    "most popular",
+    "recommended",
+    "highly recommended",
+    "what is popular",
+    "most ordered",
+    "most bought",
+    "most sold",
+    "top rated",
+    "customer favourite",
+    "customer favorites",
+    "crowd favourite",
+    "crowd pleaser",
+    "fan pick",
+    "fan picks",
+    "staff pick",
+    "staff picks",
+    "editors pick",
+    "highlight",
+    "highlights",
+    "featured",
+    "best",
+    "greatest",
+    "star product",
+    "star items",
+    "special items",
+    "special products",
+    "love",
+    "adore",
+  ],
+
+  DELIVERY: [
+    "delivery",
+    "deliver",
+    "delivering",
+    "deliveries",
+    "shipping",
+    "ship",
+    "shipping charge",
+    "delivery charge",
+    "shipping cost",
+    "delivery cost",
+    "shipping fee",
+    "delivery fee",
+    "shipping rate",
+    "delivery rate",
+    "courier",
+    "dispatch",
+    "freight",
+    "send",
+    "sent",
+    "postal",
+    "post",
+    "free delivery",
+    "free shipping",
+    "free ship",
+    "zero delivery",
+    "pan india",
+    "all india",
+    "nationwide",
+    "india delivery",
+    "deliver in india",
+    "where do you deliver",
+    "do you deliver",
+    "will you deliver",
+    "delivery available",
+    "delivery area",
+    "delivery location",
+    "how much for delivery",
+    "how much to deliver",
+    "delivery charge how much",
+    "shipping charge how much",
+    "delivery above",
+    "free above",
+    "minimum free",
+    "order above",
+    "above 999",
+    "above 1000",
+    "minimum order",
+    "how much does shipping cost",
+    "is delivery free",
+    "is shipping free",
+    "delivery price",
+    "shipping price",
+    "how much extra",
+    "extra charge",
+    "extra cost",
+    "additional charge",
+    "delivery charges apply",
+    "charges for delivery",
+  ],
+
+  DELIVERY_TIME: [
+    "how long",
+    "how many days",
+    "when will i get",
+    "when does it arrive",
+    "when does it come",
+    "when will it reach",
+    "delivery time",
+    "shipping time",
+    "eta",
+    "estimated time",
+    "estimated delivery",
+    "delivery days",
+    "how long to ship",
+    "how long to deliver",
+    "how long does delivery take",
+    "standard delivery time",
+    "express delivery",
+    "express ship",
+    "fast delivery",
+    "quick delivery",
+    "time to receive",
+    "days to receive",
+    "days to deliver",
+    "arrival time",
+    "when delivered",
+    "when dispatched",
+    "how long does it take",
+    "when will it come",
+    "when will it arrive",
+    "how soon can i get",
+    "will it come soon",
+    "fast ship",
+    "quick ship",
+    "how fast",
+    "turnaround",
+    "processing time",
+    "dispatch time",
+    "when will you send",
+    "time frame",
+    "kab milega",
+    "kab ayega",
+    "kab aayega",
+  ],
+
+  ORDERING: [
+    "how to order",
+    "how do i order",
+    "how can i order",
+    "how to buy",
+    "how do i buy",
+    "how can i buy",
+    "how to purchase",
+    "how to get",
+    "place order",
+    "placing order",
+    "order process",
+    "ordering process",
+    "steps to order",
+    "steps to buy",
+    "buying process",
+    "purchasing process",
+    "checkout",
+    "how does it work",
+    "order now",
+    "add to cart",
+    "how to shop",
+    "shopping process",
+    "can i order",
+    "want to order",
+    "ordering steps",
+    "i want to buy",
+    "i want to order",
+    "i want to get",
+    "i wish to buy",
+    "how do i get",
+    "how do i proceed",
+    "purchase process",
+    "buy process",
+    "place an order",
+    "make an order",
+    "submit an order",
+    "order form",
+    "how does buying work",
+    "buying steps",
+    "to buy",
+    "to order",
+    "next steps",
+    "what do i do to order",
+    "how do i place",
+    "process of buying",
+    "kaise order",
+    "order kaise",
+    "kaise buy",
+    "buy kaise",
+  ],
+
+  PAYMENT: [
+    "payment",
+    "pay",
+    "paying",
+    "paid",
+    "how to pay",
+    "payment method",
+    "payment methods",
+    "payment options",
+    "accepted payments",
+    "payment modes",
+    "mode of payment",
+    "payment gateway",
+    "payment process",
+    "upi",
+    "gpay",
+    "google pay",
+    "phonepe",
+    "phone pe",
+    "paytm",
+    "bhim",
+    "razorpay",
+    "stripe",
+    "instamojo",
+    "cashfree",
+    "card",
+    "debit card",
+    "credit card",
+    "net banking",
+    "netbanking",
+    "online payment",
+    "online pay",
+    "pay online",
+    "digital payment",
+    "cash",
+    "cash on delivery",
+    "cod",
+    "pay on delivery",
+    "pay on arrival",
+    "cash at delivery",
+    "cash payment",
+    "no cod",
+    "is cod available",
+    "wallet",
+    "prepaid",
+    "advance payment",
+    "any payment",
+    "how do i pay",
+    "payment link",
+    "pay via",
+    "transaction",
+    "payment transfer",
+    "bank transfer",
+    "neft",
+    "imps",
+    "rtgs",
+    "account transfer",
+    "do you accept",
+    "accepted modes",
+    "what do you accept",
+    "payment details",
+    "how much to pay",
+    "payment information",
+    "paise kaise",
+    "payment kaise",
+  ],
+
+  WHATSAPP: [
+    "whatsapp",
+    "wa",
+    "watsapp",
+    "wapp",
+    "whats app",
+    "whatsapp number",
+    "whatsapp contact",
+    "wa number",
+    "order on whatsapp",
+    "message on whatsapp",
+    "send on whatsapp",
+    "chat on whatsapp",
+    "reach on whatsapp",
+    "your number",
+    "your whatsapp",
+    "wp number",
+    "contact number",
+    "contact whatsapp",
+    "whatsapp link",
+    "wa link",
+    "whatsapp me",
+    "message me",
+    "dm",
+    "direct message",
+    "message us",
+    "text us",
+    "text you",
+    "send message",
+    "send a message",
+    "whatsapp chat",
+    "chat with you",
+    "chat with us",
+    "talk on whatsapp",
+    "call on whatsapp",
+    "whatsapp call",
+    "voice call",
+    "video call",
+    "your mobile",
+    "your phone number",
+    "phone no",
+    "mobile number",
+    "mob no",
+  ],
+
+  CONTACT: [
+    "contact",
+    "contact us",
+    "reach you",
+    "reach us",
+    "how to reach",
+    "how to contact",
+    "email",
+    "email address",
+    "mail",
+    "your email",
+    "your contact",
+    "contact details",
+    "reach out",
+    "get in touch",
+    "connect",
+    "customer care",
+    "customer service",
+    "support",
+    "help desk",
+    "helpline",
+    "service center",
+    "how to get support",
+    "i need help",
+    "assistance",
+    "contact info",
+    "contact information",
+    "how to find you",
+    "find you",
+    "talk to someone",
+    "speak to someone",
+    "person to talk",
+    "human agent",
+    "real person",
+    "not a bot",
+    "speak to human",
+    "talk to human",
+    "your address",
+    "where are you",
+    "office address",
+    "shop address",
+  ],
+
+  RETURNS: [
+    "return",
+    "returns",
+    "refund",
+    "refunds",
+    "exchange",
+    "exchanges",
+    "replace",
+    "replacement",
+    "damaged",
+    "damage",
+    "defective",
+    "defect",
+    "broken",
+    "wrong item",
+    "wrong order",
+    "incorrect item",
+    "incorrect order",
+    "return policy",
+    "refund policy",
+    "exchange policy",
+    "replacement policy",
+    "can i return",
+    "what if damaged",
+    "if i do not like",
+    "change my mind",
+    "cancel",
+    "cancellation",
+    "can i cancel",
+    "money back",
+    "guarantee",
+    "warranty",
+    "dispute",
+    "complaint",
+    "complain",
+    "issue with order",
+    "problem with order",
+    "not satisfied",
+    "unhappy",
+    "dissatisfied",
+    "wrong product",
+    "bad product",
+    "damaged product",
+    "quality issue",
+    "not as expected",
+    "not as described",
+    "item not received",
+    "missing item",
+    "lost package",
+    "lost parcel",
+    "never arrived",
+    "not delivered",
+  ],
+
+  PACKAGING: [
+    "packaging",
+    "package",
+    "packed",
+    "packing",
+    "gift wrap",
+    "gift wrapping",
+    "gift packed",
+    "gift box",
+    "present wrapping",
+    "presentation",
+    "unboxing",
+    "how is it packed",
+    "will it be safe",
+    "safely packed",
+    "secure packaging",
+    "gift packaging",
+    "is it gift wrapped",
+    "can you gift wrap",
+    "boxing",
+    "box",
+    "wrap",
+    "wrapped",
+    "bubble wrap",
+    "protective packaging",
+    "safe packing",
+    "nice packaging",
+    "pretty packaging",
+    "attractive packing",
+    "packaging material",
+    "how well packed",
+    "packing quality",
+    "note in package",
+    "personal note",
+    "gift note",
+    "message in box",
+    "custom message",
+    "add a note",
+    "include a note",
+    "gift ready",
+    "ready to gift",
+  ],
+
+  CARE: [
+    "care",
+    "care instructions",
+    "how to wash",
+    "how to clean",
+    "washing",
+    "cleaning",
+    "washing instructions",
+    "cleaning instructions",
+    "drying",
+    "dry",
+    "maintain",
+    "maintenance",
+    "hand wash",
+    "machine wash",
+    "how to care",
+    "how to handle",
+    "take care of",
+    "care guide",
+    "product care",
+    "delicate wash",
+    "gentle wash",
+    "gentle clean",
+    "wool wash",
+    "yarn care",
+    "crochet care",
+    "preserve",
+    "preservation",
+    "store",
+    "storage",
+    "how to store",
+    "storing",
+    "shelf life",
+    "how long does it last",
+    "durability",
+    "durable",
+    "long lasting",
+    "will it fade",
+    "colour fade",
+    "color fade",
+    "will it shrink",
+    "shrink",
+    "can i wash it",
+    "safe to wash",
+    "washable",
+    "is it washable",
+  ],
+
+  MATERIALS: [
+    "material",
+    "materials",
+    "yarn",
+    "thread",
+    "fabric",
+    "what is it made of",
+    "made of",
+    "made from",
+    "what material",
+    "what yarn",
+    "quality",
+    "cotton",
+    "wool",
+    "acrylic",
+    "crochet yarn",
+    "fiber",
+    "fibre",
+    "is it soft",
+    "is it safe",
+    "baby safe",
+    "child safe",
+    "hypoallergenic",
+    "non toxic",
+    "safe for kids",
+    "safe for babies",
+    "safe for children",
+    "allergy",
+    "allergic",
+    "pet safe",
+    "skin safe",
+    "skin friendly",
+    "composition",
+    "texture",
+    "soft",
+    "fluffy material",
+    "handmade material",
+    "what is used",
+    "what are they made with",
+    "what goes into",
+    "stuffing",
+    "filling",
+    "fill material",
+    "polyester fill",
+    "natural material",
+    "synthetic",
+    "eco friendly",
+    "sustainable",
+    "premium quality",
+    "high quality",
+    "good quality",
+    "quality material",
+  ],
+
+  SIZE: [
+    "size",
+    "sizes",
+    "dimension",
+    "dimensions",
+    "how big",
+    "how small",
+    "how large",
+    "how long",
+    "how tall",
+    "measurement",
+    "measurements",
+    "cm",
+    "inch",
+    "inches",
+    "mm",
+    "millimeter",
+    "centimeter",
+    "height",
+    "width",
+    "length",
+    "depth",
+    "scale",
+    "actual size",
+    "fits",
+    "size chart",
+    "what size",
+    "which size",
+    "big",
+    "small",
+    "medium",
+    "large",
+    "extra large",
+    "tiny",
+    "miniature",
+    "mini",
+    "compact",
+    "how many cm",
+    "how many inches",
+    "measurements for",
+    "size for",
+    "how thick",
+    "thickness",
+    "weight",
+    "how heavy",
+    "grams",
+    "light",
+    "heavy",
+  ],
+
+  GIFTS: [
+    "gift",
+    "gifts",
+    "present",
+    "presents",
+    "gifting",
+    "what to gift",
+    "birthday gift",
+    "birthday present",
+    "anniversary gift",
+    "anniversary present",
+    "valentine gift",
+    "valentines",
+    "valentines day",
+    "christmas gift",
+    "christmas present",
+    "diwali gift",
+    "diwali present",
+    "holi gift",
+    "eid gift",
+    "new year gift",
+    "new year present",
+    "festive gift",
+    "rakhi gift",
+    "raksha bandhan",
+    "mothers day gift",
+    "mother day gift",
+    "fathers day gift",
+    "father day gift",
+    "teachers day gift",
+    "friendship day gift",
+    "special occasion",
+    "for her",
+    "for him",
+    "for kids",
+    "for baby",
+    "for friend",
+    "for boyfriend",
+    "for girlfriend",
+    "for mom",
+    "for mum",
+    "for dad",
+    "for sister",
+    "for brother",
+    "for sister in law",
+    "for someone special",
+    "best gift",
+    "good gift",
+    "recommend gift",
+    "gift suggestion",
+    "surprise gift",
+    "gift ideas",
+    "gift idea",
+    "gifting option",
+    "gift for",
+    "what should i gift",
+    "what can i gift",
+    "unique gift",
+    "thoughtful gift",
+    "handmade gift",
+    "crochet gift",
+    "gift under 200",
+    "gift under 500",
+    "budget gift",
+    "affordable gift",
+    "housewarming gift",
+    "baby shower gift",
+    "wedding gift",
+    "graduation gift",
+    "farewell gift",
+    "get well gift",
+    "congratulations gift",
+  ],
+
+  RECOMMEND: [
+    "recommend",
+    "recommendation",
+    "suggest",
+    "suggestion",
+    "what should i buy",
+    "what should i get",
+    "which is best",
+    "which is good",
+    "what is popular",
+    "what is trending",
+    "top pick",
+    "top picks",
+    "what do people buy",
+    "most bought",
+    "most ordered",
+    "worth buying",
+    "worth it",
+    "value for money",
+    "what to buy",
+    "help me choose",
+    "not sure what to get",
+    "undecided",
+    "help me decide",
+    "assist me choose",
+    "guide me",
+    "need guidance",
+    "which one should i",
+    "which is better",
+    "any suggestions",
+    "any recommendations",
+    "what would you suggest",
+    "what do you recommend",
+    "what is your pick",
+    "what are your favourites",
+    "what is a good choice",
+    "what is a safe choice",
+    "safe option",
+    "popular option",
+    "best option",
+    "best choice",
+    "good choice",
+  ],
+
+  BULK: [
+    "bulk",
+    "bulk order",
+    "wholesale",
+    "large quantity",
+    "large order",
+    "multiple",
+    "many pieces",
+    "lots of",
+    "lot of",
+    "event",
+    "wedding",
+    "party",
+    "corporate",
+    "gifting event",
+    "birthday party",
+    "bulk discount",
+    "group order",
+    "multiple orders",
+    "big order",
+    "want 10",
+    "want 20",
+    "want 50",
+    "want 100",
+    "order 10",
+    "order 20",
+    "order 50",
+    "10 pieces",
+    "20 pieces",
+    "50 pieces",
+    "wholesale price",
+    "resell",
+    "reselling",
+    "bulk pricing",
+    "quantity discount",
+    "volume discount",
+    "corporate order",
+    "office order",
+    "team order",
+    "business order",
+    "institutional order",
+    "school order",
+    "college order",
+    "giveaway",
+    "goody bag",
+    "favour bag",
+    "return gift",
+    "return gifts",
+    "party favour",
+    "party favors",
+  ],
+
+  DISCOUNT: [
+    "discount",
+    "discounts",
+    "offer",
+    "offers",
+    "coupon",
+    "coupons",
+    "sale",
+    "sales",
+    "promo",
+    "promo code",
+    "promotion",
+    "promotional",
+    "deal",
+    "deals",
+    "code",
+    "voucher",
+    "vouchers",
+    "cashback",
+    "rebate",
+    "any offer",
+    "any discount",
+    "special offer",
+    "seasonal offer",
+    "festive offer",
+    "festive discount",
+    "diwali offer",
+    "christmas sale",
+    "summer sale",
+    "winter sale",
+    "flash sale",
+    "clearance",
+    "reduced price",
+    "cheaper",
+    "reduced",
+    "marked down",
+    "price cut",
+    "off",
+    "percent off",
+    "50 percent off",
+    "half price",
+    "buy one get one",
+    "bogo",
+    "free gift",
+    "loyalty discount",
+    "first order discount",
+    "new customer",
+    "returning customer",
+    "referral",
+    "referral code",
+    "affiliate",
+    "membership discount",
+  ],
+
+  AVAILABILITY: [
+    "available",
+    "availability",
+    "in stock",
+    "out of stock",
+    "stock",
+    "when back",
+    "when available",
+    "when restocked",
+    "restocked",
+    "restock",
+    "not available",
+    "sold out",
+    "do you have",
+    "can i get",
+    "is it available",
+    "do you have it",
+    "still available",
+    "currently available",
+    "stock status",
+    "how many left",
+    "limited stock",
+    "last few",
+    "last piece",
+    "only one left",
+    "when will it come back",
+    "how soon available",
+    "pre order",
+    "waitlist",
+    "notify me",
+    "back in stock notification",
+    "reservation",
+    "reserve",
+    "hold for me",
+    "can you hold",
+    "set aside",
+    "put on hold",
+  ],
+
+  GALLERY: [
+    "picture",
+    "pictures",
+    "photo",
+    "photos",
+    "image",
+    "images",
+    "gallery",
+    "product gallery",
+    "image gallery",
+    "photo gallery",
+    "can i see",
+    "let me see",
+    "show me",
+    "see pictures",
+    "view pictures",
+    "what does it look like",
+    "how does it look",
+    "see it",
+    "view it",
+    "see the product",
+    "view the product",
+    "product photo",
+    "product image",
+    "canva",
+    "canva link",
+    "canva gallery",
+    "product photos",
+    "can i view",
+    "where to see",
+    "where can i see",
+    "see all photos",
+    "browse photos",
+    "look at",
+    "visual",
+    "visuals",
+    "looks",
+    "appearance",
+    "what does it look",
+    "how does the product look",
+    "see the design",
+    "see the colour",
+    "see the color",
+    "see the pattern",
+    "preview",
+  ],
+
+  TRACKING: [
+    "track",
+    "tracking",
+    "order status",
+    "where is my order",
+    "where is my parcel",
+    "where is my package",
+    "when will i get",
+    "dispatched",
+    "shipped",
+    "out for delivery",
+    "track my order",
+    "parcel status",
+    "delivery update",
+    "order update",
+    "when does it come",
+    "track package",
+    "shipment status",
+    "shipment tracking",
+    "courier tracking",
+    "tracking number",
+    "tracking id",
+    "track id",
+    "tracking link",
+    "where did my order go",
+    "how to track",
+    "how can i track",
+    "order reached",
+    "parcel reached",
+    "delivery reached",
+    "has it been sent",
+    "has it shipped",
+    "when shipped",
+    "dispatch update",
+    "delivery status",
+    "order movement",
+    "package location",
+  ],
+
+  HOW_IT_WORKS: [
+    "how does it work",
+    "how do you work",
+    "explain",
+    "tell me how",
+    "steps",
+    "process",
+    "walk me through",
+    "how does ordering work",
+    "how does the shop work",
+    "how does buying work",
+    "how does shopping work",
+    "how are they made",
+    "handmade process",
+    "making process",
+    "how do you make",
+    "what is the process",
+    "what is the procedure",
+    "step by step",
+    "procedure",
+    "workflow",
+    "sequence",
+    "method",
+    "approach",
+  ],
+
+  CUSTOM: [
+    "custom",
+    "customise",
+    "customize",
+    "customization",
+    "customisation",
+    "personalise",
+    "personalize",
+    "personalization",
+    "personalisation",
+    "personalised",
+    "personalized",
+    "bespoke",
+    "special order",
+    "made to order",
+    "specific color",
+    "specific colour",
+    "my color",
+    "my colour",
+    "my design",
+    "own design",
+    "can you make",
+    "make for me",
+    "special request",
+    "tailored",
+    "tailor made",
+    "name on it",
+    "name keychain",
+    "initials",
+    "initial letter",
+    "letter keychain",
+    "alphabet keychain",
+    "personalised gift",
+    "can i choose",
+    "my own design",
+    "custom request",
+    "custom colour",
+    "custom color",
+    "custom size",
+    "custom plushie",
+    "custom keychain",
+    "custom hat",
+    "custom design",
+    "custom made",
+    "unique design",
+    "one of a kind",
+    "exclusive",
+    "unique piece",
+    "handmade to order",
+    "made especially",
+    "made specially",
+    "special colour",
+  ],
+
+  PRICING_GENERAL: [
+    "price",
+    "prices",
+    "pricing",
+    "cost",
+    "costs",
+    "rate",
+    "rates",
+    "fee",
+    "fees",
+    "how much",
+    "how much does",
+    "how much is",
+    "how much for",
+    "rupee",
+    "rupees",
+    "rs",
+    "inr",
+    "paisa",
+    "money",
+    "amount",
+    "tariff",
+    "quote",
+    "estimate",
+    "worth",
+    "value",
+    "affordable",
+    "expensive",
+    "price list",
+    "price range",
+    "all prices",
+    "show prices",
+    "price chart",
+    "price table",
+    "price sheet",
+    "cost list",
+    "rate card",
+    "rate list",
+    "how much does each",
+    "what does it cost",
+    "what is the price",
+    "what is the cost",
+    "what is the rate",
+    "total cost",
+    "price for",
+    "cost for",
+    "rate for",
+    "charge for",
+    "charges",
+    "pricing info",
+  ],
+
+  PRICE_CHEAP: [
+    "cheapest",
+    "most affordable",
+    "lowest price",
+    "lowest cost",
+    "budget friendly",
+    "pocket friendly",
+    "inexpensive",
+    "minimum price",
+    "bargain",
+    "cheap",
+    "least expensive",
+    "economy",
+    "economical",
+    "low budget",
+    "tight budget",
+    "small budget",
+    "under 100",
+    "under 150",
+    "under 200",
+    "under 300",
+    "not expensive",
+    "not costly",
+    "reasonable",
+    "reasonably priced",
+    "entry level",
+    "starter",
+    "basic",
+    "simple",
+    "modest",
+    "frugal",
+    "save money",
+    "value pick",
+    "value option",
+    "best value",
+    "cheap option",
+    "affordable option",
+    "affordable range",
+    "budget range",
+    "budget options",
+    "budget items",
+    "cheap items",
+    "low price items",
+    "items on a budget",
+  ],
+
+  PRICE_EXPENSIVE: [
+    "expensive",
+    "priciest",
+    "most expensive",
+    "premium",
+    "highest price",
+    "most costly",
+    "top priced",
+    "luxury",
+    "high end",
+    "upscale",
+    "exclusive",
+    "splurge",
+    "treat yourself",
+    "worth splurging",
+    "special",
+    "finest",
+    "best quality",
+    "top quality",
+    "premium quality",
+    "deluxe",
+    "elite",
+    "costly",
+    "high price",
+    "high cost",
+    "most valuable",
+    "prized",
+    "prestige",
+  ],
+
+  SOCIAL_MEDIA: [
+    "instagram",
+    "facebook",
+    "twitter",
+    "tiktok",
+    "youtube",
+    "social media",
+    "social",
+    "follow",
+    "follow you",
+    "your page",
+    "your profile",
+    "your account",
+    "on instagram",
+    "on facebook",
+    "on twitter",
+    "on tiktok",
+    "on youtube",
+    "your instagram",
+    "your facebook",
+    "ig",
+    "fb",
+    "insta",
+    "snap",
+    "snapchat",
+    "pinterest",
+    "linkedin",
+    "threads",
+    "social presence",
+    "online presence",
+  ],
+
+  ADMIN: [
+    "admin",
+    "login",
+    "password",
+    "admin page",
+    "manage",
+    "edit products",
+    "backend",
+    "dashboard",
+    "admin panel",
+    "admin access",
+    "staff login",
+    "how to manage",
+    "manage store",
+    "update products",
+    "add products",
+    "change price",
+    "update price",
+    "edit price",
+    "admin credentials",
+  ],
+
+  URGENCY: [
+    "urgent",
+    "urgently",
+    "asap",
+    "as soon as possible",
+    "fast",
+    "quick",
+    "rush order",
+    "need today",
+    "need tomorrow",
+    "same day",
+    "express order",
+    "need it soon",
+    "need it fast",
+    "need it quickly",
+    "right away",
+    "immediately",
+    "instant",
+    "emergency",
+    "hurry",
+    "hurry up",
+    "can you make it faster",
+    "faster delivery",
+    "priority",
+    "priority order",
+    "special rush",
+    "time sensitive",
+    "deadline",
+    "by this weekend",
+    "by tomorrow",
+    "by today",
+    "within 2 days",
+    "within 3 days",
+  ],
+
+  COMPLAINT: [
+    "issue",
+    "problem",
+    "bad",
+    "terrible",
+    "not good",
+    "awful",
+    "horrible",
+    "not happy",
+    "unhappy",
+    "dissatisfied",
+    "angry",
+    "frustrated",
+    "disappointed",
+    "complain",
+    "complaint",
+    "escalate",
+    "not satisfied",
+    "very bad",
+    "very unhappy",
+    "so bad",
+    "worst",
+    "pathetic",
+    "useless",
+    "failure",
+    "failed",
+    "did not work",
+    "broken product",
+    "bad quality",
+    "poor quality",
+    "not as expected",
+    "misleading",
+    "false advertising",
+    "cheat",
+    "scam",
+    "fraud",
+    "fake",
+    "not original",
+    "not genuine",
+    "report",
+    "reporting",
+  ],
+
+  COMPLIMENT: [
+    "love it",
+    "love this",
+    "love the",
+    "love your",
+    "amazing",
+    "beautiful",
+    "gorgeous",
+    "cute",
+    "adorable",
+    "excellent",
+    "wonderful",
+    "great",
+    "brilliant",
+    "perfect",
+    "fabulous",
+    "superb",
+    "outstanding",
+    "exceptional",
+    "lovely",
+    "so nice",
+    "very nice",
+    "really nice",
+    "so pretty",
+    "very pretty",
+    "impressed",
+    "impressive",
+    "fantastic",
+    "terrific",
+    "awesome",
+    "wow",
+    "oh wow",
+    "oh my",
+    "stunning",
+    "mind blowing",
+    "top notch",
+    "5 stars",
+    "five stars",
+    "10 out of 10",
+    "100 out of 100",
+    "highly recommend",
+    "will recommend",
+    "must buy",
+    "must get",
+    "please make more",
+    "keep it up",
+    "well done",
+    "bravo",
+    "kudos",
+    "hats off",
+    "great work",
+    "nice work",
+  ],
+
+  COMPARISON: [
+    "compare",
+    "comparison",
+    "vs",
+    "versus",
+    "difference",
+    "differences",
+    "better",
+    "which one",
+    "which is best",
+    "similar",
+    "between",
+    "choose between",
+    "should i get",
+    "should i buy",
+    "which is better",
+    "what is the difference",
+    "how are they different",
+    "differentiate",
+    "distinguish",
+    "which would you suggest",
+    "which would you recommend",
+    "more popular",
+    "which sells more",
+    "contrast",
+    "pros and cons",
+  ],
+
+  HELP: [
+    "help",
+    "what can you do",
+    "what can you help with",
+    "what do you know",
+    "your capabilities",
+    "what questions",
+    "what can i ask",
+    "how can you help",
+    "what do you answer",
+    "what topics",
+    "what areas",
+    "capabilities",
+    "features",
+    "what are you able to",
+    "what do you cover",
+    "menu",
+    "options",
+    "assistant help",
+    "bot help",
+    "chatbot help",
+    "what is this chat",
+    "what does this chat do",
+    "chat capabilities",
+    "what can i ask you",
+    "guide me",
+    "help guide",
+    "user guide",
+    "faq",
+    "frequently asked",
+    "common questions",
+    "quick questions",
+    "questions and answers",
+  ],
+
+  ORDER_CONFIRM: [
+    "my order confirmed",
+    "order confirmed",
+    "order placed",
+    "i ordered",
+    "i sent whatsapp",
+    "i messaged on whatsapp",
+    "i filled the form",
+    "i submitted the form",
+    "order submitted",
+    "i placed my order",
+    "i have ordered",
+    "already ordered",
+    "just ordered",
+    "done ordering",
+    "order done",
+    "payment done",
+    "paid already",
+    "already paid",
+    "i paid",
+    "i have paid",
+    "payment sent",
+    "upi sent",
+    "gpay sent",
+    "transfer done",
+    "transaction done",
+    "what happens next",
+    "next steps after",
+    "after ordering what",
+    "order next",
+    "after payment",
+    "confirmation received",
+  ],
+
+  FESTIVAL: [
+    "diwali",
+    "christmas",
+    "new year",
+    "holi",
+    "eid",
+    "valentine",
+    "valentines",
+    "rakhi",
+    "raksha bandhan",
+    "mothers day",
+    "fathers day",
+    "teachers day",
+    "friendship day",
+    "navratri",
+    "pongal",
+    "onam",
+    "ugadi",
+    "baisakhi",
+    "durga puja",
+    "ganesh chaturthi",
+    "janmashtami",
+    "independence day",
+    "republic day",
+    "festive season",
+    "holiday season",
+    "festive collection",
+    "holiday collection",
+    "seasonal",
+    "seasonal offer",
+    "festival gift",
+    "festive gift",
+    "holiday gift",
+    "celebration",
+    "occasion",
+    "special day",
+  ],
+};
+
+// ─── Intent scoring engine ─────────────────────────────────────────────────
+function scoreIntents(q: string): Record<string, number> {
+  const scores: Record<string, number> = {};
+  const qWords = q.split(" ").filter((w) => w.length > 0);
+
+  for (const [intent, keywords] of Object.entries(INTENT_KEYWORDS)) {
+    let score = 0;
+    for (const kw of keywords) {
+      if (kw.includes(" ")) {
+        // multi-word: check substring
+        if (q.includes(kw)) score += 2;
+      } else {
+        // single word: check word boundary via includes on tokenized array
+        if (qWords.includes(kw)) score += 1;
+        else if (q.includes(kw)) score += 0.5; // partial substring match
+      }
+    }
+    scores[intent] = score;
   }
+  return scores;
+}
 
-  // ── 7. Category listings ──────────────────────────────────────────────────
-  const catFromQ = detectCategory(q);
-  const resolvedCat =
-    catFromQ ??
-    (ctx.lastCategory &&
-    /\b(more|those|all of them|list|show|see|any|give me|cheapest|expensive|cheap|price|cost|how much|under|below|above|over|budget|affordable)\b/.test(
-      q,
-    )
-      ? ctx.lastCategory
-      : null);
-
-  if (catFromQ) {
-    const cat = categoryProducts(catFromQ);
-    if (cat) {
-      newCtx.lastCategory = cat.key;
-      newCtx.lastIntent = "category_list";
-      return {
-        text: `Here are our ${cat.key}! 🧶\n\n${fmt(cat.items)}\n\n✨ = Fan Favourite. Ask me about any specific item for more details!`,
-        newCtx,
-      };
+function topIntent(scores: Record<string, number>): string | null {
+  let best: string | null = null;
+  let bestScore = 0.8; // minimum threshold
+  for (const [intent, score] of Object.entries(scores)) {
+    if (score > bestScore) {
+      bestScore = score;
+      best = intent;
     }
   }
+  return best;
+}
 
-  // ── 8. Price filter: under / below ───────────────────────────────────────
+// ─── Category detector ─────────────────────────────────────────────────────
+function detectCategory(q: string): string | null {
+  const catScores: Record<string, number> = {};
+  const catIntents: Record<string, string> = {
+    PLUSHIES: "Plushies",
+    KEYCHAINS: "Keychains",
+    WEARABLES: "Wearables",
+    HOME_DECOR: "Home Decor",
+    ACCESSORIES: "Accessories",
+  };
+  const all = scoreIntents(q);
+  let best: string | null = null;
+  let bestScore = 0.5;
+  for (const [intentKey, catName] of Object.entries(catIntents)) {
+    const s = all[intentKey] ?? 0;
+    catScores[catName] = s;
+    if (s > bestScore) {
+      bestScore = s;
+      best = catName;
+    }
+  }
+  return best;
+}
+
+// ─── Intent Engine / getResponse ──────────────────────────────────────────
+function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
+  const expanded = expand(raw);
+  const q = norm(expanded);
+  const newCtx: Partial<ConversationContext> = {};
+
+  // Score all intents
+  const scores = scoreIntents(q);
+  const intent = topIntent(scores);
+
+  // ── Price range: between X and Y ─────────────────────────────────────────
+  const between = extractBetween(q);
+  if (between) {
+    const catFromQ = detectCategory(q);
+    const resolvedCat = catFromQ ?? ctx.lastCategory;
+    const pool = resolvedCat
+      ? (categoryProducts(resolvedCat)?.items ?? allProducts())
+      : allProducts();
+    const filtered = pool.filter(
+      (p) => p.price >= between[0] && p.price <= between[1],
+    );
+    newCtx.lastIntent = "price_filter";
+    if (filtered.length === 0)
+      return {
+        text: `Hmm, nothing between ₹${between[0]} and ₹${between[1]}${resolvedCat ? ` in ${resolvedCat}` : ""}. Try widening your range! Our prices go from ₹79 to ₹499 🏷️`,
+        newCtx,
+      };
+    return {
+      text: `Items between ₹${between[0]} and ₹${between[1]}${resolvedCat ? ` in ${resolvedCat}` : ""} 🏷️\n\n${fmt(filtered)}`,
+      newCtx,
+    };
+  }
+
+  // ── Price range: under / below ───────────────────────────────────────────
   const underLimit = extractUnder(q);
   if (underLimit !== null) {
+    const catFromQ = detectCategory(q);
+    const resolvedCat = catFromQ ?? ctx.lastCategory;
     const pool = resolvedCat
       ? (categoryProducts(resolvedCat)?.items ?? allProducts())
       : allProducts();
@@ -368,7 +2511,7 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
     newCtx.lastIntent = "price_filter";
     if (filtered.length === 0)
       return {
-        text: `Hmm, nothing under ₹${underLimit}${resolvedCat ? ` in ${resolvedCat}` : ""}. Our most affordable item is Bookmarks at ₹79! 🎀`,
+        text: `Nothing under ₹${underLimit}${resolvedCat ? ` in ${resolvedCat}` : ""}. Our most affordable item is Bookmarks at ₹79! 🎀`,
         newCtx,
       };
     return {
@@ -377,9 +2520,11 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
     };
   }
 
-  // ── 9. Price filter: above / over ────────────────────────────────────────
+  // ── Price range: above / over ────────────────────────────────────────────
   const aboveLimit = extractAbove(q);
   if (aboveLimit !== null) {
+    const catFromQ = detectCategory(q);
+    const resolvedCat = catFromQ ?? ctx.lastCategory;
     const pool = resolvedCat
       ? (categoryProducts(resolvedCat)?.items ?? allProducts())
       : allProducts();
@@ -394,41 +2539,19 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
     };
   }
 
-  // ── 10. Cheapest / most affordable ───────────────────────────────────────
-  if (IS_PRICE_CHEAP.test(q)) {
-    const pool = resolvedCat
-      ? (categoryProducts(resolvedCat)?.items ?? allProducts())
-      : allProducts();
-    const sorted = [...pool].sort((a, b) => a.price - b.price).slice(0, 5);
-    newCtx.lastIntent = "cheapest";
-    return {
-      text: `Our most affordable${resolvedCat ? ` ${resolvedCat}` : ""} options 🏷️\n\n${fmt(sorted)}`,
-      newCtx,
-    };
-  }
-
-  // ── 11. Most expensive / premium ─────────────────────────────────────────
-  if (IS_PRICE_EXPENSIVE.test(q)) {
-    const pool = resolvedCat
-      ? (categoryProducts(resolvedCat)?.items ?? allProducts())
-      : allProducts();
-    const sorted = [...pool].sort((a, b) => b.price - a.price).slice(0, 5);
-    newCtx.lastIntent = "expensive";
-    return {
-      text: `Our premium picks${resolvedCat ? ` in ${resolvedCat}` : ""} ✨\n\n${fmt(sorted)}`,
-      newCtx,
-    };
-  }
-
-  // ── 12. Specific product lookup (phrase patterns) ────────────────────────
+  // ── Specific product lookup ───────────────────────────────────────────────
   const productPhraseMatch =
-    q.match(/how much (?:is|does|for|costs?) (?:the )?(\w[\w\s()]*?)\s*\??$/) ??
-    q.match(/(?:price|cost|rate) (?:of|for) (?:the )?(\w[\w\s()]*?)\s*\??$/) ??
     q.match(
-      /(?:tell me about|info (?:on|about)|what(?:'s| is) the?) (?:the )?(\w[\w\s()]*?)\s*\??$/,
+      /how much (?:is|does|for|costs?) (?:the )?([\w][\w\s()]*?)\s*\??$/,
     ) ??
     q.match(
-      /(?:is|how much is) (?:the )?(\w[\w\s()]*?) (?:available|in stock)/,
+      /(?:price|cost|rate) (?:of|for) (?:the )?([\w][\w\s()]*?)\s*\??$/,
+    ) ??
+    q.match(
+      /(?:tell me about|info (?:on|about)|what(?:'s| is) the?) (?:the )?([\w][\w\s()]*?)\s*\??$/,
+    ) ??
+    q.match(
+      /(?:is|how much is) (?:the )?([\w][\w\s()]*?) (?:available|in stock)/,
     ) ??
     null;
 
@@ -454,14 +2577,18 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
     }
   }
 
-  // ── 13. Direct product name mention (fuzzy) ───────────────────────────────
+  // ── Direct product name mention ───────────────────────────────────────────
   const directMatches = findProductsByQuery(q);
   if (directMatches.length === 1) {
     const found = directMatches[0];
     newCtx.lastProduct = found.name;
     newCtx.lastCategory = getCategory(found.name);
     return {
-      text: `${found.name} is one of our lovely pieces! 🧶\n\nPrice: ₹${found.price}${found.highlight ? " ✨ (Fan Favourite)" : ""}${found.custom ? " — and it can be personalised with your initial! ✏️" : ""}\n\nTo place an order or see the picture, message us on WhatsApp!`,
+      text: pick([
+        `${found.name} is one of our most-loved pieces! 🧶\n\nPrice: ₹${found.price}${found.highlight ? " ✨ (Fan Favourite)" : ""}${found.custom ? " — fully customisable with your initial! ✏️" : ""}\n\nSee pictures in our gallery or place your order via WhatsApp! 💕`,
+        `Great choice! ${found.name} — ₹${found.price}${found.highlight ? " ✨" : ""}${found.custom ? " (Custom available)" : ""}\n\nHandcrafted with love, ships in 5–7 business days. View it in our gallery! 🛍️`,
+        `${found.name} is ₹${found.price}${found.highlight ? " ✨ (Fan Favourite — sells out fast!" : ""}${found.custom ? " — personalise it with your initial!" : ""}\n\nMessage us on WhatsApp to place an order! 💬`,
+      ]),
       link: { label: "View in Gallery", url: KB.imageGallery },
       newCtx,
     };
@@ -473,7 +2600,7 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
     };
   }
 
-  // ── 14. Context follow-up: "that one" / "same" ────────────────────────────
+  // ── Context follow-up: "that one" / "same" ───────────────────────────────
   if (
     ctx.lastCategory &&
     /\b(that one|this one|the other|another one|similar|same category|those)\b/.test(
@@ -488,189 +2615,9 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
       };
   }
 
-  // ── 15. How it works / ordering process ──────────────────────────────────
-  if (IS_HOW_IT_WORKS.test(q) || IS_ORDERING.test(q))
-    return {
-      text: "Ordering from The Cozy Hook is super easy! 🛍️\n\n1️⃣ Browse the collection and add items to your cart\n2️⃣ Fill in your name, address, and phone number on the cart page\n3️⃣ Tap 'Order Now' — WhatsApp opens with everything pre-filled\n4️⃣ We confirm your order and share payment details\n5️⃣ Your handmade piece is crafted and delivered in 5–7 days! 📦\n\nNo advance payment needed before confirmation! 💕",
-      newCtx: { lastIntent: "ordering" },
-    };
-
-  // ── 16. Payment ───────────────────────────────────────────────────────────
-  if (IS_PAYMENT.test(q))
-    return {
-      text: "We accept all major payment modes! 💳\n\n• UPI (GPay, PhonePe, Paytm)\n• Debit / Credit cards\n• Net banking\n• Cash on Delivery (COD) — available for most locations\n\nPayment details are shared on WhatsApp after order confirmation. No advance payment needed before we confirm! 🌸",
-      newCtx: { lastIntent: "payment" },
-    };
-
-  // ── 17. WhatsApp ──────────────────────────────────────────────────────────
-  if (IS_WHATSAPP.test(q))
-    return {
-      text: `You can reach us directly on WhatsApp! 💬\n\n📱 ${KB.contact.whatsappUrl}\n\nWe typically reply within a few hours. You can place orders, ask questions, or request custom pieces!`,
-      link: { label: "Open WhatsApp", url: KB.contact.whatsappUrl },
-      newCtx: { lastIntent: "whatsapp" },
-    };
-
-  // ── 18. Contact ───────────────────────────────────────────────────────────
-  if (IS_CONTACT.test(q))
-    return {
-      text: `You can reach The Cozy Hook here 🌸\n\n💬 WhatsApp: ${KB.contact.whatsappUrl}\n📧 Email: ${KB.contact.email}\n\nWe typically respond within a few hours!`,
-      link: { label: "Message us on WhatsApp", url: KB.contact.whatsappUrl },
-      newCtx: { lastIntent: "contact" },
-    };
-
-  // ── 19. Delivery ─────────────────────────────────────────────────────────
-  if (IS_DELIVERY.test(q))
-    return {
-      text: `We deliver across India! 🇮🇳\n\n📦 Delivery charge: ₹${KB.delivery.charge}\n🎉 FREE delivery on orders above ₹${KB.delivery.freeAbove}\n⏱️ Standard delivery time: ${KB.delivery.days}\n\nYou'll receive tracking details on WhatsApp once dispatched!`,
-      newCtx: { lastIntent: "delivery" },
-    };
-
-  // ── 20. Delivery time ─────────────────────────────────────────────────────
-  if (IS_DELIVERY_TIME.test(q))
-    return {
-      text: `Standard delivery takes ${KB.delivery.days} after dispatch. 📦\n\nCustom orders (like Initial Letter Keychains or personalised pieces) may take 10–15 days as they're made to order.\n\nYou'll receive tracking details on WhatsApp once your order ships! 🌸`,
-      newCtx: { lastIntent: "delivery_time" },
-    };
-
-  // ── 21. Custom orders ─────────────────────────────────────────────────────
-  if (IS_CUSTOM.test(q))
-    return {
-      text: "We love making custom pieces! 🎨\n\nYou can request:\n• Custom colours on most items\n• Personalised keychains (your initial or name)\n• Special sizes or unique designs\n• Bulk orders for events & gifting\n• Custom plushies or specific colour combos\n\nFill in our Custom Orders form and we'll get back to you on WhatsApp! 💕",
-      link: { label: "Fill Custom Order Form", url: KB.customOrdersUrl },
-      newCtx: { lastIntent: "custom" },
-    };
-
-  // ── 22. Returns / refunds ─────────────────────────────────────────────────
-  if (IS_RETURNS.test(q))
-    return {
-      text: "We want you to love every piece! 💛\n\nOur policy:\n• Exchanges accepted within 7 days — item must be unused and in original packaging\n• Damaged or defective items — contact us immediately and we'll make it right\n• Returns considered case-by-case\n• Order cancellations accepted before dispatch\n\nJust reach out on WhatsApp or email and we'll sort it out! 🌸",
-      newCtx: { lastIntent: "returns" },
-    };
-
-  // ── 23. Packaging ─────────────────────────────────────────────────────────
-  if (IS_PACKAGING.test(q))
-    return {
-      text: "Every order is carefully packaged to keep your items safe during transit! 🎁\n\nMost orders come in gift-ready packaging too. If you'd like special gift wrapping or a personal note, just mention it in your order notes on WhatsApp and we'll take care of it 💕",
-      newCtx: { lastIntent: "packaging" },
-    };
-
-  // ── 24. Care instructions ─────────────────────────────────────────────────
-  if (IS_CARE.test(q))
-    return {
-      text: "Crochet care tips for your Cozy Hook pieces 🌊\n\n• Hand wash gently in cold water with mild soap\n• Lay flat to dry — never hang wet (it stretches the yarn)\n• Do not machine wash or tumble dry\n• Store in a cool, dry place away from direct sunlight\n\nWith proper care, your pieces will stay beautiful for years! 🧶",
-      newCtx: { lastIntent: "care" },
-    };
-
-  // ── 25. Materials / safety ────────────────────────────────────────────────
-  if (IS_MATERIALS.test(q))
-    return {
-      text: "All Cozy Hook pieces are handcrafted using high-quality yarn — mostly premium cotton and wool blends. 🧶\n\n• Plushies use hypoallergenic polyester fill (safe for all ages)\n• Wearables use soft, skin-friendly cotton or wool-blend yarn\n• Keychains & accessories use durable cotton thread\n• All materials are non-toxic and safe for kids & babies\n\nEvery piece is made with love and attention to detail! 💕",
-      newCtx: { lastIntent: "materials" },
-    };
-
-  // ── 26. Size / dimensions ─────────────────────────────────────────────────
-  if (IS_SIZE.test(q))
-    return {
-      text: "Sizes vary by product! Here are some examples 📏\n\n🧸 Plushies: ~17–22 cm tall\n🔑 Keychains: ~5–9 cm\n🧢 Bucket Hat: adjustable inner tie\n❤️ Heart Pillow: ~30 cm wide\n🪴 Hanging Plant: ~40 cm drop\n🖼️ Wall Hanging: ~30–40 cm wide\n\nNeed exact measurements for a specific item? Ask me by name or WhatsApp us!",
-      newCtx: { lastIntent: "sizing" },
-    };
-
-  // ── 27. Gift ideas ────────────────────────────────────────────────────────
-  if (IS_GIFTS.test(q))
-    return {
-      text: "We make the most heartfelt gifts! 🎁 Popular choices:\n\n💝 For her: Strawberry Costumed Bunny (₹399), Bucket Hat (₹399), Heart Pillow (₹399)\n🎂 Birthday: Frog Plushie (₹249), Cherry Keychain (₹129), Mini Pouches (₹199)\n🏠 Housewarming: Wall Hanging (₹499), Coaster Set (₹299), Hanging Plant (₹349)\n👶 For kids/babies: Any Plushie (₹249–₹399)\n💑 Valentine: Heart Keychain (₹109), Heart Pillow (₹399)\n\nGift wrapping available — just ask! 💕",
-      newCtx: { lastIntent: "gifts" },
-    };
-
-  // ── 28. Recommendations ───────────────────────────────────────────────────
-  if (IS_RECOMMEND.test(q)) {
-    const faves = allProducts().filter((p) => p.highlight);
-    return {
-      text: `Here are our most recommended pieces 🌟\n\n${fmt(faves)}\n\nAll four are fan favourites and sell out quickly! If you tell me who you're buying for, I can suggest something more specific 💕`,
-      newCtx: { lastIntent: "recommend" },
-    };
-  }
-
-  // ── 29. Bulk orders ───────────────────────────────────────────────────────
-  if (IS_BULK.test(q))
-    return {
-      text: "We love fulfilling bulk orders for events, gifting, and special occasions! 🎉\n\nFor bulk orders (10+ pieces), please WhatsApp us directly so we can discuss quantities, timelines, and special pricing. Discounts available for larger quantities! 🛍️",
-      link: { label: "Contact for Bulk Order", url: KB.contact.whatsappUrl },
-      newCtx: { lastIntent: "bulk" },
-    };
-
-  // ── 30. Discounts ─────────────────────────────────────────────────────────
-  if (IS_DISCOUNT.test(q))
-    return {
-      text: "We don't run discount codes currently, but you get FREE delivery on orders above ₹999! 🎉\n\nFor bulk orders or special events, custom pricing is available — just WhatsApp us to discuss. 💕\n\nFollow our updates for seasonal offers!",
-      newCtx: { lastIntent: "discount" },
-    };
-
-  // ── 31. Stock availability ────────────────────────────────────────────────
-  if (IS_AVAILABILITY.test(q))
-    return {
-      text: "Most items are made to order, so availability depends on current workload! 🧶\n\nFor the quickest updates, WhatsApp us directly — we'll let you know the status and can reserve your item too! 💕",
-      link: { label: "Check Stock on WhatsApp", url: KB.contact.whatsappUrl },
-      newCtx: { lastIntent: "availability" },
-    };
-
-  // ── 32. Gallery / pictures ────────────────────────────────────────────────
-  if (IS_GALLERY.test(q))
-    return {
-      text: "You can browse all our product pictures in our image gallery! 📸\n\nScroll through to find your favourite pieces. Each product page on our website also has a 'View Picture' button linking directly to the gallery.",
-      link: { label: "Open Product Gallery", url: KB.imageGallery },
-      newCtx: { lastIntent: "gallery" },
-    };
-
-  // ── 33. Order tracking ────────────────────────────────────────────────────
-  if (IS_TRACKING.test(q))
-    return {
-      text: "Order tracking details are shared on WhatsApp after your order is dispatched! 📦\n\nYou'll receive a tracking number via WhatsApp message. If you haven't received it yet or need an update, just message us directly!\n\n💬 wa.me/918660099085",
-      link: { label: "Track via WhatsApp", url: KB.contact.whatsappUrl },
-      newCtx: { lastIntent: "tracking" },
-    };
-
-  // ── 34. General pricing ───────────────────────────────────────────────────
-  if (IS_PRICING_GENERAL.test(q)) {
-    if (resolvedCat) {
-      const cat = categoryProducts(resolvedCat);
-      if (cat) {
-        newCtx.lastCategory = cat.key;
-        return {
-          text: `Here are the ${cat.key} prices 🏷️\n\n${fmt(cat.items)}`,
-          newCtx,
-        };
-      }
-    }
-    // Context: last product
-    if (ctx.lastProduct) {
-      const p = allProducts().find((x) => x.name === ctx.lastProduct);
-      if (p)
-        return {
-          text: `${p.name} is priced at ₹${p.price}${p.highlight ? " ✨" : ""}. 🏷️`,
-          newCtx,
-        };
-    }
-    return {
-      text: "Our prices range from ₹79 to ₹499 🏷️\n\n• Accessories: ₹79–₹199\n• Keychains: ₹99–₹159\n• Wearables: ₹149–₹399\n• Home Decor: ₹299–₹499\n• Plushies: ₹249–₹399\n\nAsk me about any category or specific item for exact prices!",
-      newCtx: { lastIntent: "pricing" },
-    };
-  }
-
-  // ── 35. Comparison ────────────────────────────────────────────────────────
+  // ── Follow-ups: "tell me more", "what else", etc. ─────────────────────────
   if (
-    /\b(compare|difference|vs\.?|versus|which is better|should i (get|buy)|between)\b/.test(
-      q,
-    )
-  )
-    return {
-      text: "I'd love to help you choose! 🤔\n\nTell me which two items you're deciding between and I'll share more details. Or describe who it's for (e.g. 'gift for my friend') and I'll suggest the best option! 💕",
-      newCtx: { lastIntent: "comparison" },
-    };
-
-  // ── 36. Follow-ups: "tell me more", "what else", "more info" ──────────────
-  if (
-    /\b(tell me more|what else|more info|more details|anything else|elaborate|explain more|go on)\b/.test(
+    /\b(tell me more|what else|more info|more details|anything else|elaborate|explain more|go on|continue|and then|more about|keep going)\b/.test(
       q,
     )
   ) {
@@ -693,42 +2640,508 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
     }
   }
 
-  // ── 37. Affirmations / acknowledgments ───────────────────────────────────
+  // ── Affirmations ─────────────────────────────────────────────────────────
   if (
-    /^(ok|okay|sure|got it|alright|noted|understood|nice|great|cool|awesome|perfect|sounds good|yep|yup|yes|k|sounds good)\s*\.?\!?$/.test(
+    /^(ok|okay|sure|got it|alright|noted|understood|nice|great|cool|awesome|perfect|sounds good|yep|yup|yes|k|sounds good|right|ok cool|ok great|ok sure)\s*\.?\!?$/.test(
       q,
     )
   )
     return {
-      text: "Great! 😊 Is there anything else I can help you with? Feel free to ask about products, pricing, custom orders, delivery, or anything else! 🧶",
+      text: pick([
+        "Great! 😊 Is there anything else I can help you with? Feel free to ask about products, pricing, custom orders, delivery, or gift ideas! 🧶",
+        "Wonderful! 🌸 Anything else you'd like to know about The Cozy Hook?",
+        "Perfect! 💕 What else can I help you with today?",
+      ]),
       newCtx,
     };
 
-  // ── 38. Negative / no ────────────────────────────────────────────────────
+  // ── Negative / no ────────────────────────────────────────────────────────
   if (
-    /^(no|nope|nah|not really|nothing|i'?m? good|all good|that'?s? all)\s*\.?\!?$/.test(
+    /^(no|nope|nah|not really|nothing|i am good|all good|that is all|that will be all|no thanks|no thank you)\s*\.?\!?$/.test(
       q,
     )
   )
     return {
-      text: "No worries! 🌸 Feel free to come back anytime you have a question. Happy shopping at The Cozy Hook! 💕",
+      text: pick([
+        "No worries! 🌸 Feel free to come back anytime. Happy shopping at The Cozy Hook! 💕",
+        "All good! 😊 Come back whenever you need anything. The Cozy Hook is always here! 🧶",
+        "Sure thing! 🌷 See you around — and enjoy your Cozy Hook pieces! ✨",
+      ]),
       newCtx,
     };
 
-  // ── 39. Help / what can you do ────────────────────────────────────────────
-  if (
-    /\b(help|what can you (do|help with|answer)|what do you know|your capabilities|what questions|what can i ask)\b/.test(
+  // ── Intent-based routing ──────────────────────────────────────────────────
+  if (intent === "GREETING")
+    return {
+      text: pick([
+        "Hi there! 👋 Welcome to The Cozy Hook — your favourite handmade crochet boutique. 🧶\n\nI can help you with products, prices, delivery, custom orders, and more. What would you like to know?",
+        "Hello! 🌸 I'm the Cozy Hook Assistant! Ask me anything about our 34 handmade crochet pieces — from plushies to keychains to home decor! 💕",
+        "Hey there! ✨ Welcome to The Cozy Hook! 🧶 How can I help you today? Ask me about products, pricing, gifting, delivery, or anything else!",
+      ]),
+      newCtx: { lastIntent: "greeting" },
+    };
+
+  if (intent === "FAREWELL")
+    return {
+      text: pick([
+        "Goodbye! 🌸 Thank you for visiting The Cozy Hook. Come back anytime — we'd love to see you again! 💕",
+        "See you soon! ✨ Hope to craft something special for you next time! 🧶",
+        "Take care! 💕 The Cozy Hook will be right here whenever you need us. Bye for now! 🌷",
+      ]),
+      newCtx: { lastIntent: "farewell" },
+    };
+
+  if (intent === "THANKS")
+    return {
+      text: pick([
+        "You're so welcome! 🥰 It's our pleasure. Is there anything else I can help you with?",
+        "Happy to help! 💕 That's what I'm here for! Any other questions?",
+        "Anytime! 🌸 Don't hesitate to ask if you need anything else. 😊",
+      ]),
+      newCtx: { lastIntent: "thanks" },
+    };
+
+  if (intent === "ABOUT")
+    return {
+      text: pick([
+        "The Cozy Hook is a handmade crochet boutique founded by Sanjana Prasad. 🧶\n\nEvery single piece is hand-crafted with love — from tiny keychains to cozy plushies and beautiful home decor. What started as a passion project has grown into a curated collection of 34 unique crochet creations.\n\nEach item is made to order, so you're getting something truly special! 💕",
+        "We're a small, passionate crochet brand run by Sanjana Prasad! 🌸\n\nEvery piece you see is hand-stitched with care and high-quality yarn. Our 34 products span Plushies, Keychains, Wearables, Home Decor, and Accessories — all handmade with love and shipped across India! 🇮🇳",
+      ]),
+      newCtx: { lastIntent: "brand" },
+    };
+
+  if (intent === "ALL_PRODUCTS")
+    return {
+      text: "Here's our full collection at The Cozy Hook! 🧶\n\n🧸 Plushies (7 items) — from ₹249\n🔑 Keychains (11 items) — from ₹99\n👗 Wearables (5 items) — from ₹149\n🏡 Home Decor (5 items) — from ₹299\n🎀 Accessories (6 items) — from ₹79\n\nAsk me about any category for the full list and prices! ✨",
+      newCtx: { lastIntent: "all_products" },
+    };
+
+  if (intent === "FAN_FAVES") {
+    const faves = allProducts().filter((p) => p.highlight);
+    return {
+      text: pick([
+        `Our fan favourites right now ✨\n\n${fmt(faves)}\n\nThese sell out the fastest — grab yours before they're gone! 💕`,
+        `The most-loved pieces at The Cozy Hook 🌟\n\n${fmt(faves)}\n\nAll four are best-sellers and come beautifully packaged! 🎁`,
+      ]),
+      newCtx: { lastIntent: "favourites" },
+    };
+  }
+
+  if (intent === "PLUSHIES") {
+    const cat = categoryProducts("Plushies");
+    if (cat) {
+      newCtx.lastCategory = "Plushies";
+      newCtx.lastIntent = "category_list";
+      return {
+        text: pick([
+          `Here are our adorable Plushies! 🧸\n\n${fmt(cat.items)}\n\n✨ = Fan Favourite. Ask me about any specific plushie for more details!`,
+          `Our Plushie collection 🧸\n\n${fmt(cat.items)}\n\nAll handcrafted with hypoallergenic fill — safe for all ages! 💕`,
+        ]),
+        newCtx,
+      };
+    }
+  }
+
+  if (intent === "KEYCHAINS") {
+    const cat = categoryProducts("Keychains");
+    if (cat) {
+      newCtx.lastCategory = "Keychains";
+      newCtx.lastIntent = "category_list";
+      return {
+        text: pick([
+          `Here are our Keychains! 🔑\n\n${fmt(cat.items)}\n\n✨ = Fan Favourite. (Custom) = can be personalised with your initial!`,
+          `Our Keychain collection 🔑\n\n${fmt(cat.items)}\n\nThe Initial Letter Keychain can be personalised with your name initial! ✏️`,
+        ]),
+        newCtx,
+      };
+    }
+  }
+
+  if (intent === "WEARABLES") {
+    const cat = categoryProducts("Wearables");
+    if (cat) {
+      newCtx.lastCategory = "Wearables";
+      newCtx.lastIntent = "category_list";
+      return {
+        text: pick([
+          `Here are our Wearables! 👗\n\n${fmt(cat.items)}\n\n✨ = Fan Favourite. All made with soft, skin-friendly yarn!`,
+          `Our Wearable collection 👗\n\n${fmt(cat.items)}\n\nAll crochet wearables are handmade with premium yarn and lots of love! 💕`,
+        ]),
+        newCtx,
+      };
+    }
+  }
+
+  if (intent === "HOME_DECOR") {
+    const cat = categoryProducts("Home Decor");
+    if (cat) {
+      newCtx.lastCategory = "Home Decor";
+      newCtx.lastIntent = "category_list";
+      return {
+        text: pick([
+          `Here are our Home Decor pieces! 🏡\n\n${fmt(cat.items)}\n\n✨ = Fan Favourite. Perfect for gifting or decorating your space!`,
+          `Our Home Decor collection 🏡\n\n${fmt(cat.items)}\n\nAll pieces add a cozy, handmade charm to any room! 🌸`,
+        ]),
+        newCtx,
+      };
+    }
+  }
+
+  if (intent === "ACCESSORIES") {
+    const cat = categoryProducts("Accessories");
+    if (cat) {
+      newCtx.lastCategory = "Accessories";
+      newCtx.lastIntent = "category_list";
+      return {
+        text: pick([
+          `Here are our Accessories! 🎀\n\n${fmt(cat.items)}\n\nCute, affordable, and perfect as gifts or personal treats!`,
+          `Our Accessories collection 🎀\n\n${fmt(cat.items)}\n\nFrom bookmarks to bag charms — all handcrafted with care! 💕`,
+        ]),
+        newCtx,
+      };
+    }
+  }
+
+  // Category detection fallback using score engine
+  const catFromQ = detectCategory(q);
+  const resolvedCat =
+    catFromQ ??
+    (ctx.lastCategory &&
+    /\b(more|those|all of them|list|show|see|any|give me|cheapest|expensive|cheap|price|cost|how much|under|below|above|over|budget|affordable)\b/.test(
       q,
     )
-  )
+      ? ctx.lastCategory
+      : null);
+
+  if (catFromQ) {
+    const cat = categoryProducts(catFromQ);
+    if (cat) {
+      newCtx.lastCategory = cat.key;
+      newCtx.lastIntent = "category_list";
+      return {
+        text: `Here are our ${cat.key}! 🧶\n\n${fmt(cat.items)}\n\n✨ = Fan Favourite. Ask me about any specific item for more details!`,
+        newCtx,
+      };
+    }
+  }
+
+  if (intent === "PRICE_CHEAP") {
+    const pool = resolvedCat
+      ? (categoryProducts(resolvedCat)?.items ?? allProducts())
+      : allProducts();
+    const sorted = [...pool].sort((a, b) => a.price - b.price).slice(0, 5);
+    newCtx.lastIntent = "cheapest";
     return {
-      text: "I'm here to help with everything about The Cozy Hook! 🧶\n\nYou can ask me about:\n• 🧸 Products & prices (all 34 items!)\n• 🚚 Delivery & shipping\n• 🎨 Custom & personalised orders\n• 💳 Payment methods\n• 🔄 Returns & exchanges\n• 📦 Packaging\n• 🎁 Gift ideas & recommendations\n• 📸 Product pictures & gallery\n• 🏷️ Price ranges & filters\n• 📍 Order tracking\n\nJust type your question naturally! 💕",
+      text: `Our most affordable${resolvedCat ? ` ${resolvedCat}` : ""} options 🏷️\n\n${fmt(sorted)}`,
+      newCtx,
+    };
+  }
+
+  if (intent === "PRICE_EXPENSIVE") {
+    const pool = resolvedCat
+      ? (categoryProducts(resolvedCat)?.items ?? allProducts())
+      : allProducts();
+    const sorted = [...pool].sort((a, b) => b.price - a.price).slice(0, 5);
+    newCtx.lastIntent = "expensive";
+    return {
+      text: `Our premium picks${resolvedCat ? ` in ${resolvedCat}` : ""} ✨\n\n${fmt(sorted)}`,
+      newCtx,
+    };
+  }
+
+  if (intent === "HOW_IT_WORKS" || intent === "ORDERING")
+    return {
+      text: pick([
+        "Ordering from The Cozy Hook is super easy! 🛍️\n\n1️⃣ Browse the collection and add items to your cart\n2️⃣ Fill in your name, address, and phone number on the cart page\n3️⃣ Tap 'Order Now' — WhatsApp opens with everything pre-filled\n4️⃣ We confirm your order and share payment details\n5️⃣ Your handmade piece is crafted and delivered in 5–7 days! 📦\n\nNo advance payment needed before confirmation! 💕",
+        "Here's how to order from us 🛍️\n\n1. Pick your items from our Collection page\n2. Add to cart and fill in your details\n3. Click 'Order Now' to open WhatsApp with your order pre-filled\n4. We confirm and you pay via UPI/GPay\n5. Dispatched in 5–7 business days! 🚀\n\nSo simple and hassle-free! 💕",
+      ]),
+      newCtx: { lastIntent: "ordering" },
+    };
+
+  if (intent === "PAYMENT")
+    return {
+      text: pick([
+        "We accept all major digital payment modes! 💳\n\n• UPI (GPay, PhonePe, Paytm)\n• Debit / Credit cards\n• Net banking\n• Bank transfer (NEFT/IMPS)\n\n⚠️ Note: COD (Cash on Delivery) is not available currently.\n\nPayment details are shared on WhatsApp after order confirmation! 🌸",
+        "Payment at The Cozy Hook 💳\n\n✅ UPI — GPay, PhonePe, Paytm, BHIM\n✅ Debit/Credit cards\n✅ Net banking\n✅ Bank transfer\n❌ COD not available\n\nAll payments are made after order confirmation via WhatsApp! 💕",
+      ]),
+      newCtx: { lastIntent: "payment" },
+    };
+
+  if (intent === "WHATSAPP")
+    return {
+      text: pick([
+        `You can reach us directly on WhatsApp! 💬\n\n📱 ${KB.contact.whatsappUrl}\n\nWe typically reply within a few hours. You can place orders, ask questions, or request custom pieces!`,
+        "Our WhatsApp is always open! 💬\n\n📱 +91 86600 99085\n\nSend us a message to place an order, ask about products, or request something custom! 🌸",
+      ]),
+      link: { label: "Open WhatsApp", url: KB.contact.whatsappUrl },
+      newCtx: { lastIntent: "whatsapp" },
+    };
+
+  if (intent === "CONTACT")
+    return {
+      text: pick([
+        `You can reach The Cozy Hook here 🌸\n\n💬 WhatsApp: ${KB.contact.whatsappUrl}\n📧 Email: ${KB.contact.email}\n\nWe typically respond within a few hours!`,
+        `Here's how to get in touch 🌸\n\n💬 WhatsApp: +91 86600 99085\n📧 Email: sanjanaprasad239@gmail.com\n\nWhatsApp is the fastest way to reach us! 💕`,
+      ]),
+      link: { label: "Message us on WhatsApp", url: KB.contact.whatsappUrl },
+      newCtx: { lastIntent: "contact" },
+    };
+
+  if (intent === "DELIVERY")
+    return {
+      text: pick([
+        `We deliver across India! 🇮🇳\n\n📦 Delivery charge: ₹${KB.delivery.charge}\n🎉 FREE delivery on orders above ₹${KB.delivery.freeAbove}\n⏱️ Standard delivery time: ${KB.delivery.days}\n\nYou'll receive tracking details on WhatsApp once dispatched!`,
+        "Shipping info for The Cozy Hook 🚚\n\n• We ship pan-India! 🇮🇳\n• Delivery fee: ₹49\n• FREE above ₹999 🎉\n• Estimated time: 5–7 business days\n\nTracking details sent on WhatsApp after dispatch! 📦",
+      ]),
+      newCtx: { lastIntent: "delivery" },
+    };
+
+  if (intent === "DELIVERY_TIME")
+    return {
+      text: pick([
+        `Standard delivery takes ${KB.delivery.days} after dispatch. 📦\n\nCustom orders (like Initial Letter Keychains or personalised pieces) may take 10–15 days as they're made to order.\n\nYou'll receive tracking details on WhatsApp once your order ships! 🌸`,
+        "Delivery time at The Cozy Hook ⏱️\n\n• Standard items: 5–7 business days\n• Custom/personalised items: 10–15 days\n• Tracking sent via WhatsApp after dispatch!\n\nWe do our best to dispatch as quickly as possible! 💕",
+      ]),
+      newCtx: { lastIntent: "delivery_time" },
+    };
+
+  if (intent === "CUSTOM")
+    return {
+      text: pick([
+        "We love making custom pieces! 🎨\n\nYou can request:\n• Custom colours on most items\n• Personalised keychains (your initial or name)\n• Special sizes or unique designs\n• Bulk orders for events & gifting\n• Custom plushies or specific colour combos\n\nFill in our Custom Orders form and we'll get back to you on WhatsApp! 💕",
+        "Custom orders are our speciality! 🎨\n\n✏️ Personalised keychains with your initial\n🎨 Custom colour choices on most items\n🧸 Special designs on request\n🎉 Bulk custom orders for events\n\nJust fill the form below and we'll make it happen! 💕",
+      ]),
+      link: { label: "Fill Custom Order Form", url: KB.customOrdersUrl },
+      newCtx: { lastIntent: "custom" },
+    };
+
+  if (intent === "RETURNS")
+    return {
+      text: pick([
+        "We want you to love every piece! 💛\n\nOur policy:\n• Exchanges accepted within 7 days — item must be unused and in original packaging\n• Damaged or defective items — contact us immediately and we'll make it right\n• Custom items are non-returnable (as they're made specifically for you)\n• Order cancellations accepted before dispatch\n\nJust reach out on WhatsApp and we'll sort it out! 🌸",
+        "Returns & refunds policy 🔄\n\n✅ Exchanges within 7 days (unused items)\n✅ Damaged/wrong items — we'll replace or refund\n❌ Custom/personalised items cannot be returned\n✅ Cancel anytime before dispatch\n\nContact us on WhatsApp with your order details! 💕",
+      ]),
+      newCtx: { lastIntent: "returns" },
+    };
+
+  if (intent === "PACKAGING")
+    return {
+      text: pick([
+        "Every order is carefully packaged to keep your items safe during transit! 🎁\n\nMost orders come in gift-ready packaging too. If you'd like special gift wrapping or a personal note, just mention it in your order on WhatsApp and we'll take care of it 💕",
+        "Packaging at The Cozy Hook 🎁\n\n• All items safely packed for transit\n• Gift-ready packaging available\n• Personal notes or gift messages can be added\n• Just mention it when placing your WhatsApp order!\n\nWe love making unboxing feel magical! ✨",
+      ]),
+      newCtx: { lastIntent: "packaging" },
+    };
+
+  if (intent === "CARE")
+    return {
+      text: pick([
+        "Crochet care tips for your Cozy Hook pieces 🌊\n\n• Hand wash gently in cold water with mild soap\n• Lay flat to dry — never hang wet (it stretches the yarn)\n• Do not machine wash or tumble dry\n• Store in a cool, dry place away from direct sunlight\n\nWith proper care, your pieces will stay beautiful for years! 🧶",
+        "How to care for your Cozy Hook items 🧶\n\n🚿 Gentle hand wash in cold water\n🧴 Use mild, gentle soap or wool wash\n📐 Lay flat to air dry\n❌ No machine wash / tumble dry\n🌙 Store in a cool, dry, dark place\n\nTreat them with love and they'll last forever! 💕",
+      ]),
+      newCtx: { lastIntent: "care" },
+    };
+
+  if (intent === "MATERIALS")
+    return {
+      text: pick([
+        "All Cozy Hook pieces are handcrafted using high-quality yarn — mostly premium cotton and wool blends. 🧶\n\n• Plushies use hypoallergenic polyester fill (safe for all ages)\n• Wearables use soft, skin-friendly cotton or wool-blend yarn\n• Keychains & accessories use durable cotton thread\n• All materials are non-toxic and safe for kids & babies\n\nEvery piece is made with love and attention to detail! 💕",
+        "Materials used at The Cozy Hook 🧶\n\n✅ Premium acrylic and cotton yarn\n✅ Hypoallergenic polyester fill (plushies)\n✅ Non-toxic — safe for babies and children\n✅ Skin-friendly for wearables\n✅ Durable thread for keychains & accessories\n\nAll materials are carefully selected for quality and safety! 💕",
+      ]),
+      newCtx: { lastIntent: "materials" },
+    };
+
+  if (intent === "SIZE")
+    return {
+      text: pick([
+        "Sizes vary by product! Here are some examples 📏\n\n🧸 Plushies: ~17–22 cm tall\n🔑 Keychains: ~5–9 cm\n🧢 Bucket Hat: adjustable inner tie\n❤️ Heart Pillow: ~30 cm wide\n🪴 Hanging Plant: ~40 cm drop\n🖼️ Wall Hanging: ~30–40 cm wide\n\nNeed exact measurements for a specific item? Ask me by name or WhatsApp us!",
+        "Approximate sizes at The Cozy Hook 📏\n\n• Plushies: 17–22 cm tall\n• Keychains: 5–9 cm\n• Hairband / Headband: adjustable\n• Heart Pillow: ~30 cm\n• Wall Hanging: 30–40 cm\n\nFor exact measurements, message us on WhatsApp! 💕",
+      ]),
+      newCtx: { lastIntent: "sizing" },
+    };
+
+  if (intent === "GIFTS")
+    return {
+      text: pick([
+        "We make the most heartfelt gifts! 🎁 Popular choices:\n\n💝 For her: Strawberry Costumed Bunny (₹399), Bucket Hat (₹399), Heart Pillow (₹399)\n🎂 Birthday: Frog Plushie (₹249), Cherry Keychain (₹129), Mini Pouches (₹199)\n🏠 Housewarming: Wall Hanging (₹499), Coaster Set (₹299), Hanging Plant (₹349)\n👶 For kids/babies: Any Plushie (₹249–₹399)\n💑 Valentine: Heart Keychain (₹109), Heart Pillow (₹399)\n\nGift wrapping available — just ask! 💕",
+        "The Cozy Hook makes perfect gifts! 🎁\n\n💫 Diwali / Festive: Wall Hanging (₹499), Coaster Set (₹299)\n🎂 Birthdays: Any Plushie (₹249–₹399)\n💝 Valentine's Day: Heart Keychain (₹109), Heart Pillow (₹399)\n👩‍👧 Moms: Hairband (₹149), Tulip Hair Accessory (₹129)\n🏠 Housewarming: Wall Hanging (₹499), Hanging Plant (₹349)\n\nAll items come gift-ready — add a personal note too! 💕",
+      ]),
+      newCtx: { lastIntent: "gifts" },
+    };
+
+  if (intent === "RECOMMEND") {
+    const faves = allProducts().filter((p) => p.highlight);
+    return {
+      text: pick([
+        `Here are our most recommended pieces 🌟\n\n${fmt(faves)}\n\nAll four are fan favourites and sell out quickly! If you tell me who you're buying for, I can suggest something more specific 💕`,
+        `Not sure what to get? Here are our top picks! ⭐\n\n${fmt(faves)}\n\nShare who it's for and your budget and I'll personalise the suggestion! 🌸`,
+      ]),
+      newCtx: { lastIntent: "recommend" },
+    };
+  }
+
+  if (intent === "BULK")
+    return {
+      text: pick([
+        "We love fulfilling bulk orders for events, gifting, and special occasions! 🎉\n\nFor bulk orders (10+ pieces), please WhatsApp us directly so we can discuss quantities, timelines, and special pricing. Discounts available for larger quantities! 🛍️",
+        "Bulk & wholesale orders welcome! 🎉\n\n• 10+ pieces — special pricing available\n• Corporate gifting, weddings, events, return gifts\n• Custom designs for large orders\n\nWhatsApp us with your requirements and we'll work something out! 💕",
+      ]),
+      link: { label: "Contact for Bulk Order", url: KB.contact.whatsappUrl },
+      newCtx: { lastIntent: "bulk" },
+    };
+
+  if (intent === "DISCOUNT")
+    return {
+      text: pick([
+        "We don't run discount codes currently, but you get FREE delivery on orders above ₹999! 🎉\n\nFor bulk orders or special events, custom pricing is available — just WhatsApp us to discuss. 💕\n\nWatch this space for seasonal offers!",
+        "No coupon codes right now, but here's the deal 🎁\n\n🎉 FREE delivery above ₹999\n🎉 Bulk order discounts (10+ pieces)\n🎉 Seasonal offers announced on WhatsApp\n\nContact us to stay updated! 💕",
+      ]),
+      newCtx: { lastIntent: "discount" },
+    };
+
+  if (intent === "AVAILABILITY")
+    return {
+      text: pick([
+        "Most items are made to order, so availability depends on current workload! 🧶\n\nFor the quickest updates, WhatsApp us directly — we'll let you know the status and can reserve your item too! 💕",
+        "All our pieces are handmade to order! 🧶\n\nThis means most items are available but take time to craft. For urgent orders or specific availability, message us on WhatsApp and we'll confirm ASAP! 💕",
+      ]),
+      link: { label: "Check Stock on WhatsApp", url: KB.contact.whatsappUrl },
+      newCtx: { lastIntent: "availability" },
+    };
+
+  if (intent === "GALLERY")
+    return {
+      text: pick([
+        "You can browse all our product pictures in our image gallery! 📸\n\nScroll through to find your favourite pieces. Each product page on our website also has a 'View Picture' button linking directly to the gallery.",
+        "Our product gallery is on Canva! 📸\n\nClick the link below to see photos of all 34 products — plushies, keychains, wearables, home decor, and accessories! 🌸",
+      ]),
+      link: { label: "Open Product Gallery", url: KB.imageGallery },
+      newCtx: { lastIntent: "gallery" },
+    };
+
+  if (intent === "TRACKING")
+    return {
+      text: pick([
+        "Order tracking details are shared on WhatsApp after your order is dispatched! 📦\n\nYou'll receive a tracking number via WhatsApp message. If you haven't received it yet or need an update, just message us directly!\n\n💬 wa.me/918660099085",
+        "Tracking your order 📦\n\nOnce dispatched, your tracking number is sent via WhatsApp. For real-time updates, you can message us anytime!\n\nStandard delivery takes 5–7 business days after dispatch. 🚚",
+      ]),
+      link: { label: "Track via WhatsApp", url: KB.contact.whatsappUrl },
+      newCtx: { lastIntent: "tracking" },
+    };
+
+  if (intent === "PRICING_GENERAL") {
+    if (resolvedCat) {
+      const cat = categoryProducts(resolvedCat);
+      if (cat) {
+        newCtx.lastCategory = cat.key;
+        return {
+          text: `Here are the ${cat.key} prices 🏷️\n\n${fmt(cat.items)}`,
+          newCtx,
+        };
+      }
+    }
+    if (ctx.lastProduct) {
+      const p = allProducts().find((x) => x.name === ctx.lastProduct);
+      if (p)
+        return {
+          text: `${p.name} is priced at ₹${p.price}${p.highlight ? " ✨" : ""}. 🏷️`,
+          newCtx,
+        };
+    }
+    return {
+      text: pick([
+        "Our prices range from ₹79 to ₹499 🏷️\n\n• Accessories: ₹79–₹199\n• Keychains: ₹99–₹159\n• Wearables: ₹149–₹399\n• Home Decor: ₹299–₹499\n• Plushies: ₹249–₹399\n\nAsk me about any category or specific item for exact prices!",
+        "Here's our price overview 🏷️\n\n🎀 Accessories: ₹79 – ₹199\n🔑 Keychains: ₹99 – ₹159\n👗 Wearables: ₹149 – ₹399\n🏡 Home Decor: ₹299 – ₹499\n🧸 Plushies: ₹249 – ₹399\n\nTell me a category and I'll list every price! 💕",
+      ]),
+      newCtx: { lastIntent: "pricing" },
+    };
+  }
+
+  if (intent === "COMPARISON")
+    return {
+      text: pick([
+        "I'd love to help you choose! 🤔\n\nTell me which two items you're deciding between and I'll share more details. Or describe who it's for (e.g. 'gift for my friend') and I'll suggest the best option! 💕",
+        "Happy to help you decide! 😊\n\nShare the two items you're comparing and I'll break down the differences — price, size, who it's best for, and more! 🧶",
+      ]),
+      newCtx: { lastIntent: "comparison" },
+    };
+
+  if (intent === "SOCIAL_MEDIA")
+    return {
+      text: "We're not on social media yet, but we're working on it! 🌸\n\nFor now, the best way to stay connected is via WhatsApp or email. We'll let you know when we're active on Instagram! 💕",
+      newCtx: { lastIntent: "social" },
+    };
+
+  if (intent === "ADMIN")
+    return {
+      text: "The admin panel is available at /admin on this website. 🔐\n\nOnly authorised users can access it. If you need help, please contact us via WhatsApp! 💕",
+      newCtx: { lastIntent: "admin" },
+    };
+
+  if (intent === "URGENCY")
+    return {
+      text: pick([
+        "We understand you need it fast! ⚡\n\nStandard delivery is 5–7 business days. For urgent or rush orders, please WhatsApp us directly and we'll do our best to prioritise your order!\n\n📱 wa.me/918660099085 💕",
+        "Rush order? We've got you! 🚀\n\nMessage us on WhatsApp with your deadline and we'll see what we can arrange. We always try to accommodate urgent requests! 💕",
+      ]),
+      link: { label: "WhatsApp for Rush Order", url: KB.contact.whatsappUrl },
+      newCtx: { lastIntent: "urgency" },
+    };
+
+  if (intent === "COMPLAINT")
+    return {
+      text: pick([
+        "I'm so sorry to hear that! 😔 We genuinely want every customer to be happy.\n\nPlease reach out to us on WhatsApp or email with your order details and we'll make it right as quickly as possible! 💕",
+        "We're really sorry you had a bad experience! 💔\n\nPlease message us on WhatsApp with your order number and the issue. We'll resolve it promptly — your satisfaction means everything to us! 🌸",
+      ]),
+      link: { label: "Contact Us on WhatsApp", url: KB.contact.whatsappUrl },
+      newCtx: { lastIntent: "complaint" },
+    };
+
+  if (intent === "COMPLIMENT")
+    return {
+      text: pick([
+        "Aww, that absolutely made our day! 🥰 Thank you so much!\n\nEvery kind word motivates us to keep crafting with love. We can't wait for you to get your piece! 💕🧶",
+        "Thank you so much! That means the world to us! 🌸\n\nWe pour our hearts into every stitch — hearing this makes it all worth it! 💕",
+        "You're too sweet! 🥹✨ We're so glad you love it! Don't forget to spread the word — every review and share helps our small business grow! 💕",
+      ]),
+      newCtx: { lastIntent: "compliment" },
+    };
+
+  if (intent === "ORDER_CONFIRM")
+    return {
+      text: pick([
+        "Wonderful! 🎉 Once we receive your WhatsApp message, we'll confirm your order and send payment details within a few hours.\n\nYour handmade piece will then be crafted and dispatched within 5–7 business days. You'll get a tracking update on WhatsApp! 📦💕",
+        "Great, thank you for ordering! 🌸\n\nWe'll send a confirmation and payment link on WhatsApp shortly. Your item will be crafted with love and shipped within 5–7 business days!\n\nExcited for you to receive it! 💕🧶",
+      ]),
+      newCtx: { lastIntent: "order_confirm" },
+    };
+
+  if (intent === "FESTIVAL")
+    return {
+      text: pick([
+        "The Cozy Hook is perfect for festive gifting! 🎊\n\n🪔 Diwali: Wall Hanging (₹499), Coaster Set (₹299)\n💝 Valentine's Day: Heart Keychain (₹109), Heart Pillow (₹399)\n🎂 Birthdays: Any Plushie or Keychain\n🤝 Friendship Day: Mini Pouches (₹199), Bookmarks (₹79)\n🏠 Housewarming: Hanging Plant (₹349), Table Mat (₹399)\n\nGift wrapping and personal notes available! 💕",
+        "Festive gifting sorted! 🎊\n\nWe have something for every occasion and every budget — from ₹79 bookmarks to ₹499 wall hangings. All items are gift-ready with beautiful packaging!\n\nTell me the occasion and budget and I'll suggest the perfect pick! 💕",
+      ]),
+      newCtx: { lastIntent: "festival" },
+    };
+
+  if (intent === "HELP")
+    return {
+      text: pick([
+        "I'm here to help with everything about The Cozy Hook! 🧶\n\nYou can ask me about:\n• 🧸 Products & prices (all 34 items!)\n• 🚚 Delivery & shipping\n• 🎨 Custom & personalised orders\n• 💳 Payment methods\n• 🔄 Returns & exchanges\n• 📦 Packaging\n• 🎁 Gift ideas & recommendations\n• 📸 Product pictures & gallery\n• 🏷️ Price ranges & filters\n• 📍 Order tracking\n\nJust type your question naturally! 💕",
+        "Ask me anything! 🌸 Here's what I can help with:\n\n🛍️ Products, prices, availability\n🚚 Delivery info and timelines\n🎨 Custom and personalised orders\n💳 Payment options\n🎁 Gift suggestions\n📸 Product gallery\n🔄 Returns and refunds\n📍 Order tracking\n\nNo question is too small — I'm here to help! 💕",
+      ]),
       newCtx: { lastIntent: "help" },
     };
 
-  // ── 40. Fallback ──────────────────────────────────────────────────────────
+  // ── Fallback ───────────────────────────────────────────────────────────────
   return {
-    text: `I'm not quite sure about that — but I don't want to leave you without an answer! 🌸\n\nHere's how to get help:\n💬 WhatsApp: ${KB.contact.whatsappUrl}\n📧 Email: ${KB.contact.email}\n\nOr try asking me about products, prices, delivery, custom orders, or gift ideas!`,
+    text: pick([
+      `I'm not quite sure about that — but I don't want to leave you without an answer! 🌸\n\nHere's how to get help:\n💬 WhatsApp: ${KB.contact.whatsappUrl}\n📧 Email: ${KB.contact.email}\n\nOr try asking me about products, prices, delivery, custom orders, or gift ideas!`,
+      "Hmm, I didn't quite catch that! 🤔 Could you rephrase it?\n\nYou can ask me about:\n• Products and prices\n• Delivery and shipping\n• Custom orders\n• Gift suggestions\n• Payment methods\n\nOr WhatsApp us directly for anything else! 💕",
+      `Not sure I understood that fully! 🌸 Try asking me something like:\n• 'Show me plushies'\n• 'How much is the bucket hat?'\n• 'How do I order?'\n• 'Is delivery free?'\n\nOr reach us on WhatsApp: ${KB.contact.whatsappUrl} 💬`,
+    ]),
     link: { label: "Ask on WhatsApp", url: KB.contact.whatsappUrl },
     newCtx: { lastIntent: "fallback" },
   };

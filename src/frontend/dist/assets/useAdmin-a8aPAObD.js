@@ -1,4 +1,4 @@
-import { r as reactExports } from "./index-D7DGx8fp.js";
+import { r as reactExports } from "./index-DU0cLvqb.js";
 const STORAGE_KEY = "cozy-hook-admin";
 const AUTH_KEY = "cozy-hook-admin-auth";
 const ADMIN_PASSWORD = "cozyhook2025";
