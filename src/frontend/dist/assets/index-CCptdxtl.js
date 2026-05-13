@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-DW3snFlO.js","assets/ProductCard-BP5rtQsQ.js","assets/plus-COJ9U2Vt.js","assets/products-C6QqLREO.js","assets/useAdmin-BrCw6xJR.js","assets/useQueries-Dqypv5H1.js","assets/CollectionPage-Dhn023a4.js","assets/ProductPage-CpvArur-.js","assets/label-CmASRgtq.js","assets/textarea-B2HIUtDA.js","assets/index-CbtCnWby.js","assets/AdminPage-CV6eSdHW.js","assets/separator-CZFrrl2k.js","assets/CartPage-bWUKynxF.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-B603Z0GJ.js","assets/ProductCard-Ch4wDp_U.js","assets/plus-FpMpL_UQ.js","assets/products-DV9WP4M5.js","assets/useAdmin-B91abJDd.js","assets/useOrderCounter-CnSXfycc.js","assets/useQueries-BlU6qg4w.js","assets/CollectionPage-CYL5Bw7_.js","assets/ProductPage-BTTlwl_0.js","assets/label-6EfFtY2J.js","assets/textarea-n2nGX6el.js","assets/index-a_5Q2cI2.js","assets/AdminPage-DMgVTZjx.js","assets/separator-CHFPWt8_.js","assets/CartPage-BGIanoPB.js","assets/trash-2-2eNEEhXQ.js","assets/ConfirmationPage-CjNGEKfT.js","assets/WishlistPage-CpWfbgQ4.js"])))=>i.map(i=>d[i]);
 var __defProp = Object.defineProperty;
 var __typeError = (msg) => {
   throw TypeError(msg);
@@ -23831,11 +23831,23 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$6 = [
+const __iconNode$7 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$6);
+const CircleCheck = createLucideIcon("circle-check", __iconNode$7);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$6 = [
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+];
+const ExternalLink = createLucideIcon("external-link", __iconNode$6);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -23843,11 +23855,15 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$6);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$5 = [
-  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
-  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
-  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+  [
+    "path",
+    {
+      d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+      key: "c3ymky"
+    }
+  ]
 ];
-const ExternalLink = createLucideIcon("external-link", __iconNode$5);
+const Heart = createLucideIcon("heart", __iconNode$5);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34989,21 +35005,21 @@ Or reach us on WhatsApp: ${KB.contact.whatsappUrl} 💬`
   };
 }
 const QUICK_REPLIES = [
-  { label: "🧸 Plushies", query: "Show me all plushies" },
-  { label: "🔑 Keychains", query: "Show me all keychains" },
-  { label: "✨ Fan Favourites", query: "What are your fan favourites?" },
-  { label: "🚚 Delivery", query: "Tell me about delivery" },
-  { label: "🎨 Custom Order", query: "I want a custom order" },
-  { label: "🎁 Gift Ideas", query: "I need a gift idea" },
-  { label: "💳 Payment", query: "What payment methods do you accept?" },
-  { label: "📸 See Pictures", query: "Can I see product pictures?" }
+  { label: "🧸 plushies", query: "Show me all plushies" },
+  { label: "🔑 keychains", query: "Show me all keychains" },
+  { label: "✨ fan favourites", query: "What are your fan favourites?" },
+  { label: "🚚 delivery", query: "Tell me about delivery" },
+  { label: "🎨 custom order", query: "I want a custom order" },
+  { label: "🎁 gift ideas", query: "I need a gift idea" },
+  { label: "💳 payment", query: "What payment methods do you accept?" },
+  { label: "📸 see pictures", query: "Can I see product pictures?" }
 ];
 let msgCounter = 0;
 const nextId = () => ++msgCounter;
 const WELCOME = {
   id: nextId(),
   role: "bot",
-  text: "Hi! I'm the Cozy Hook assistant 🧶\n\nI know every product, price, and policy! Ask me anything about our collection, delivery, custom orders, gift ideas, and more. 💕"
+  text: "hi! i'm the cozy hook assistant 🧶\n\ni know every product, price, and policy! ask me anything about our collection, delivery, custom orders, gift ideas, and more. 💕"
 };
 function ChatAssistant() {
   const [open, setOpen] = reactExports.useState(false);
@@ -35113,10 +35129,10 @@ function ChatAssistant() {
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 px-5 py-4 bg-primary text-primary-foreground shrink-0", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center text-lg select-none shrink-0", children: "🧶" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-sm font-semibold leading-tight", children: "The Cozy Hook Assistant" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-sm font-semibold leading-tight", children: "the cozy hook assistant" }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "font-body text-xs opacity-75 flex items-center gap-1", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-green-300 inline-block" }),
-                "Always here to help ✨"
+                "always here to help ✨"
               ] })
             ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -35174,7 +35190,7 @@ function ChatAssistant() {
             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { ref: bottomRef })
           ] }),
           showQuickReplies && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-4 pb-3 pt-1 bg-background shrink-0 border-t border-border/50", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground font-body mb-2", children: "Quick questions:" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground font-body mb-2", children: "quick questions:" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-1.5", children: QUICK_REPLIES.map((qr) => /* @__PURE__ */ jsxRuntimeExports.jsx(
               "button",
               {
@@ -35242,11 +35258,14 @@ function ChatAssistant() {
   ] });
 }
 const FOOTER_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "Collection", to: "/collection" },
-  { label: "Our Story", to: "/our-story" },
-  { label: "Journal", to: "/journal" },
-  { label: "Contact", to: "/contact" }
+  { label: "home", to: "/" },
+  { label: "collection", to: "/collection" },
+  { label: "our story", to: "/our-story" },
+  { label: "journal", to: "/journal" },
+  { label: "contact", to: "/contact" },
+  { label: "faq", to: "/faq" },
+  { label: "care guide", to: "/care-guide" },
+  { label: "wishlist", to: "/wishlist" }
 ];
 function Footer() {
   const year = (/* @__PURE__ */ new Date()).getFullYear();
@@ -35255,11 +35274,11 @@ function Footer() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className: "bg-card border-t border-border", "data-ocid": "footer", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-10", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-xl font-semibold text-foreground", children: "The Cozy Hook" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-xl font-semibold text-foreground", children: "the cozy hook" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-body text-muted-foreground leading-relaxed max-w-xs", children: "Handmade crochet with love — every stitch is a tiny act of care, made just for you." })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "font-display text-sm font-semibold text-foreground uppercase tracking-wider", children: "Explore" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "font-display text-sm font-semibold text-foreground uppercase tracking-wider", children: "explore" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-2", children: FOOTER_LINKS.map((link) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
           Link,
           {
@@ -35271,7 +35290,7 @@ function Footer() {
         ) }, link.to)) })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "font-display text-sm font-semibold text-foreground uppercase tracking-wider", children: "Get in Touch" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "font-display text-sm font-semibold text-foreground uppercase tracking-wider", children: "get in touch" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "a",
@@ -35304,7 +35323,30 @@ function Footer() {
                     children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" })
                   }
                 ),
-                "WhatsApp Us"
+                "whatsapp us"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "a",
+            {
+              href: "https://www.youtube.com/@thecozyhookworld",
+              target: "_blank",
+              rel: "noopener noreferrer",
+              className: "flex items-center gap-2 text-sm font-body text-muted-foreground hover:text-foreground transition-smooth",
+              "data-ocid": "footer.youtube_link",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "svg",
+                  {
+                    viewBox: "0 0 24 24",
+                    className: "w-4 h-4 shrink-0",
+                    fill: "currentColor",
+                    "aria-hidden": "true",
+                    children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" })
+                  }
+                ),
+                "follow us on youtube"
               ]
             }
           )
@@ -35315,7 +35357,7 @@ function Footer() {
       /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs font-body text-muted-foreground", children: [
         "© ",
         year,
-        " The Cozy Hook. All rights reserved."
+        " the cozy hook. all rights reserved."
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs font-body text-muted-foreground", children: [
         "Built with love using",
@@ -38316,6 +38358,22 @@ function useCartTotals() {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   return { subtotal, delivery, total, itemCount };
 }
+const useWishlist = create()(
+  persist(
+    (set, get) => ({
+      wishlistItems: [],
+      addToWishlist: (product) => set((s) => ({
+        wishlistItems: s.wishlistItems.some((p) => p.id === product.id) ? s.wishlistItems : [...s.wishlistItems, product]
+      })),
+      removeFromWishlist: (productId) => set((s) => ({
+        wishlistItems: s.wishlistItems.filter((p) => p.id !== productId)
+      })),
+      isInWishlist: (productId) => get().wishlistItems.some((p) => p.id === productId),
+      clearWishlist: () => set({ wishlistItems: [] })
+    }),
+    { name: "cozy-hook-wishlist" }
+  )
+);
 const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0BlM1VYW-igf5GLSDMpDddolGnPASMygeFOfyRiTfdiGfPQ/viewform?pli=1";
 const WHATSAPP_NOTIFY_URL = `https://wa.me/918660099085?text=${encodeURIComponent(
   "Hi! I've submitted a custom crochet order request via The Cozy Hook website. Please let me know the next steps! 🧶"
@@ -38464,16 +38522,18 @@ function CustomOrderModal({ open, onClose }) {
   ] }) });
 }
 const NAV_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "Collection", to: "/collection" },
-  { label: "Our Story", to: "/our-story" },
-  { label: "Journal", to: "/journal" },
-  { label: "Contact", to: "/contact" }
+  { label: "home", to: "/" },
+  { label: "collection", to: "/collection" },
+  { label: "our story", to: "/our-story" },
+  { label: "journal", to: "/journal" },
+  { label: "contact", to: "/contact" }
 ];
 function Navbar() {
   const [mobileOpen, setMobileOpen] = reactExports.useState(false);
   const [customOrderOpen, setCustomOrderOpen] = reactExports.useState(false);
   const { itemCount } = useCartTotals();
+  const { wishlistItems } = useWishlist();
+  const wishlistCount = wishlistItems.length;
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
   const navigate = useNavigate();
@@ -38500,7 +38560,7 @@ function Navbar() {
                       className: "h-10 w-auto object-contain"
                     }
                   ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-lg font-semibold text-foreground hidden sm:block leading-tight", children: "The Cozy Hook" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-lg font-semibold text-foreground hidden sm:block leading-tight", children: "the cozy hook" })
                 ]
               }
             ),
@@ -38541,7 +38601,44 @@ function Navbar() {
                   className: "hidden md:flex rounded-xl font-body text-xs gap-1.5 h-8",
                   onClick: () => setCustomOrderOpen(true),
                   "data-ocid": "navbar.custom_orders_button",
-                  children: "✨ Custom Orders"
+                  children: "✨ custom orders"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "a",
+                {
+                  href: "https://www.youtube.com/@thecozyhookworld",
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: "hidden md:flex p-2 rounded-full hover:bg-muted transition-smooth text-muted-foreground hover:text-foreground",
+                  "data-ocid": "navbar.youtube_link",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "svg",
+                      {
+                        viewBox: "0 0 24 24",
+                        className: "w-5 h-5",
+                        fill: "currentColor",
+                        "aria-hidden": "true",
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" })
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "The Cozy Hook YouTube channel" })
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  onClick: () => navigate({ to: "/wishlist" }),
+                  className: "relative p-2 rounded-full hover:bg-muted transition-smooth text-foreground",
+                  "aria-label": `Wishlist, ${wishlistCount} items`,
+                  "data-ocid": "navbar.wishlist_button",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Heart, { className: "w-5 h-5", style: { color: "#D8A7B1" } }),
+                    wishlistCount > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] font-body font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none", children: wishlistCount > 9 ? "9+" : wishlistCount })
+                  ]
                 }
               ),
               /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -38592,6 +38689,44 @@ function Navbar() {
                   },
                   link.to
                 )),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  Link,
+                  {
+                    to: "/wishlist",
+                    className: "flex items-center gap-2 px-3 py-2.5 text-sm font-body font-medium text-foreground hover:bg-muted rounded-xl transition-smooth",
+                    onClick: () => setMobileOpen(false),
+                    "data-ocid": "navbar.mobile_wishlist_link",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(Heart, { className: "w-4 h-4", style: { color: "#D8A7B1" } }),
+                      "wishlist",
+                      wishlistCount > 0 ? ` (${wishlistCount})` : ""
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "a",
+                  {
+                    href: "https://www.youtube.com/@thecozyhookworld",
+                    target: "_blank",
+                    rel: "noopener noreferrer",
+                    className: "flex items-center gap-2 px-3 py-2.5 text-sm font-body font-medium text-foreground hover:bg-muted rounded-xl transition-smooth",
+                    onClick: () => setMobileOpen(false),
+                    "data-ocid": "navbar.mobile_youtube_link",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "svg",
+                        {
+                          viewBox: "0 0 24 24",
+                          className: "w-4 h-4",
+                          fill: "currentColor",
+                          "aria-hidden": "true",
+                          children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" })
+                        }
+                      ),
+                      "youtube"
+                    ]
+                  }
+                ),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   Button,
                   {
@@ -38603,7 +38738,7 @@ function Navbar() {
                       setCustomOrderOpen(true);
                     },
                     "data-ocid": "navbar.mobile_custom_orders_button",
-                    children: "✨ Custom Orders"
+                    children: "✨ custom orders"
                   }
                 )
               ] })
@@ -38630,30 +38765,44 @@ function Layout({ children }) {
   ] });
 }
 const HomePage = reactExports.lazy(
-  () => __vitePreload(() => import("./HomePage-DW3snFlO.js"), true ? __vite__mapDeps([0,1,2,3,4,5]) : void 0).then((m) => ({ default: m.HomePage }))
+  () => __vitePreload(() => import("./HomePage-B603Z0GJ.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6]) : void 0).then((m) => ({ default: m.HomePage }))
 );
 const CollectionPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CollectionPage-Dhn023a4.js"), true ? __vite__mapDeps([6,1,2,3]) : void 0).then((m) => ({
+  () => __vitePreload(() => import("./CollectionPage-CYL5Bw7_.js"), true ? __vite__mapDeps([7,1,2,3]) : void 0).then((m) => ({
     default: m.CollectionPage
   }))
 );
 const ProductPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ProductPage-CpvArur-.js"), true ? __vite__mapDeps([7,1,2,8,9,10,5,3]) : void 0).then((m) => ({ default: m.ProductPage }))
+  () => __vitePreload(() => import("./ProductPage-BTTlwl_0.js"), true ? __vite__mapDeps([8,1,2,9,10,11,6,3]) : void 0).then((m) => ({ default: m.ProductPage }))
 );
 const OurStoryPage = reactExports.lazy(
-  () => __vitePreload(() => import("./OurStoryPage-lYSfzJ14.js"), true ? [] : void 0).then((m) => ({ default: m.OurStoryPage }))
+  () => __vitePreload(() => import("./OurStoryPage-BklvU22W.js"), true ? [] : void 0).then((m) => ({ default: m.OurStoryPage }))
 );
 const JournalPage = reactExports.lazy(
-  () => __vitePreload(() => import("./JournalPage-BVsTahR7.js"), true ? [] : void 0).then((m) => ({ default: m.JournalPage }))
+  () => __vitePreload(() => import("./JournalPage-VYFxvP4o.js"), true ? [] : void 0).then((m) => ({ default: m.JournalPage }))
 );
 const ContactPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ContactPage-DcmVvC53.js"), true ? [] : void 0).then((m) => ({ default: m.ContactPage }))
+  () => __vitePreload(() => import("./ContactPage-z9HeIzBP.js"), true ? [] : void 0).then((m) => ({ default: m.ContactPage }))
 );
 const AdminPage = reactExports.lazy(
-  () => __vitePreload(() => import("./AdminPage-CV6eSdHW.js"), true ? __vite__mapDeps([11,8,12,10,3,4]) : void 0).then((m) => ({ default: m.AdminPage }))
+  () => __vitePreload(() => import("./AdminPage-DMgVTZjx.js"), true ? __vite__mapDeps([12,9,13,11,3,4]) : void 0).then((m) => ({ default: m.AdminPage }))
 );
 const CartPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CartPage-bWUKynxF.js"), true ? __vite__mapDeps([13,8,12,9,2]) : void 0).then((m) => ({ default: m.CartPage }))
+  () => __vitePreload(() => import("./CartPage-BGIanoPB.js"), true ? __vite__mapDeps([14,9,13,10,15,2]) : void 0).then((m) => ({ default: m.CartPage }))
+);
+const ConfirmationPage = reactExports.lazy(
+  () => __vitePreload(() => import("./ConfirmationPage-CjNGEKfT.js"), true ? __vite__mapDeps([16,5]) : void 0).then((m) => ({
+    default: m.ConfirmationPage
+  }))
+);
+const WishlistPage = reactExports.lazy(
+  () => __vitePreload(() => import("./WishlistPage-CpWfbgQ4.js"), true ? __vite__mapDeps([17,1,2,15]) : void 0).then((m) => ({ default: m.WishlistPage }))
+);
+const FAQPage = reactExports.lazy(
+  () => __vitePreload(() => import("./FAQPage-D4I5MmLB.js"), true ? [] : void 0).then((m) => ({ default: m.FAQPage }))
+);
+const CareGuidePage = reactExports.lazy(
+  () => __vitePreload(() => import("./CareGuidePage-jT_JwmP3.js"), true ? [] : void 0).then((m) => ({ default: m.CareGuidePage }))
 );
 function PageLoader() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center min-h-[40vh]", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-1.5", children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -38711,6 +38860,31 @@ const cartRoute = createRoute({
   path: "/cart",
   component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(CartPage, {})
 });
+const confirmationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/order-confirmed",
+  validateSearch: (search) => ({
+    name: typeof search.name === "string" ? search.name : "",
+    total: typeof search.total === "number" ? search.total : 0,
+    itemCount: typeof search.itemCount === "number" ? search.itemCount : 0
+  }),
+  component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(ConfirmationPage, {})
+});
+const wishlistRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/wishlist",
+  component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(WishlistPage, {})
+});
+const faqRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/faq",
+  component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(FAQPage, {})
+});
+const careGuideRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/care-guide",
+  component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(CareGuidePage, {})
+});
 const routeTree = rootRoute.addChildren([
   indexRoute,
   collectionRoute,
@@ -38719,7 +38893,11 @@ const routeTree = rootRoute.addChildren([
   journalRoute,
   contactRoute,
   adminRoute,
-  cartRoute
+  cartRoute,
+  confirmationRoute,
+  wishlistRoute,
+  faqRoute,
+  careGuideRoute
 ]);
 const router = createRouter({ routeTree });
 function App() {
@@ -38736,45 +38914,48 @@ export {
   AnimatePresence as A,
   Button as B,
   CustomOrderModal as C,
-  useQueryClient as D,
+  shouldThrowError as D,
   ExternalLink as E,
-  Slot as F,
-  cva as G,
-  MessageCircle as H,
-  CircleCheck as I,
-  o as J,
-  vt as K,
+  useQueryClient as F,
+  Slot as G,
+  Heart as H,
+  cva as I,
+  MessageCircle as J,
+  CircleCheck as K,
   Link as L,
   Mail as M,
-  useCartTotals as N,
-  FREE_DELIVERY_THRESHOLD as O,
-  createSlot as P,
+  o as N,
+  vt as O,
+  useCartTotals as P,
+  FREE_DELIVERY_THRESHOLD as Q,
+  DELIVERY_CHARGE as R,
   ShoppingBag as S,
+  createSlot as T,
   X,
   useSearch as a,
   cn as b,
   createLucideIcon as c,
   useParams as d,
   useCart as e,
-  Subscribable as f,
-  resolveEnabled as g,
-  resolveStaleTime as h,
-  environmentManager as i,
+  useWishlist as f,
+  Subscribable as g,
+  resolveEnabled as h,
+  resolveStaleTime as i,
   jsxRuntimeExports as j,
-  isValidTimeout as k,
-  timeoutManager as l,
+  environmentManager as k,
+  isValidTimeout as l,
   motion as m,
   noop$7 as n,
-  focusManager as o,
+  timeoutManager as o,
   pendingThenable as p,
-  fetchState as q,
+  focusManager as q,
   reactExports as r,
   shallowEqualObjects as s,
   timeUntilStale as t,
   useNavigate as u,
-  replaceData as v,
-  notifyManager as w,
-  hashKey as x,
-  getDefaultState as y,
-  shouldThrowError as z
+  fetchState as v,
+  replaceData as w,
+  notifyManager as x,
+  hashKey as y,
+  getDefaultState as z
 };

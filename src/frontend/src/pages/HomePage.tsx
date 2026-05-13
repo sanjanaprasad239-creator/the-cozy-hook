@@ -6,8 +6,13 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { CustomOrderModal } from "../components/CustomOrderModal";
 import { ProductCard } from "../components/ProductCard";
-import { FEATURED_PRODUCT_IDS, getFeaturedProducts } from "../data/products";
+import {
+  ALL_PRODUCTS,
+  FEATURED_PRODUCT_IDS,
+  getFeaturedProducts,
+} from "../data/products";
 import { useAdmin } from "../hooks/useAdmin";
+import { getOrderCount } from "../hooks/useOrderCounter";
 import { loadAllReviews } from "../hooks/useQueries";
 
 // ── Category card data ──────────────────────────────────────────────────────
@@ -389,6 +394,9 @@ export function HomePage() {
       : FEATURED_PRODUCT_IDS,
   );
 
+  const newArrivals = ALL_PRODUCTS.filter((p) => p.isNew);
+  const orderCount = getOrderCount();
+
   // Load reviews from localStorage, fall back to sample reviews
   const allStoredReviews = loadAllReviews();
   const highlightReviews =
@@ -584,6 +592,28 @@ export function HomePage() {
             {settings.heroTagline}
           </motion.p>
 
+          {/* Order counter social proof */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
+            className="mt-5 flex justify-center"
+          >
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-body text-sm"
+              style={{
+                background: "oklch(0.72 0.09 5 / 0.1)",
+                color: "oklch(0.56 0.12 5)",
+              }}
+              data-ocid="hero.order_counter"
+            >
+              <span className="text-base" aria-hidden="true">
+                🧸
+              </span>
+              {orderCount}+ happy orders & counting
+            </span>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -632,6 +662,55 @@ export function HomePage() {
           </motion.div>
         </motion.div>
       </section>
+
+      {/* ── NEW ARRIVALS ───────────────────────────────────────────────── */}
+      {newArrivals.length > 0 && (
+        <section
+          data-ocid="new_arrivals.section"
+          className="bg-background py-24 px-6"
+        >
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="text-center mb-14"
+            >
+              <motion.p
+                custom={0}
+                variants={fadeUp}
+                className="text-xs font-body text-primary tracking-[0.2em] uppercase mb-3"
+              >
+                just dropped
+              </motion.p>
+              <motion.h2
+                custom={1}
+                variants={fadeUp}
+                className="font-display text-4xl md:text-5xl font-semibold text-foreground"
+              >
+                new arrivals ✨
+              </motion.h2>
+              <motion.div
+                custom={2}
+                variants={fadeUp}
+                className="mt-4 mx-auto w-14 h-0.5 rounded-full bg-primary/40"
+              />
+            </motion.div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+              {newArrivals.map((product, i) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  index={i}
+                  onClick={() =>
+                    navigate({ to: "/product/$id", params: { id: product.id } })
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── CATEGORY CARDS ────────────────────────────────────────────────── */}
       <section

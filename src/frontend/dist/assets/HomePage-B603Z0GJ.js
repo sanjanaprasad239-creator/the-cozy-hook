@@ -1,9 +1,10 @@
-import { u as useNavigate, r as reactExports, j as jsxRuntimeExports, A as AnimatePresence, m as motion, L as Link, X, B as Button, C as CustomOrderModal } from "./index-CjLMAHmo.js";
-import { P as ProductCard } from "./ProductCard-BP5rtQsQ.js";
-import { g as getFeaturedProducts, F as FEATURED_PRODUCT_IDS } from "./products-C6QqLREO.js";
-import { u as useAdmin } from "./useAdmin-BrCw6xJR.js";
-import { l as loadAllReviews } from "./useQueries-Dqypv5H1.js";
-import "./plus-COJ9U2Vt.js";
+import { u as useNavigate, r as reactExports, j as jsxRuntimeExports, A as AnimatePresence, m as motion, L as Link, X, B as Button, C as CustomOrderModal } from "./index-CCptdxtl.js";
+import { P as ProductCard } from "./ProductCard-Ch4wDp_U.js";
+import { g as getFeaturedProducts, F as FEATURED_PRODUCT_IDS, A as ALL_PRODUCTS } from "./products-DV9WP4M5.js";
+import { u as useAdmin } from "./useAdmin-B91abJDd.js";
+import { g as getOrderCount } from "./useOrderCounter-CnSXfycc.js";
+import { l as loadAllReviews } from "./useQueries-BlU6qg4w.js";
+import "./plus-FpMpL_UQ.js";
 const CATEGORY_CARDS = [
   {
     name: "Plushies",
@@ -444,6 +445,8 @@ function HomePage() {
   const featuredProducts = getFeaturedProducts(
     settings.featuredProductIds.length ? settings.featuredProductIds : FEATURED_PRODUCT_IDS
   );
+  const newArrivals = ALL_PRODUCTS.filter((p) => p.isNew);
+  const orderCount = getOrderCount();
   const allStoredReviews = loadAllReviews();
   const highlightReviews = allStoredReviews.length >= 2 ? allStoredReviews.slice(-3).map((r) => ({
     id: r.id,
@@ -648,6 +651,31 @@ function HomePage() {
                 children: settings.heroTagline
               }
             ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              motion.div,
+              {
+                initial: { opacity: 0, y: 12 },
+                animate: { opacity: 1, y: 0 },
+                transition: { duration: 0.5, delay: 0.45 },
+                className: "mt-5 flex justify-center",
+                children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "span",
+                  {
+                    className: "inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-body text-sm",
+                    style: {
+                      background: "oklch(0.72 0.09 5 / 0.1)",
+                      color: "oklch(0.56 0.12 5)"
+                    },
+                    "data-ocid": "hero.order_counter",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-base", "aria-hidden": "true", children: "🧸" }),
+                      orderCount,
+                      "+ happy orders & counting"
+                    ]
+                  }
+                )
+              }
+            ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               motion.div,
               {
@@ -704,6 +732,61 @@ function HomePage() {
             }
           )
         ]
+      }
+    ),
+    newArrivals.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "section",
+      {
+        "data-ocid": "new_arrivals.section",
+        className: "bg-background py-24 px-6",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-6xl mx-auto", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            motion.div,
+            {
+              initial: "hidden",
+              whileInView: "show",
+              viewport: { once: true },
+              className: "text-center mb-14",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  motion.p,
+                  {
+                    custom: 0,
+                    variants: fadeUp,
+                    className: "text-xs font-body text-primary tracking-[0.2em] uppercase mb-3",
+                    children: "just dropped"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  motion.h2,
+                  {
+                    custom: 1,
+                    variants: fadeUp,
+                    className: "font-display text-4xl md:text-5xl font-semibold text-foreground",
+                    children: "new arrivals ✨"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  motion.div,
+                  {
+                    custom: 2,
+                    variants: fadeUp,
+                    className: "mt-4 mx-auto w-14 h-0.5 rounded-full bg-primary/40"
+                  }
+                )
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5", children: newArrivals.map((product, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ProductCard,
+            {
+              product,
+              index: i,
+              onClick: () => navigate({ to: "/product/$id", params: { id: product.id } })
+            },
+            product.id
+          )) })
+        ] })
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(

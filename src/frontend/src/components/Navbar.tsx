@@ -1,23 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Heart, Menu, ShoppingBag, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useCartTotals } from "../hooks/useCart";
+import { useWishlist } from "../hooks/useWishlist";
 import { CustomOrderModal } from "./CustomOrderModal";
 
 const NAV_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "Collection", to: "/collection" },
-  { label: "Our Story", to: "/our-story" },
-  { label: "Journal", to: "/journal" },
-  { label: "Contact", to: "/contact" },
+  { label: "home", to: "/" },
+  { label: "collection", to: "/collection" },
+  { label: "our story", to: "/our-story" },
+  { label: "journal", to: "/journal" },
+  { label: "contact", to: "/contact" },
 ];
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [customOrderOpen, setCustomOrderOpen] = useState(false);
   const { itemCount } = useCartTotals();
+  const { wishlistItems } = useWishlist();
+  const wishlistCount = wishlistItems.length;
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
   const navigate = useNavigate();
@@ -42,7 +45,7 @@ export function Navbar() {
                 className="h-10 w-auto object-contain"
               />
               <span className="font-display text-lg font-semibold text-foreground hidden sm:block leading-tight">
-                The Cozy Hook
+                the cozy hook
               </span>
             </Link>
 
@@ -89,8 +92,43 @@ export function Navbar() {
                 onClick={() => setCustomOrderOpen(true)}
                 data-ocid="navbar.custom_orders_button"
               >
-                ✨ Custom Orders
+                ✨ custom orders
               </Button>
+
+              {/* YouTube link — desktop */}
+              <a
+                href="https://www.youtube.com/@thecozyhookworld"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:flex p-2 rounded-full hover:bg-muted transition-smooth text-muted-foreground hover:text-foreground"
+                data-ocid="navbar.youtube_link"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+                <span className="sr-only">The Cozy Hook YouTube channel</span>
+              </a>
+
+              {/* Wishlist */}
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/wishlist" })}
+                className="relative p-2 rounded-full hover:bg-muted transition-smooth text-foreground"
+                aria-label={`Wishlist, ${wishlistCount} items`}
+                data-ocid="navbar.wishlist_button"
+              >
+                <Heart className="w-5 h-5" style={{ color: "#D8A7B1" }} />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] font-body font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                  </span>
+                )}
+              </button>
 
               {/* Cart */}
               <button
@@ -149,6 +187,33 @@ export function Navbar() {
                     {link.label}
                   </Link>
                 ))}
+                <Link
+                  to="/wishlist"
+                  className="flex items-center gap-2 px-3 py-2.5 text-sm font-body font-medium text-foreground hover:bg-muted rounded-xl transition-smooth"
+                  onClick={() => setMobileOpen(false)}
+                  data-ocid="navbar.mobile_wishlist_link"
+                >
+                  <Heart className="w-4 h-4" style={{ color: "#D8A7B1" }} />
+                  wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+                </Link>
+                <a
+                  href="https://www.youtube.com/@thecozyhookworld"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2.5 text-sm font-body font-medium text-foreground hover:bg-muted rounded-xl transition-smooth"
+                  onClick={() => setMobileOpen(false)}
+                  data-ocid="navbar.mobile_youtube_link"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                  </svg>
+                  youtube
+                </a>
                 <Button
                   variant="default"
                   size="sm"
@@ -159,7 +224,7 @@ export function Navbar() {
                   }}
                   data-ocid="navbar.mobile_custom_orders_button"
                 >
-                  ✨ Custom Orders
+                  ✨ custom orders
                 </Button>
               </nav>
             </motion.div>

@@ -35,6 +35,21 @@ const AdminPage = lazy(() =>
 const CartPage = lazy(() =>
   import("./pages/CartPage").then((m) => ({ default: m.CartPage })),
 );
+const ConfirmationPage = lazy(() =>
+  import("./pages/ConfirmationPage").then((m) => ({
+    default: m.ConfirmationPage,
+  })),
+);
+
+const WishlistPage = lazy(() =>
+  import("./pages/WishlistPage").then((m) => ({ default: m.WishlistPage })),
+);
+const FAQPage = lazy(() =>
+  import("./pages/FAQPage").then((m) => ({ default: m.FAQPage })),
+);
+const CareGuidePage = lazy(() =>
+  import("./pages/CareGuidePage").then((m) => ({ default: m.CareGuidePage })),
+);
 
 function PageLoader() {
   return (
@@ -114,6 +129,35 @@ const cartRoute = createRoute({
   component: () => <CartPage />,
 });
 
+const confirmationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/order-confirmed",
+  validateSearch: (search: Record<string, unknown>) => ({
+    name: typeof search.name === "string" ? search.name : "",
+    total: typeof search.total === "number" ? search.total : 0,
+    itemCount: typeof search.itemCount === "number" ? search.itemCount : 0,
+  }),
+  component: () => <ConfirmationPage />,
+});
+
+const wishlistRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/wishlist",
+  component: () => <WishlistPage />,
+});
+
+const faqRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/faq",
+  component: () => <FAQPage />,
+});
+
+const careGuideRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/care-guide",
+  component: () => <CareGuidePage />,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   collectionRoute,
@@ -123,6 +167,10 @@ const routeTree = rootRoute.addChildren([
   contactRoute,
   adminRoute,
   cartRoute,
+  confirmationRoute,
+  wishlistRoute,
+  faqRoute,
+  careGuideRoute,
 ]);
 
 const router = createRouter({ routeTree });

@@ -69,6 +69,33 @@ export function ReviewForm({ productId, onSuccess }: Props) {
       <h3 className="font-display text-lg font-semibold text-foreground">
         Share Your Experience
       </h3>
+      <p className="text-xs font-body text-muted-foreground -mt-2">
+        your review will be marked as a{" "}
+        <span
+          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full align-middle"
+          style={{
+            background: "oklch(0.85 0.04 145 / 0.3)",
+            color: "oklch(0.42 0.07 145)",
+          }}
+        >
+          <svg
+            viewBox="0 0 12 12"
+            fill="none"
+            className="w-3 h-3"
+            aria-hidden="true"
+          >
+            <circle cx="6" cy="6" r="5.5" fill="oklch(0.85 0.04 145 / 0.6)" />
+            <polyline
+              points="3.5 6 5 7.5 8.5 4"
+              stroke="oklch(0.42 0.07 145)"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          verified purchase
+        </span>
+      </p>
 
       {/* Name */}
       <div className="flex flex-col gap-1.5">

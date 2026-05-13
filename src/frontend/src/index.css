@@ -64,6 +64,7 @@
 
   * {
     @apply border-border;
+    text-transform: lowercase;
   }
   body {
     @apply bg-background text-foreground font-body antialiased;

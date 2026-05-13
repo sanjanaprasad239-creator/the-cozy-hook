@@ -1,11 +1,11 @@
-import { c as createLucideIcon, j as jsxRuntimeExports, b as cn, r as reactExports, B as Button, d as useParams, u as useNavigate, e as useCart, L as Link, m as motion, E as ExternalLink, S as ShoppingBag } from "./index-CjLMAHmo.js";
-import { P as ProductCard } from "./ProductCard-BP5rtQsQ.js";
-import { L as Label, I as Input } from "./label-CmASRgtq.js";
-import { T as Textarea, M as Minus } from "./textarea-B2HIUtDA.js";
-import { u as ue } from "./index-CbtCnWby.js";
-import { u as useCreateReview, a as useProductReviews } from "./useQueries-Dqypv5H1.js";
-import { a as getProductById, b as getProductsByCategory } from "./products-C6QqLREO.js";
-import { P as Plus } from "./plus-COJ9U2Vt.js";
+import { c as createLucideIcon, j as jsxRuntimeExports, b as cn, r as reactExports, B as Button, d as useParams, u as useNavigate, e as useCart, f as useWishlist, L as Link, m as motion, E as ExternalLink, S as ShoppingBag, H as Heart } from "./index-CCptdxtl.js";
+import { P as ProductCard } from "./ProductCard-Ch4wDp_U.js";
+import { L as Label, I as Input } from "./label-6EfFtY2J.js";
+import { T as Textarea, M as Minus } from "./textarea-n2nGX6el.js";
+import { u as ue } from "./index-a_5Q2cI2.js";
+import { u as useCreateReview, a as useProductReviews } from "./useQueries-BlU6qg4w.js";
+import { a as getProductById, b as getProductsByCategory, A as ALL_PRODUCTS } from "./products-DV9WP4M5.js";
+import { P as Plus } from "./plus-FpMpL_UQ.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -148,7 +148,43 @@ function ReviewCard({ review }) {
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3 flex-wrap", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-1 min-w-0", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display font-semibold text-foreground text-base truncate", children: review.authorName }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(ReviewStars, { rating: review.rating, size: "sm" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ReviewStars, { rating: review.rating, size: "sm" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "span",
+              {
+                className: "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-body font-medium w-fit mt-0.5",
+                style: {
+                  background: "oklch(0.85 0.04 145 / 0.35)",
+                  color: "oklch(0.42 0.07 145)"
+                },
+                "data-ocid": "review.verified_badge",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "svg",
+                    {
+                      viewBox: "0 0 12 12",
+                      fill: "none",
+                      className: "w-3 h-3",
+                      "aria-hidden": "true",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("circle", { cx: "6", cy: "6", r: "5.5", fill: "oklch(0.85 0.04 145 / 0.6)" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "polyline",
+                          {
+                            points: "3.5 6 5 7.5 8.5 4",
+                            stroke: "oklch(0.42 0.07 145)",
+                            strokeWidth: "1.4",
+                            strokeLinecap: "round",
+                            strokeLinejoin: "round"
+                          }
+                        )
+                      ]
+                    }
+                  ),
+                  "verified purchase"
+                ]
+              }
+            )
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "time",
@@ -211,6 +247,45 @@ function ReviewForm({ productId, onSuccess }) {
       noValidate: true,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-lg font-semibold text-foreground", children: "Share Your Experience" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs font-body text-muted-foreground -mt-2", children: [
+          "your review will be marked as a",
+          " ",
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "span",
+            {
+              className: "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full align-middle",
+              style: {
+                background: "oklch(0.85 0.04 145 / 0.3)",
+                color: "oklch(0.42 0.07 145)"
+              },
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "svg",
+                  {
+                    viewBox: "0 0 12 12",
+                    fill: "none",
+                    className: "w-3 h-3",
+                    "aria-hidden": "true",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("circle", { cx: "6", cy: "6", r: "5.5", fill: "oklch(0.85 0.04 145 / 0.6)" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "polyline",
+                        {
+                          points: "3.5 6 5 7.5 8.5 4",
+                          stroke: "oklch(0.42 0.07 145)",
+                          strokeWidth: "1.4",
+                          strokeLinecap: "round",
+                          strokeLinejoin: "round"
+                        }
+                      )
+                    ]
+                  }
+                ),
+                "verified purchase"
+              ]
+            }
+          )
+        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             Label,
@@ -385,6 +460,7 @@ function ProductPage() {
   const { id } = useParams({ strict: false });
   const navigate = useNavigate();
   const addItem = useCart((s) => s.addItem);
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const product = getProductById(id);
   const [qty, setQty] = reactExports.useState(1);
   const [added, setAdded] = reactExports.useState(false);
@@ -420,6 +496,14 @@ function ProductPage() {
   }
   const p = product;
   const relatedProducts = getProductsByCategory(p.category).filter((item) => item.id !== p.id).slice(0, 3);
+  const bundleSuggestions = ALL_PRODUCTS.filter(
+    (item) => item.id !== p.id && item.category !== p.category
+  ).reduce((acc, item) => {
+    if (!acc.some((a) => a.category === item.category)) acc.push(item);
+    return acc;
+  }, []).slice(0, 3);
+  const bundleTotal = bundleSuggestions.reduce((s, i) => s + i.price, p.price);
+  const wishlisted = isInWishlist(p.id);
   function handleAddToCart() {
     addItem(p, qty);
     setAdded(true);
@@ -677,6 +761,140 @@ Please confirm availability and delivery details. Thank you! 🌸`;
                           /* @__PURE__ */ jsxRuntimeExports.jsx(WhatsAppIcon, {}),
                           "Order via WhatsApp"
                         ]
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Button,
+                      {
+                        type: "button",
+                        size: "lg",
+                        variant: "outline",
+                        className: "rounded-2xl font-body gap-2 h-12 border-border/50 hover:border-primary/50 transition-smooth px-4",
+                        onClick: () => {
+                          if (wishlisted) removeFromWishlist(p.id);
+                          else addToWishlist(p);
+                        },
+                        "aria-label": wishlisted ? "Remove from wishlist" : "Save to wishlist",
+                        "data-ocid": "product.wishlist_button",
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          Heart,
+                          {
+                            className: "w-4 h-4",
+                            style: { color: "#D8A7B1" },
+                            fill: wishlisted ? "#D8A7B1" : "none"
+                          }
+                        )
+                      }
+                    )
+                  ] })
+                ]
+              }
+            )
+          ] }),
+          bundleSuggestions.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "mt-16", "data-ocid": "product.bundle_section", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4 mb-8", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 h-px bg-border" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-2xl font-semibold text-foreground whitespace-nowrap", children: "Complete the Look" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 h-px bg-border" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "rounded-3xl border border-border/40 p-6",
+                style: { background: "oklch(0.88 0.05 5 / 0.1)" },
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-body text-xs text-muted-foreground mb-5", children: "pair with these handmade pieces for a perfect gift set or collection starter:" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 snap-x", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-shrink-0 snap-start w-36 rounded-2xl bg-card border border-primary/30 overflow-hidden shadow-soft", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "aspect-square bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "img",
+                        {
+                          src: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+                          alt: p.name,
+                          className: "w-full h-full object-cover"
+                        }
+                      ) }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "p-2.5", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xs font-semibold text-foreground line-clamp-1", children: p.name }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                          "p",
+                          {
+                            className: "font-body text-xs font-bold mt-0.5",
+                            style: { color: "#D8A7B1" },
+                            children: [
+                              "₹",
+                              p.price
+                            ]
+                          }
+                        ),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] font-body text-primary", children: "this item" })
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-shrink-0 flex items-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-body text-xl text-muted-foreground", children: "+" }) }),
+                    bundleSuggestions.map((item, bi) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                        "button",
+                        {
+                          type: "button",
+                          className: "flex-shrink-0 snap-start w-36 rounded-2xl bg-card border border-border/40 overflow-hidden shadow-soft hover:shadow-boutique hover:-translate-y-1 transition-smooth text-left",
+                          onClick: () => navigate({
+                            to: "/product/$id",
+                            params: { id: item.id }
+                          }),
+                          "data-ocid": `product.bundle_item.${bi + 1}`,
+                          children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "aspect-square bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                              "img",
+                              {
+                                src: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+                                alt: item.name,
+                                className: "w-full h-full object-cover"
+                              }
+                            ) }),
+                            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "p-2.5", children: [
+                              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xs font-semibold text-foreground line-clamp-1", children: item.name }),
+                              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                "p",
+                                {
+                                  className: "font-body text-xs font-bold mt-0.5",
+                                  style: { color: "#D8A7B1" },
+                                  children: [
+                                    "₹",
+                                    item.price
+                                  ]
+                                }
+                              ),
+                              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-body text-muted-foreground capitalize", children: item.category })
+                            ] })
+                          ]
+                        }
+                      ),
+                      bi < bundleSuggestions.length - 1 && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-body text-xl text-muted-foreground flex-shrink-0", children: "+" })
+                    ] }, item.id))
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-5 pt-4 border-t border-border/40 flex items-center justify-between flex-wrap gap-3", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "font-body text-sm text-muted-foreground", children: [
+                      "bundle total:",
+                      " ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-semibold text-foreground text-base", children: [
+                        "₹",
+                        bundleTotal
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "a",
+                      {
+                        href: `https://wa.me/918660099085?text=${encodeURIComponent(`Hi! I'd like to order a bundle:
+• ${p.name} (₹${p.price})
+${bundleSuggestions.map((b) => `• ${b.name} (₹${b.price})`).join("\n")}
+
+Total: ₹${bundleTotal} 🌸`)}`,
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                        className: "inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 font-body text-sm font-medium transition-smooth",
+                        style: { background: "#D8A7B1", color: "#fff" },
+                        "data-ocid": "product.bundle_whatsapp_button",
+                        children: "order bundle via whatsapp"
                       }
                     )
                   ] })

@@ -1,4 +1,4 @@
-import { j as jsxRuntimeExports, m as motion } from "./index-CjLMAHmo.js";
+import { j as jsxRuntimeExports, m as motion } from "./index-CCptdxtl.js";
 const timelineEvents = [
   {
     year: "2024",

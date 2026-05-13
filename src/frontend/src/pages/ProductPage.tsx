@@ -6,6 +6,7 @@ import {
   Check,
   ChevronRight,
   ExternalLink,
+  Heart,
   Minus,
   Plus,
   ShoppingBag,
@@ -24,6 +25,7 @@ import {
 } from "../data/products";
 import { useCart } from "../hooks/useCart";
 import { useProductReviews } from "../hooks/useQueries";
+import { useWishlist } from "../hooks/useWishlist";
 
 function HeartBullet() {
   return (
@@ -85,6 +87,7 @@ export function ProductPage() {
   const { id } = useParams({ strict: false }) as { id: string };
   const navigate = useNavigate();
   const addItem = useCart((s) => s.addItem);
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   const product = getProductById(id);
   const [qty, setQty] = useState(1);
@@ -127,6 +130,20 @@ export function ProductPage() {
   const relatedProducts = getProductsByCategory(p.category)
     .filter((item) => item.id !== p.id)
     .slice(0, 3);
+
+  // Bundle suggestions: pick from different categories
+  const bundleSuggestions = ALL_PRODUCTS.filter(
+    (item) => item.id !== p.id && item.category !== p.category,
+  )
+    .reduce((acc: typeof ALL_PRODUCTS, item) => {
+      if (!acc.some((a) => a.category === item.category)) acc.push(item);
+      return acc;
+    }, [])
+    .slice(0, 3);
+
+  const bundleTotal = bundleSuggestions.reduce((s, i) => s + i.price, p.price);
+
+  const wishlisted = isInWishlist(p.id);
 
   function handleAddToCart() {
     addItem(p, qty);
@@ -390,9 +407,147 @@ export function ProductPage() {
                 <WhatsAppIcon />
                 Order via WhatsApp
               </Button>
+
+              {/* Wishlist button */}
+              <Button
+                type="button"
+                size="lg"
+                variant="outline"
+                className="rounded-2xl font-body gap-2 h-12 border-border/50 hover:border-primary/50 transition-smooth px-4"
+                onClick={() => {
+                  if (wishlisted) removeFromWishlist(p.id);
+                  else addToWishlist(p);
+                }}
+                aria-label={
+                  wishlisted ? "Remove from wishlist" : "Save to wishlist"
+                }
+                data-ocid="product.wishlist_button"
+              >
+                <Heart
+                  className="w-4 h-4"
+                  style={{ color: "#D8A7B1" }}
+                  fill={wishlisted ? "#D8A7B1" : "none"}
+                />
+              </Button>
             </div>
           </motion.div>
         </div>
+
+        {/* ── Bundle & Save ── */}
+        {bundleSuggestions.length > 0 && (
+          <section className="mt-16" data-ocid="product.bundle_section">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="flex-1 h-px bg-border" />
+              <h2 className="font-display text-2xl font-semibold text-foreground whitespace-nowrap">
+                Complete the Look
+              </h2>
+              <div className="flex-1 h-px bg-border" />
+            </div>
+            <div
+              className="rounded-3xl border border-border/40 p-6"
+              style={{ background: "oklch(0.88 0.05 5 / 0.1)" }}
+            >
+              <p className="font-body text-xs text-muted-foreground mb-5">
+                pair with these handmade pieces for a perfect gift set or
+                collection starter:
+              </p>
+              <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
+                {/* Current product */}
+                <div className="flex-shrink-0 snap-start w-36 rounded-2xl bg-card border border-primary/30 overflow-hidden shadow-soft">
+                  <div className="aspect-square bg-muted">
+                    <img
+                      src="/assets/generated/hero-crochet.dim_1600x900.jpg"
+                      alt={p.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-2.5">
+                    <p className="font-display text-xs font-semibold text-foreground line-clamp-1">
+                      {p.name}
+                    </p>
+                    <p
+                      className="font-body text-xs font-bold mt-0.5"
+                      style={{ color: "#D8A7B1" }}
+                    >
+                      ₹{p.price}
+                    </p>
+                    <span className="text-[10px] font-body text-primary">
+                      this item
+                    </span>
+                  </div>
+                </div>
+
+                {/* Plus icon */}
+                <div className="flex-shrink-0 flex items-center">
+                  <span className="font-body text-xl text-muted-foreground">
+                    +
+                  </span>
+                </div>
+
+                {bundleSuggestions.map((item, bi) => (
+                  <div key={item.id} className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="flex-shrink-0 snap-start w-36 rounded-2xl bg-card border border-border/40 overflow-hidden shadow-soft hover:shadow-boutique hover:-translate-y-1 transition-smooth text-left"
+                      onClick={() =>
+                        navigate({
+                          to: "/product/$id",
+                          params: { id: item.id },
+                        })
+                      }
+                      data-ocid={`product.bundle_item.${bi + 1}`}
+                    >
+                      <div className="aspect-square bg-muted">
+                        <img
+                          src="/assets/generated/hero-crochet.dim_1600x900.jpg"
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-2.5">
+                        <p className="font-display text-xs font-semibold text-foreground line-clamp-1">
+                          {item.name}
+                        </p>
+                        <p
+                          className="font-body text-xs font-bold mt-0.5"
+                          style={{ color: "#D8A7B1" }}
+                        >
+                          ₹{item.price}
+                        </p>
+                        <p className="text-[10px] font-body text-muted-foreground capitalize">
+                          {item.category}
+                        </p>
+                      </div>
+                    </button>
+                    {bi < bundleSuggestions.length - 1 && (
+                      <span className="font-body text-xl text-muted-foreground flex-shrink-0">
+                        +
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 pt-4 border-t border-border/40 flex items-center justify-between flex-wrap gap-3">
+                <p className="font-body text-sm text-muted-foreground">
+                  bundle total:{" "}
+                  <span className="font-semibold text-foreground text-base">
+                    ₹{bundleTotal}
+                  </span>
+                </p>
+                <a
+                  href={`https://wa.me/918660099085?text=${encodeURIComponent(`Hi! I'd like to order a bundle:\n• ${p.name} (₹${p.price})\n${bundleSuggestions.map((b) => `• ${b.name} (₹${b.price})`).join("\n")}\n\nTotal: ₹${bundleTotal} 🌸`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 font-body text-sm font-medium transition-smooth"
+                  style={{ background: "#D8A7B1", color: "#fff" }}
+                  data-ocid="product.bundle_whatsapp_button"
+                >
+                  order bundle via whatsapp
+                </a>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── You May Also Like ── */}
         {relatedProducts.length > 0 && (

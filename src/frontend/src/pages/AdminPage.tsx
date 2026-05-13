@@ -19,19 +19,19 @@ import { useAdmin } from "../hooks/useAdmin";
 import type { ProductCategory } from "../types/product";
 
 const CATEGORY_ORDER: ProductCategory[] = [
-  "Plushies",
-  "Keychains",
-  "Wearables",
-  "Home Decor",
-  "Accessories",
+  "plushies",
+  "keychains",
+  "wearables",
+  "home decor",
+  "accessories",
 ];
 
 const CATEGORY_COLORS: Record<ProductCategory, string> = {
-  Plushies: "bg-primary/10 text-primary",
-  Keychains: "bg-secondary/20 text-secondary-foreground",
-  Wearables: "bg-accent text-accent-foreground",
-  "Home Decor": "bg-muted text-muted-foreground",
-  Accessories: "bg-primary/5 text-primary",
+  plushies: "bg-primary/10 text-primary",
+  keychains: "bg-secondary/20 text-secondary-foreground",
+  wearables: "bg-accent text-accent-foreground",
+  "home decor": "bg-muted text-muted-foreground",
+  accessories: "bg-primary/5 text-primary",
 };
 
 export function AdminPage() {

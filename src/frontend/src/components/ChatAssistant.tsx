@@ -3149,14 +3149,14 @@ function getResponse(raw: string, ctx: ConversationContext): ResponseResult {
 
 // ─── Quick Replies ─────────────────────────────────────────────────────────
 const QUICK_REPLIES = [
-  { label: "🧸 Plushies", query: "Show me all plushies" },
-  { label: "🔑 Keychains", query: "Show me all keychains" },
-  { label: "✨ Fan Favourites", query: "What are your fan favourites?" },
-  { label: "🚚 Delivery", query: "Tell me about delivery" },
-  { label: "🎨 Custom Order", query: "I want a custom order" },
-  { label: "🎁 Gift Ideas", query: "I need a gift idea" },
-  { label: "💳 Payment", query: "What payment methods do you accept?" },
-  { label: "📸 See Pictures", query: "Can I see product pictures?" },
+  { label: "🧸 plushies", query: "Show me all plushies" },
+  { label: "🔑 keychains", query: "Show me all keychains" },
+  { label: "✨ fan favourites", query: "What are your fan favourites?" },
+  { label: "🚚 delivery", query: "Tell me about delivery" },
+  { label: "🎨 custom order", query: "I want a custom order" },
+  { label: "🎁 gift ideas", query: "I need a gift idea" },
+  { label: "💳 payment", query: "What payment methods do you accept?" },
+  { label: "📸 see pictures", query: "Can I see product pictures?" },
 ];
 
 // ─── Message counter ──────────────────────────────────────────────────────
@@ -3166,7 +3166,7 @@ const nextId = () => ++msgCounter;
 const WELCOME: Message = {
   id: nextId(),
   role: "bot",
-  text: "Hi! I'm the Cozy Hook assistant 🧶\n\nI know every product, price, and policy! Ask me anything about our collection, delivery, custom orders, gift ideas, and more. 💕",
+  text: "hi! i'm the cozy hook assistant 🧶\n\ni know every product, price, and policy! ask me anything about our collection, delivery, custom orders, gift ideas, and more. 💕",
 };
 
 // ─── Component ─────────────────────────────────────────────────────────────
@@ -3293,11 +3293,11 @@ export function ChatAssistant() {
               </div>
               <div className="min-w-0">
                 <p className="font-display text-sm font-semibold leading-tight">
-                  The Cozy Hook Assistant
+                  the cozy hook assistant
                 </p>
                 <p className="font-body text-xs opacity-75 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-300 inline-block" />
-                  Always here to help ✨
+                  always here to help ✨
                 </p>
               </div>
               <button
@@ -3366,7 +3366,7 @@ export function ChatAssistant() {
             {showQuickReplies && (
               <div className="px-4 pb-3 pt-1 bg-background shrink-0 border-t border-border/50">
                 <p className="text-xs text-muted-foreground font-body mb-2">
-                  Quick questions:
+                  quick questions:
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {QUICK_REPLIES.map((qr) => (

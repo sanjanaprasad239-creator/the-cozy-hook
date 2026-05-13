@@ -1,9 +1,9 @@
 export type ProductCategory =
-  | "Plushies"
-  | "Keychains"
-  | "Wearables"
-  | "Home Decor"
-  | "Accessories";
+  | "plushies"
+  | "keychains"
+  | "wearables"
+  | "home decor"
+  | "accessories";
 
 export interface Product {
   id: string;
@@ -14,6 +14,7 @@ export interface Product {
   features: string[];
   imagePath: string;
   pictureUrl?: string;
+  isNew?: boolean;
 }
 
 export interface CartItem {

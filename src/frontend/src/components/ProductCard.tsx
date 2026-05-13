@@ -1,17 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Plus, ShoppingBag } from "lucide-react";
+import { Heart, Plus, ShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { useCart } from "../hooks/useCart";
+import { useWishlist } from "../hooks/useWishlist";
 import type { Product } from "../types/product";
 
 const CARD_IMAGE = "/assets/generated/hero-crochet.dim_1600x900.jpg";
 
 const FAN_FAVOURITE_IDS = new Set([
-  "strawberry-costumed-bunny",
-  "bucket-hat",
-  "heart-pillow",
-  "wall-hanging",
+  "plush-008",
+  "wear-005",
+  "decor-006",
+  "decor-003",
 ]);
 
 interface ProductCardProps {
@@ -22,15 +23,23 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
   const addItem = useCart((s) => s.addItem);
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
 
   const isFanFavourite = FAN_FAVOURITE_IDS.has(product.id);
+  const wishlisted = isInWishlist(product.id);
 
   function handleAddToCart(e: React.MouseEvent) {
     e.stopPropagation();
     addItem(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
+  }
+
+  function handleWishlist(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (wishlisted) removeFromWishlist(product.id);
+    else addToWishlist(product);
   }
 
   return (
@@ -79,9 +88,41 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
                 WebkitBackdropFilter: "blur(4px)",
               }}
             >
-              ✨ Fan Favourite
+              ✨ fan favourite
             </span>
           )}
+
+          {/* New badge */}
+          {product.isNew && (
+            <span
+              className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-body font-semibold leading-none select-none pointer-events-none"
+              style={{
+                background: "#D8A7B1",
+                color: "#fff",
+              }}
+            >
+              new
+            </span>
+          )}
+
+          {/* Wishlist button */}
+          <button
+            type="button"
+            onClick={handleWishlist}
+            aria-label={
+              wishlisted
+                ? `Remove ${product.name} from wishlist`
+                : `Save ${product.name} to wishlist`
+            }
+            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center bg-card/90 backdrop-blur-sm border border-border/40 transition-smooth opacity-0 group-hover:opacity-100 hover:scale-110 focus:opacity-100"
+            data-ocid={`product.wishlist_button.${index + 1}`}
+          >
+            <Heart
+              className="w-4 h-4 transition-colors"
+              style={{ color: "#D8A7B1" }}
+              fill={wishlisted ? "#D8A7B1" : "none"}
+            />
+          </button>
 
           {/* Quick add overlay */}
           <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-smooth" />
@@ -110,7 +151,7 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
               {added ? (
                 <>
                   <Plus className="w-3 h-3" />
-                  Added!
+                  added!
                 </>
               ) : (
                 <>

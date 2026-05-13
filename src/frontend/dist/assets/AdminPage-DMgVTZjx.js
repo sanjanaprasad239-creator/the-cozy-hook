@@ -1,10 +1,10 @@
-import { c as createLucideIcon, r as reactExports, j as jsxRuntimeExports, m as motion, A as AnimatePresence, B as Button, I as CircleCheck } from "./index-CjLMAHmo.js";
-import { L as Label, I as Input } from "./label-CmASRgtq.js";
-import { S as Separator } from "./separator-CZFrrl2k.js";
-import { u as ue } from "./index-CbtCnWby.js";
-import { A as ALL_PRODUCTS } from "./products-C6QqLREO.js";
-import { F } from "./products-C6QqLREO.js";
-import { u as useAdmin } from "./useAdmin-BrCw6xJR.js";
+import { c as createLucideIcon, r as reactExports, j as jsxRuntimeExports, m as motion, A as AnimatePresence, B as Button, K as CircleCheck } from "./index-CCptdxtl.js";
+import { L as Label, I as Input } from "./label-6EfFtY2J.js";
+import { S as Separator } from "./separator-CHFPWt8_.js";
+import { u as ue } from "./index-a_5Q2cI2.js";
+import { A as ALL_PRODUCTS } from "./products-DV9WP4M5.js";
+import { F } from "./products-DV9WP4M5.js";
+import { u as useAdmin } from "./useAdmin-B91abJDd.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -109,18 +109,18 @@ const __iconNode = [
 ];
 const Sparkles = createLucideIcon("sparkles", __iconNode);
 const CATEGORY_ORDER = [
-  "Plushies",
-  "Keychains",
-  "Wearables",
-  "Home Decor",
-  "Accessories"
+  "plushies",
+  "keychains",
+  "wearables",
+  "home decor",
+  "accessories"
 ];
 const CATEGORY_COLORS = {
-  Plushies: "bg-primary/10 text-primary",
-  Keychains: "bg-secondary/20 text-secondary-foreground",
-  Wearables: "bg-accent text-accent-foreground",
-  "Home Decor": "bg-muted text-muted-foreground",
-  Accessories: "bg-primary/5 text-primary"
+  plushies: "bg-primary/10 text-primary",
+  keychains: "bg-secondary/20 text-secondary-foreground",
+  wearables: "bg-accent text-accent-foreground",
+  "home decor": "bg-muted text-muted-foreground",
+  accessories: "bg-primary/5 text-primary"
 };
 function AdminPage() {
   const {

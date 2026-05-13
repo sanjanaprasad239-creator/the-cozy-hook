@@ -1,21 +1,28 @@
-import { e as useCart, r as reactExports, j as jsxRuntimeExports, m as motion, B as Button, S as ShoppingBag } from "./index-CjLMAHmo.js";
-import { P as Plus } from "./plus-COJ9U2Vt.js";
+import { e as useCart, f as useWishlist, r as reactExports, j as jsxRuntimeExports, m as motion, H as Heart, B as Button, S as ShoppingBag } from "./index-CCptdxtl.js";
+import { P as Plus } from "./plus-FpMpL_UQ.js";
 const CARD_IMAGE = "/assets/generated/hero-crochet.dim_1600x900.jpg";
 const FAN_FAVOURITE_IDS = /* @__PURE__ */ new Set([
-  "strawberry-costumed-bunny",
-  "bucket-hat",
-  "heart-pillow",
-  "wall-hanging"
+  "plush-008",
+  "wear-005",
+  "decor-006",
+  "decor-003"
 ]);
 function ProductCard({ product, onClick, index = 0 }) {
   const addItem = useCart((s) => s.addItem);
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const [added, setAdded] = reactExports.useState(false);
   const isFanFavourite = FAN_FAVOURITE_IDS.has(product.id);
+  const wishlisted = isInWishlist(product.id);
   function handleAddToCart(e) {
     e.stopPropagation();
     addItem(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
+  }
+  function handleWishlist(e) {
+    e.stopPropagation();
+    if (wishlisted) removeFromWishlist(product.id);
+    else addToWishlist(product);
   }
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     motion.article,
@@ -65,7 +72,36 @@ function ProductCard({ product, onClick, index = 0 }) {
                     backdropFilter: "blur(4px)",
                     WebkitBackdropFilter: "blur(4px)"
                   },
-                  children: "✨ Fan Favourite"
+                  children: "✨ fan favourite"
+                }
+              ),
+              product.isNew && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: "absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-body font-semibold leading-none select-none pointer-events-none",
+                  style: {
+                    background: "#D8A7B1",
+                    color: "#fff"
+                  },
+                  children: "new"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  onClick: handleWishlist,
+                  "aria-label": wishlisted ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`,
+                  className: "absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center bg-card/90 backdrop-blur-sm border border-border/40 transition-smooth opacity-0 group-hover:opacity-100 hover:scale-110 focus:opacity-100",
+                  "data-ocid": `product.wishlist_button.${index + 1}`,
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Heart,
+                    {
+                      className: "w-4 h-4 transition-colors",
+                      style: { color: "#D8A7B1" },
+                      fill: wishlisted ? "#D8A7B1" : "none"
+                    }
+                  )
                 }
               ),
               /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-smooth" })
@@ -88,7 +124,7 @@ function ProductCard({ product, onClick, index = 0 }) {
                     "data-ocid": `product.add_button.${index + 1}`,
                     children: added ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "w-3 h-3" }),
-                      "Added!"
+                      "added!"
                     ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx(ShoppingBag, { className: "w-3 h-3" }),
                       "Add"

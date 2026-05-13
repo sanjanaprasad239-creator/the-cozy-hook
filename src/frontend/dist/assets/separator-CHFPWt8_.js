@@ -1,5 +1,5 @@
-import { r as reactExports, j as jsxRuntimeExports, b as cn } from "./index-CjLMAHmo.js";
-import { P as Primitive } from "./label-CmASRgtq.js";
+import { r as reactExports, j as jsxRuntimeExports, b as cn } from "./index-CCptdxtl.js";
+import { P as Primitive } from "./label-6EfFtY2J.js";
 var NAME = "Separator";
 var DEFAULT_ORIENTATION = "horizontal";
 var ORIENTATIONS = ["horizontal", "vertical"];

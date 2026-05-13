@@ -35,6 +35,32 @@ export function ReviewCard({ review }: Props) {
             {review.authorName}
           </p>
           <ReviewStars rating={review.rating} size="sm" />
+          {/* Verified purchase badge */}
+          <span
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-body font-medium w-fit mt-0.5"
+            style={{
+              background: "oklch(0.85 0.04 145 / 0.35)",
+              color: "oklch(0.42 0.07 145)",
+            }}
+            data-ocid="review.verified_badge"
+          >
+            <svg
+              viewBox="0 0 12 12"
+              fill="none"
+              className="w-3 h-3"
+              aria-hidden="true"
+            >
+              <circle cx="6" cy="6" r="5.5" fill="oklch(0.85 0.04 145 / 0.6)" />
+              <polyline
+                points="3.5 6 5 7.5 8.5 4"
+                stroke="oklch(0.42 0.07 145)"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            verified purchase
+          </span>
         </div>
         <time
           className="text-xs font-body text-muted-foreground shrink-0 mt-0.5"
