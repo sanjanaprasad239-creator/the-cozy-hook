@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 
 const timelineEvents = [
   {
-    year: "2021",
+    year: "2020",
     title: "The First Stitch",
     description:
       "It all began on a quiet winter evening with a single crochet hook and a ball of soft cream yarn. What started as stress relief quickly became a deep, meditative love.",
