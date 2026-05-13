@@ -1,15 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { useEffect } from "react";
-import { incrementOrderCount } from "../hooks/useOrderCounter";
 
 export function ConfirmationPage() {
   const { name, total, itemCount } = useSearch({ from: "/order-confirmed" });
-
-  useEffect(() => {
-    incrementOrderCount();
-  }, []);
 
   function handlePrint() {
     window.print();

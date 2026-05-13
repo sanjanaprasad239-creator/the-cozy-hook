@@ -12,7 +12,6 @@ import {
   getFeaturedProducts,
 } from "../data/products";
 import { useAdmin } from "../hooks/useAdmin";
-import { getOrderCount } from "../hooks/useOrderCounter";
 import { loadAllReviews } from "../hooks/useQueries";
 
 // ── Category card data ──────────────────────────────────────────────────────
@@ -336,10 +335,10 @@ const SAMPLE_REVIEWS = [
   },
   {
     id: -3,
-    reviewer: "Ananya R.",
+    reviewer: "Nishitha",
     rating: 5,
-    text: "Ordered a custom initial keychain — turned out absolutely perfect. Highly recommend The Cozy Hook!",
-    product: "Initial Letter Keychain",
+    text: "hello sanjana, i'm so glad i had the opportunity to order these beautiful handmade plushies for my daughters. they are truly special—crafted with so much love and care. it's not just a toy, but a wonderful piece of art that reflects your talent so beautifully. thank you once again—it was a pleasure doing business with you! 😄",
+    product: "Plushie",
   },
 ];
 
@@ -395,7 +394,6 @@ export function HomePage() {
   );
 
   const newArrivals = ALL_PRODUCTS.filter((p) => p.isNew);
-  const orderCount = getOrderCount();
 
   // Load reviews from localStorage, fall back to sample reviews
   const allStoredReviews = loadAllReviews();
@@ -591,28 +589,6 @@ export function HomePage() {
           >
             {settings.heroTagline}
           </motion.p>
-
-          {/* Order counter social proof */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.45 }}
-            className="mt-5 flex justify-center"
-          >
-            <span
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-body text-sm"
-              style={{
-                background: "oklch(0.72 0.09 5 / 0.1)",
-                color: "oklch(0.56 0.12 5)",
-              }}
-              data-ocid="hero.order_counter"
-            >
-              <span className="text-base" aria-hidden="true">
-                🧸
-              </span>
-              {orderCount}+ happy orders & counting
-            </span>
-          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}

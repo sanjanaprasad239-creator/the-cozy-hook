@@ -104,6 +104,9 @@ export function useCreateReview() {
         reviewText: input.reviewText,
         authorName: input.authorName,
         timestamp: Date.now(),
+        ...(input.imageUrls && input.imageUrls.length > 0
+          ? { imageUrls: input.imageUrls }
+          : {}),
       };
       saveAllReviews([...all, review]);
       return nextId;

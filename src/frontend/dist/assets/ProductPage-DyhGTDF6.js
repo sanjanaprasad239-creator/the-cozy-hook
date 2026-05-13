@@ -1,11 +1,11 @@
-import { c as createLucideIcon, j as jsxRuntimeExports, b as cn, r as reactExports, B as Button, d as useParams, u as useNavigate, e as useCart, f as useWishlist, L as Link, m as motion, E as ExternalLink, S as ShoppingBag, H as Heart } from "./index-CCptdxtl.js";
-import { P as ProductCard } from "./ProductCard-Ch4wDp_U.js";
-import { L as Label, I as Input } from "./label-6EfFtY2J.js";
-import { T as Textarea, M as Minus } from "./textarea-n2nGX6el.js";
-import { u as ue } from "./index-a_5Q2cI2.js";
-import { u as useCreateReview, a as useProductReviews } from "./useQueries-BlU6qg4w.js";
+import { c as createLucideIcon, j as jsxRuntimeExports, b as cn, r as reactExports, B as Button, d as useParams, u as useNavigate, e as useCart, f as useWishlist, L as Link, m as motion, E as ExternalLink, S as ShoppingBag, H as Heart } from "./index-B6J4yjYJ.js";
+import { P as ProductCard } from "./ProductCard-FfZs1i9a.js";
+import { L as Label, I as Input } from "./label-DMhXSekG.js";
+import { T as Textarea, M as Minus } from "./textarea-Bjsn-tyx.js";
+import { u as ue } from "./index-DU0MGq6i.js";
+import { u as useCreateReview, a as useProductReviews } from "./useQueries-SncF205W.js";
 import { a as getProductById, b as getProductsByCategory, A as ALL_PRODUCTS } from "./products-DV9WP4M5.js";
-import { P as Plus } from "./plus-FpMpL_UQ.js";
+import { P as Plus } from "./plus-BNj9e0ie.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -138,6 +138,82 @@ function relativeDate(timestamp) {
   if (weeks < 5) return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
   return `${months} month${months > 1 ? "s" : ""} ago`;
 }
+function ReviewPhotoGallery({ images }) {
+  const [lightbox, setLightbox] = reactExports.useState(null);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: "flex flex-wrap gap-2 mt-1",
+        "data-ocid": "review.photo_gallery",
+        children: images.slice(0, 3).map((src, idx) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "aria-label": `view item ${idx + 1} full size`,
+            onClick: () => setLightbox(src),
+            className: "w-16 h-16 rounded-xl overflow-hidden border border-border/40 shadow-soft hover:shadow-boutique hover:scale-105 transition-smooth focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0",
+            "data-ocid": `review.photo.${idx + 1}`,
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src,
+                alt: `uploaded item ${idx + 1}`,
+                className: "w-full h-full object-cover"
+              }
+            )
+          },
+          src.slice(-32)
+        ))
+      }
+    ),
+    lightbox && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "dialog",
+      {
+        "aria-modal": "true",
+        "aria-label": "photo viewer",
+        open: true,
+        className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent border-none m-0 max-w-none max-h-none w-full h-full",
+        style: { background: "oklch(0.1 0 0 / 0.8)" },
+        "data-ocid": "review.photo_lightbox",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "aria-label": "close photo viewer",
+              onClick: () => setLightbox(null),
+              className: "absolute inset-0 w-full h-full cursor-default",
+              onKeyDown: (e) => e.key === "Escape" && setLightbox(null),
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "close" })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative z-10 max-w-sm w-full mx-auto", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: lightbox,
+                alt: "full size view",
+                className: "w-full rounded-2xl shadow-boutique-lg object-contain max-h-[80vh]"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "aria-label": "close photo viewer",
+                onClick: () => setLightbox(null),
+                className: "absolute -top-3 -right-3 w-8 h-8 rounded-full bg-foreground/80 text-background flex items-center justify-center text-lg font-bold hover:bg-foreground transition-colors shadow-boutique",
+                "data-ocid": "review.photo_lightbox.close_button",
+                children: "×"
+              }
+            )
+          ] })
+        ]
+      }
+    )
+  ] });
+}
 function ReviewCard({ review }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "article",
@@ -197,15 +273,19 @@ function ReviewCard({ review }) {
             }
           )
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-body text-sm text-muted-foreground leading-relaxed", children: review.reviewText })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-body text-sm text-muted-foreground leading-relaxed", children: review.reviewText }),
+        review.imageUrls && review.imageUrls.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(ReviewPhotoGallery, { images: review.imageUrls })
       ]
     }
   );
 }
 const INITIAL = { authorName: "", rating: 0, reviewText: "" };
+const MAX_PHOTOS = 3;
 function ReviewForm({ productId, onSuccess }) {
   const [form, setForm] = reactExports.useState(INITIAL);
   const [errors, setErrors] = reactExports.useState({});
+  const [photoUrls, setPhotoUrls] = reactExports.useState([]);
+  const [photoError, setPhotoError] = reactExports.useState(null);
   const createReview = useCreateReview();
   function validate() {
     const next = {};
@@ -223,10 +303,12 @@ function ReviewForm({ productId, onSuccess }) {
         productId,
         rating: form.rating,
         reviewText: form.reviewText.trim(),
-        authorName: form.authorName.trim()
+        authorName: form.authorName.trim(),
+        imageUrls: photoUrls
       });
       setForm(INITIAL);
       setErrors({});
+      setPhotoUrls([]);
       ue.success("Thank you for your review! 🌸", {
         description: "Your thoughts help other customers find what they love.",
         duration: 5e3
@@ -387,6 +469,119 @@ function ReviewForm({ productId, onSuccess }) {
               children: errors.reviewText
             }
           )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-body text-sm font-medium text-foreground", children: [
+            "add photos",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground font-normal", children: "(optional)" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2 items-center", children: [
+            photoUrls.map((url, idx) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "relative w-16 h-16 rounded-xl overflow-hidden border border-border/50 shadow-soft flex-shrink-0",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "img",
+                    {
+                      src: url,
+                      alt: `uploaded item ${idx + 1}`,
+                      className: "w-full h-full object-cover"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      "aria-label": `remove photo ${idx + 1}`,
+                      onClick: () => setPhotoUrls((prev) => prev.filter((_, i) => i !== idx)),
+                      className: "absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-foreground/70 text-background flex items-center justify-center text-xs font-bold leading-none hover:bg-foreground transition-colors",
+                      "data-ocid": "review.remove_photo_button",
+                      children: "×"
+                    }
+                  )
+                ]
+              },
+              url.slice(-32)
+            )),
+            photoUrls.length < MAX_PHOTOS && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "label",
+              {
+                htmlFor: "review-photos",
+                className: "w-16 h-16 rounded-xl border-2 border-dashed border-primary/40 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary/70 hover:bg-primary/5 transition-colors group flex-shrink-0",
+                "data-ocid": "review.upload_button",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "svg",
+                    {
+                      viewBox: "0 0 24 24",
+                      fill: "none",
+                      className: "w-5 h-5 text-primary/60 group-hover:text-primary/90 transition-colors",
+                      "aria-hidden": "true",
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "path",
+                        {
+                          d: "M12 5v14M5 12h14",
+                          stroke: "currentColor",
+                          strokeWidth: "2",
+                          strokeLinecap: "round"
+                        }
+                      )
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "add a photo" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[9px] font-body text-primary/50 group-hover:text-primary/80 transition-colors leading-none", children: "add photo" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "review-photos",
+                      type: "file",
+                      accept: "image/*",
+                      multiple: true,
+                      className: "sr-only",
+                      onChange: (e) => {
+                        setPhotoError(null);
+                        const files = Array.from(e.target.files ?? []);
+                        const remaining = MAX_PHOTOS - photoUrls.length;
+                        const toRead = files.slice(0, remaining);
+                        for (const file of toRead) {
+                          const reader = new FileReader();
+                          reader.onload = (ev) => {
+                            var _a;
+                            const result = (_a = ev.target) == null ? void 0 : _a.result;
+                            if (typeof result === "string") {
+                              setPhotoUrls(
+                                (prev) => prev.length < MAX_PHOTOS ? [...prev, result] : prev
+                              );
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                        if (files.length > remaining) {
+                          setPhotoError(`you can add up to ${MAX_PHOTOS} photos`);
+                        }
+                        e.target.value = "";
+                      }
+                    }
+                  )
+                ]
+              }
+            )
+          ] }),
+          photoError && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              className: "text-xs font-body text-muted-foreground",
+              "data-ocid": "review.photo_error_state",
+              children: photoError
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs font-body text-muted-foreground/70", children: [
+            "up to ",
+            MAX_PHOTOS,
+            " photos of your product"
+          ] })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           Button,

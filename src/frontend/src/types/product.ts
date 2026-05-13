@@ -35,6 +35,7 @@ export interface Review {
   reviewText: string;
   authorName: string;
   timestamp: number;
+  imageUrls?: string[];
 }
 
 export interface ReviewInput {
@@ -42,4 +43,5 @@ export interface ReviewInput {
   rating: number;
   reviewText: string;
   authorName: string;
+  imageUrls?: string[];
 }

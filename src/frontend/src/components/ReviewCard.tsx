@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Review } from "../types/product";
 import { ReviewStars } from "./ReviewStars";
 
@@ -21,6 +22,74 @@ function relativeDate(timestamp: number): string {
   if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
   if (weeks < 5) return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
   return `${months} month${months > 1 ? "s" : ""} ago`;
+}
+
+function ReviewPhotoGallery({ images }: { images: string[] }) {
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  return (
+    <>
+      <div
+        className="flex flex-wrap gap-2 mt-1"
+        data-ocid="review.photo_gallery"
+      >
+        {images.slice(0, 3).map((src, idx) => (
+          <button
+            key={src.slice(-32)}
+            type="button"
+            aria-label={`view item ${idx + 1} full size`}
+            onClick={() => setLightbox(src)}
+            className="w-16 h-16 rounded-xl overflow-hidden border border-border/40 shadow-soft hover:shadow-boutique hover:scale-105 transition-smooth focus-visible:ring-2 focus-visible:ring-primary flex-shrink-0"
+            data-ocid={`review.photo.${idx + 1}`}
+          >
+            <img
+              src={src}
+              alt={`uploaded item ${idx + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </button>
+        ))}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <dialog
+          aria-modal="true"
+          aria-label="photo viewer"
+          open
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent border-none m-0 max-w-none max-h-none w-full h-full"
+          style={{ background: "oklch(0.1 0 0 / 0.8)" }}
+          data-ocid="review.photo_lightbox"
+        >
+          <button
+            type="button"
+            aria-label="close photo viewer"
+            onClick={() => setLightbox(null)}
+            className="absolute inset-0 w-full h-full cursor-default"
+            onKeyDown={(e) => e.key === "Escape" && setLightbox(null)}
+          >
+            <span className="sr-only">close</span>
+          </button>
+          <div className="relative z-10 max-w-sm w-full mx-auto">
+            <img
+              src={lightbox}
+              alt="full size view"
+              className="w-full rounded-2xl shadow-boutique-lg object-contain max-h-[80vh]"
+            />
+            <button
+              type="button"
+              aria-label="close photo viewer"
+              onClick={() => setLightbox(null)}
+              className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-foreground/80 text-background flex items-center justify-center text-lg font-bold hover:bg-foreground transition-colors shadow-boutique"
+              data-ocid="review.photo_lightbox.close_button"
+            >
+              ×
+            </button>
+          </div>
+        </dialog>
+      )}
+    </>
+  );
 }
 
 export function ReviewCard({ review }: Props) {
@@ -76,6 +145,9 @@ export function ReviewCard({ review }: Props) {
       <p className="font-body text-sm text-muted-foreground leading-relaxed">
         {review.reviewText}
       </p>
+      {review.imageUrls && review.imageUrls.length > 0 && (
+        <ReviewPhotoGallery images={review.imageUrls} />
+      )}
     </article>
   );
 }

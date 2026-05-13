@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-B603Z0GJ.js","assets/ProductCard-Ch4wDp_U.js","assets/plus-FpMpL_UQ.js","assets/products-DV9WP4M5.js","assets/useAdmin-B91abJDd.js","assets/useOrderCounter-CnSXfycc.js","assets/useQueries-BlU6qg4w.js","assets/CollectionPage-CYL5Bw7_.js","assets/ProductPage-BTTlwl_0.js","assets/label-6EfFtY2J.js","assets/textarea-n2nGX6el.js","assets/index-a_5Q2cI2.js","assets/AdminPage-DMgVTZjx.js","assets/separator-CHFPWt8_.js","assets/CartPage-BGIanoPB.js","assets/trash-2-2eNEEhXQ.js","assets/ConfirmationPage-CjNGEKfT.js","assets/WishlistPage-CpWfbgQ4.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-Cx-llusN.js","assets/ProductCard-FfZs1i9a.js","assets/plus-BNj9e0ie.js","assets/products-DV9WP4M5.js","assets/useAdmin-BAUvgEtC.js","assets/useQueries-SncF205W.js","assets/CollectionPage-CzejIy7J.js","assets/ProductPage-DyhGTDF6.js","assets/label-DMhXSekG.js","assets/textarea-Bjsn-tyx.js","assets/index-DU0MGq6i.js","assets/AdminPage-CeBrMJVE.js","assets/separator-CEUCrHxw.js","assets/CartPage-t3vTsNRo.js","assets/trash-2-ARn9qJdz.js","assets/WishlistPage-CXDFYgnX.js"])))=>i.map(i=>d[i]);
 var __defProp = Object.defineProperty;
 var __typeError = (msg) => {
   throw TypeError(msg);
@@ -38765,44 +38765,44 @@ function Layout({ children }) {
   ] });
 }
 const HomePage = reactExports.lazy(
-  () => __vitePreload(() => import("./HomePage-B603Z0GJ.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6]) : void 0).then((m) => ({ default: m.HomePage }))
+  () => __vitePreload(() => import("./HomePage-Cx-llusN.js"), true ? __vite__mapDeps([0,1,2,3,4,5]) : void 0).then((m) => ({ default: m.HomePage }))
 );
 const CollectionPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CollectionPage-CYL5Bw7_.js"), true ? __vite__mapDeps([7,1,2,3]) : void 0).then((m) => ({
+  () => __vitePreload(() => import("./CollectionPage-CzejIy7J.js"), true ? __vite__mapDeps([6,1,2,3]) : void 0).then((m) => ({
     default: m.CollectionPage
   }))
 );
 const ProductPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ProductPage-BTTlwl_0.js"), true ? __vite__mapDeps([8,1,2,9,10,11,6,3]) : void 0).then((m) => ({ default: m.ProductPage }))
+  () => __vitePreload(() => import("./ProductPage-DyhGTDF6.js"), true ? __vite__mapDeps([7,1,2,8,9,10,5,3]) : void 0).then((m) => ({ default: m.ProductPage }))
 );
 const OurStoryPage = reactExports.lazy(
-  () => __vitePreload(() => import("./OurStoryPage-BklvU22W.js"), true ? [] : void 0).then((m) => ({ default: m.OurStoryPage }))
+  () => __vitePreload(() => import("./OurStoryPage-BggVPFHW.js"), true ? [] : void 0).then((m) => ({ default: m.OurStoryPage }))
 );
 const JournalPage = reactExports.lazy(
-  () => __vitePreload(() => import("./JournalPage-VYFxvP4o.js"), true ? [] : void 0).then((m) => ({ default: m.JournalPage }))
+  () => __vitePreload(() => import("./JournalPage-c9NZ07-J.js"), true ? [] : void 0).then((m) => ({ default: m.JournalPage }))
 );
 const ContactPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ContactPage-z9HeIzBP.js"), true ? [] : void 0).then((m) => ({ default: m.ContactPage }))
+  () => __vitePreload(() => import("./ContactPage-2rOJoz3A.js"), true ? [] : void 0).then((m) => ({ default: m.ContactPage }))
 );
 const AdminPage = reactExports.lazy(
-  () => __vitePreload(() => import("./AdminPage-DMgVTZjx.js"), true ? __vite__mapDeps([12,9,13,11,3,4]) : void 0).then((m) => ({ default: m.AdminPage }))
+  () => __vitePreload(() => import("./AdminPage-CeBrMJVE.js"), true ? __vite__mapDeps([11,8,12,10,3,4]) : void 0).then((m) => ({ default: m.AdminPage }))
 );
 const CartPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CartPage-BGIanoPB.js"), true ? __vite__mapDeps([14,9,13,10,15,2]) : void 0).then((m) => ({ default: m.CartPage }))
+  () => __vitePreload(() => import("./CartPage-t3vTsNRo.js"), true ? __vite__mapDeps([13,8,12,9,14,2]) : void 0).then((m) => ({ default: m.CartPage }))
 );
 const ConfirmationPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ConfirmationPage-CjNGEKfT.js"), true ? __vite__mapDeps([16,5]) : void 0).then((m) => ({
+  () => __vitePreload(() => import("./ConfirmationPage-B-EAR22n.js"), true ? [] : void 0).then((m) => ({
     default: m.ConfirmationPage
   }))
 );
 const WishlistPage = reactExports.lazy(
-  () => __vitePreload(() => import("./WishlistPage-CpWfbgQ4.js"), true ? __vite__mapDeps([17,1,2,15]) : void 0).then((m) => ({ default: m.WishlistPage }))
+  () => __vitePreload(() => import("./WishlistPage-CXDFYgnX.js"), true ? __vite__mapDeps([15,1,2,14]) : void 0).then((m) => ({ default: m.WishlistPage }))
 );
 const FAQPage = reactExports.lazy(
-  () => __vitePreload(() => import("./FAQPage-D4I5MmLB.js"), true ? [] : void 0).then((m) => ({ default: m.FAQPage }))
+  () => __vitePreload(() => import("./FAQPage-7c_sWhDq.js"), true ? [] : void 0).then((m) => ({ default: m.FAQPage }))
 );
 const CareGuidePage = reactExports.lazy(
-  () => __vitePreload(() => import("./CareGuidePage-jT_JwmP3.js"), true ? [] : void 0).then((m) => ({ default: m.CareGuidePage }))
+  () => __vitePreload(() => import("./CareGuidePage-Co9fkaLd.js"), true ? [] : void 0).then((m) => ({ default: m.CareGuidePage }))
 );
 function PageLoader() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center min-h-[40vh]", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-1.5", children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(

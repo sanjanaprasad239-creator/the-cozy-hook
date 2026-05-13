@@ -7,7 +7,7 @@ var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot
 var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
 var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
 var _client, _currentQuery, _currentQueryInitialState, _currentResult, _currentResultState, _currentResultOptions, _currentThenable, _selectError, _selectFn, _selectResult, _lastQueryWithDefinedData, _staleTimeoutId, _refetchIntervalId, _currentRefetchInterval, _trackedProps, _QueryObserver_instances, executeFetch_fn, updateStaleTimeout_fn, computeRefetchInterval_fn, updateRefetchInterval_fn, updateTimers_fn, clearStaleTimeout_fn, clearRefetchInterval_fn, updateQuery_fn, notify_fn, _a, _client2, _currentResult2, _currentMutation, _mutateOptions, _MutationObserver_instances, updateResult_fn, notify_fn2, _b;
-import { g as Subscribable, p as pendingThenable, h as resolveEnabled, s as shallowEqualObjects, i as resolveStaleTime, n as noop, k as environmentManager, l as isValidTimeout, t as timeUntilStale, o as timeoutManager, q as focusManager, v as fetchState, w as replaceData, x as notifyManager, y as hashKey, z as getDefaultState, r as reactExports, D as shouldThrowError, F as useQueryClient } from "./index-CCptdxtl.js";
+import { g as Subscribable, p as pendingThenable, h as resolveEnabled, s as shallowEqualObjects, i as resolveStaleTime, n as noop, k as environmentManager, l as isValidTimeout, t as timeUntilStale, o as timeoutManager, q as focusManager, v as fetchState, w as replaceData, x as notifyManager, y as hashKey, z as getDefaultState, r as reactExports, D as shouldThrowError, F as useQueryClient } from "./index-B6J4yjYJ.js";
 var QueryObserver = (_a = class extends Subscribable {
   constructor(client, options) {
     super();
@@ -793,7 +793,8 @@ function useCreateReview() {
         rating: input.rating,
         reviewText: input.reviewText,
         authorName: input.authorName,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        ...input.imageUrls && input.imageUrls.length > 0 ? { imageUrls: input.imageUrls } : {}
       };
       saveAllReviews([...all, review]);
       return nextId;

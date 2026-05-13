@@ -1,9 +1,9 @@
-import { c as createLucideIcon, j as jsxRuntimeExports, e as useCart, P as useCartTotals, u as useNavigate, r as reactExports, S as ShoppingBag, B as Button, L as Link, m as motion, A as AnimatePresence, Q as FREE_DELIVERY_THRESHOLD, R as DELIVERY_CHARGE } from "./index-CCptdxtl.js";
-import { L as Label, I as Input } from "./label-6EfFtY2J.js";
-import { S as Separator } from "./separator-CHFPWt8_.js";
-import { M as Minus, T as Textarea } from "./textarea-n2nGX6el.js";
-import { T as Trash2 } from "./trash-2-2eNEEhXQ.js";
-import { P as Plus } from "./plus-FpMpL_UQ.js";
+import { c as createLucideIcon, j as jsxRuntimeExports, e as useCart, P as useCartTotals, u as useNavigate, r as reactExports, S as ShoppingBag, B as Button, L as Link, m as motion, A as AnimatePresence, Q as FREE_DELIVERY_THRESHOLD, R as DELIVERY_CHARGE } from "./index-B6J4yjYJ.js";
+import { L as Label, I as Input } from "./label-DMhXSekG.js";
+import { S as Separator } from "./separator-CEUCrHxw.js";
+import { M as Minus, T as Textarea } from "./textarea-Bjsn-tyx.js";
+import { T as Trash2 } from "./trash-2-ARn9qJdz.js";
+import { P as Plus } from "./plus-BNj9e0ie.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -758,72 +758,58 @@ function CartPage() {
                     " more for free delivery"
                   ] }),
                   /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                    "button",
+                    "label",
                     {
-                      type: "button",
-                      className: "flex items-center justify-between w-full rounded-xl px-3 py-2.5 border border-border/50 cursor-pointer select-none text-left",
+                      htmlFor: "gift-wrap-checkbox",
+                      className: "flex items-center justify-between w-full rounded-xl px-3 py-2.5 border border-border/50 cursor-pointer select-none",
                       style: {
                         background: giftWrapping ? "oklch(0.88 0.05 5 / 0.18)" : "transparent"
                       },
-                      onClick: () => setGiftWrapping((v) => !v),
-                      onKeyDown: (e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setGiftWrapping((v) => !v);
-                        }
-                      },
                       "data-ocid": "cart.gift_wrap_toggle",
                       children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                          "label",
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "input",
                           {
-                            className: "flex items-center gap-2.5 cursor-pointer",
-                            htmlFor: "gift-wrap-checkbox",
-                            children: [
-                              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                                "div",
-                                {
-                                  className: "w-4.5 h-4.5 rounded flex items-center justify-center border-2 transition-all duration-200",
-                                  style: {
-                                    width: 18,
-                                    height: 18,
-                                    borderColor: giftWrapping ? "#D8A7B1" : "#D1C4BC",
-                                    background: giftWrapping ? "#D8A7B1" : "transparent"
-                                  },
-                                  children: giftWrapping && /* @__PURE__ */ jsxRuntimeExports.jsx(
-                                    "svg",
-                                    {
-                                      viewBox: "0 0 12 12",
-                                      fill: "none",
-                                      stroke: "#fff",
-                                      strokeWidth: "2",
-                                      strokeLinecap: "round",
-                                      strokeLinejoin: "round",
-                                      className: "w-2.5 h-2.5",
-                                      "aria-hidden": "true",
-                                      children: /* @__PURE__ */ jsxRuntimeExports.jsx("polyline", { points: "2 6 5 9 10 3" })
-                                    }
-                                  )
-                                }
-                              ),
-                              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                                "input",
-                                {
-                                  id: "gift-wrap-checkbox",
-                                  type: "checkbox",
-                                  className: "sr-only",
-                                  checked: giftWrapping,
-                                  onChange: (e) => setGiftWrapping(e.target.checked),
-                                  "data-ocid": "cart.gift_wrap_checkbox"
-                                }
-                              ),
-                              /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-1.5 font-body text-xs text-foreground/80", children: [
-                                /* @__PURE__ */ jsxRuntimeExports.jsx(Gift, { className: "w-3.5 h-3.5", style: { color: "#D8A7B1" } }),
-                                "add gift wrapping"
-                              ] })
-                            ]
+                            id: "gift-wrap-checkbox",
+                            type: "checkbox",
+                            className: "sr-only",
+                            checked: giftWrapping,
+                            onChange: (e) => setGiftWrapping(e.target.checked),
+                            "data-ocid": "cart.gift_wrap_checkbox"
                           }
                         ),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-2.5", children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "div",
+                            {
+                              className: "rounded flex items-center justify-center border-2 transition-all duration-200",
+                              style: {
+                                width: 18,
+                                height: 18,
+                                borderColor: giftWrapping ? "#D8A7B1" : "#D1C4BC",
+                                background: giftWrapping ? "#D8A7B1" : "transparent"
+                              },
+                              children: giftWrapping && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                "svg",
+                                {
+                                  viewBox: "0 0 12 12",
+                                  fill: "none",
+                                  stroke: "#fff",
+                                  strokeWidth: "2",
+                                  strokeLinecap: "round",
+                                  strokeLinejoin: "round",
+                                  className: "w-2.5 h-2.5",
+                                  "aria-hidden": "true",
+                                  children: /* @__PURE__ */ jsxRuntimeExports.jsx("polyline", { points: "2 6 5 9 10 3" })
+                                }
+                              )
+                            }
+                          ),
+                          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-1.5 font-body text-xs text-foreground/80", children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(Gift, { className: "w-3.5 h-3.5", style: { color: "#D8A7B1" } }),
+                            "add gift wrapping"
+                          ] })
+                        ] }),
                         /* @__PURE__ */ jsxRuntimeExports.jsxs(
                           "span",
                           {

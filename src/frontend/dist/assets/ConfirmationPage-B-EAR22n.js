@@ -1,10 +1,6 @@
-import { a as useSearch, r as reactExports, j as jsxRuntimeExports, m as motion, B as Button, L as Link } from "./index-CCptdxtl.js";
-import { i as incrementOrderCount } from "./useOrderCounter-CnSXfycc.js";
+import { a as useSearch, j as jsxRuntimeExports, m as motion, B as Button, L as Link } from "./index-B6J4yjYJ.js";
 function ConfirmationPage() {
   const { name, total, itemCount } = useSearch({ from: "/order-confirmed" });
-  reactExports.useEffect(() => {
-    incrementOrderCount();
-  }, []);
   function handlePrint() {
     window.print();
   }

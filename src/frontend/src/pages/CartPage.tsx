@@ -744,29 +744,27 @@ export function CartPage() {
             )}
 
             {/* Gift wrapping toggle */}
-            <button
-              type="button"
-              className="flex items-center justify-between w-full rounded-xl px-3 py-2.5 border border-border/50 cursor-pointer select-none text-left"
+            <label
+              htmlFor="gift-wrap-checkbox"
+              className="flex items-center justify-between w-full rounded-xl px-3 py-2.5 border border-border/50 cursor-pointer select-none"
               style={{
                 background: giftWrapping
                   ? "oklch(0.88 0.05 5 / 0.18)"
                   : "transparent",
               }}
-              onClick={() => setGiftWrapping((v) => !v)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setGiftWrapping((v) => !v);
-                }
-              }}
               data-ocid="cart.gift_wrap_toggle"
             >
-              <label
-                className="flex items-center gap-2.5 cursor-pointer"
-                htmlFor="gift-wrap-checkbox"
-              >
+              <input
+                id="gift-wrap-checkbox"
+                type="checkbox"
+                className="sr-only"
+                checked={giftWrapping}
+                onChange={(e) => setGiftWrapping(e.target.checked)}
+                data-ocid="cart.gift_wrap_checkbox"
+              />
+              <span className="flex items-center gap-2.5">
                 <div
-                  className="w-4.5 h-4.5 rounded flex items-center justify-center border-2 transition-all duration-200"
+                  className="rounded flex items-center justify-center border-2 transition-all duration-200"
                   style={{
                     width: 18,
                     height: 18,
@@ -789,26 +787,18 @@ export function CartPage() {
                     </svg>
                   )}
                 </div>
-                <input
-                  id="gift-wrap-checkbox"
-                  type="checkbox"
-                  className="sr-only"
-                  checked={giftWrapping}
-                  onChange={(e) => setGiftWrapping(e.target.checked)}
-                  data-ocid="cart.gift_wrap_checkbox"
-                />
                 <span className="flex items-center gap-1.5 font-body text-xs text-foreground/80">
                   <Gift className="w-3.5 h-3.5" style={{ color: "#D8A7B1" }} />
                   add gift wrapping
                 </span>
-              </label>
+              </span>
               <span
                 className="font-body text-xs font-semibold"
                 style={{ color: "#D8A7B1" }}
               >
                 +₹{GIFT_WRAP_CHARGE}
               </span>
-            </button>
+            </label>
 
             {giftWrapping && (
               <div className="flex justify-between text-xs font-body text-muted-foreground">

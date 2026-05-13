@@ -1,10 +1,9 @@
-import { u as useNavigate, r as reactExports, j as jsxRuntimeExports, A as AnimatePresence, m as motion, L as Link, X, B as Button, C as CustomOrderModal } from "./index-CCptdxtl.js";
-import { P as ProductCard } from "./ProductCard-Ch4wDp_U.js";
+import { u as useNavigate, r as reactExports, j as jsxRuntimeExports, A as AnimatePresence, m as motion, L as Link, X, B as Button, C as CustomOrderModal } from "./index-B6J4yjYJ.js";
+import { P as ProductCard } from "./ProductCard-FfZs1i9a.js";
 import { g as getFeaturedProducts, F as FEATURED_PRODUCT_IDS, A as ALL_PRODUCTS } from "./products-DV9WP4M5.js";
-import { u as useAdmin } from "./useAdmin-B91abJDd.js";
-import { g as getOrderCount } from "./useOrderCounter-CnSXfycc.js";
-import { l as loadAllReviews } from "./useQueries-BlU6qg4w.js";
-import "./plus-FpMpL_UQ.js";
+import { u as useAdmin } from "./useAdmin-BAUvgEtC.js";
+import { l as loadAllReviews } from "./useQueries-SncF205W.js";
+import "./plus-BNj9e0ie.js";
 const CATEGORY_CARDS = [
   {
     name: "Plushies",
@@ -400,10 +399,10 @@ const SAMPLE_REVIEWS = [
   },
   {
     id: -3,
-    reviewer: "Ananya R.",
+    reviewer: "Nishitha",
     rating: 5,
-    text: "Ordered a custom initial keychain — turned out absolutely perfect. Highly recommend The Cozy Hook!",
-    product: "Initial Letter Keychain"
+    text: "hello sanjana, i'm so glad i had the opportunity to order these beautiful handmade plushies for my daughters. they are truly special—crafted with so much love and care. it's not just a toy, but a wonderful piece of art that reflects your talent so beautifully. thank you once again—it was a pleasure doing business with you! 😄",
+    product: "Plushie"
   }
 ];
 const fadeUp = {
@@ -446,7 +445,6 @@ function HomePage() {
     settings.featuredProductIds.length ? settings.featuredProductIds : FEATURED_PRODUCT_IDS
   );
   const newArrivals = ALL_PRODUCTS.filter((p) => p.isNew);
-  const orderCount = getOrderCount();
   const allStoredReviews = loadAllReviews();
   const highlightReviews = allStoredReviews.length >= 2 ? allStoredReviews.slice(-3).map((r) => ({
     id: r.id,
@@ -649,31 +647,6 @@ function HomePage() {
                 className: "mt-5 text-lg md:text-xl font-body italic text-muted-foreground tracking-wide",
                 "data-ocid": "hero.tagline",
                 children: settings.heroTagline
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              motion.div,
-              {
-                initial: { opacity: 0, y: 12 },
-                animate: { opacity: 1, y: 0 },
-                transition: { duration: 0.5, delay: 0.45 },
-                className: "mt-5 flex justify-center",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  "span",
-                  {
-                    className: "inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-body text-sm",
-                    style: {
-                      background: "oklch(0.72 0.09 5 / 0.1)",
-                      color: "oklch(0.56 0.12 5)"
-                    },
-                    "data-ocid": "hero.order_counter",
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-base", "aria-hidden": "true", children: "🧸" }),
-                      orderCount,
-                      "+ happy orders & counting"
-                    ]
-                  }
-                )
               }
             ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
