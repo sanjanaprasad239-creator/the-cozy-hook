@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Heart, Plus, ShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { useAdmin } from "../hooks/useAdmin";
 import { useCart } from "../hooks/useCart";
+import { useProductImages } from "../hooks/useProductImages";
 import { useWishlist } from "../hooks/useWishlist";
 import type { Product } from "../types/product";
 
@@ -25,12 +27,17 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
   const addItem = useCart((s) => s.addItem);
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
+  const { settings } = useAdmin();
+  const productImages = useProductImages();
 
   const isFanFavourite = FAN_FAVOURITE_IDS.has(product.id);
   const wishlisted = isInWishlist(product.id);
+  const isSoldOut = (settings.soldOutProductIds ?? []).includes(product.id);
+  const imageSrc = productImages.get(product.id) ?? CARD_IMAGE;
 
   function handleAddToCart(e: React.MouseEvent) {
     e.stopPropagation();
+    if (isSoldOut) return;
     addItem(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
@@ -71,13 +78,28 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img
-            src={CARD_IMAGE}
+            src={imageSrc}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
+            className={`w-full h-full object-cover group-hover:scale-105 transition-smooth ${
+              isSoldOut ? "opacity-60 grayscale-[30%]" : ""
+            }`}
           />
 
-          {/* Fan Favourite badge */}
-          {isFanFavourite && (
+          {/* Sold out badge */}
+          {isSoldOut && (
+            <span
+              className="absolute top-2.5 left-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-body font-semibold leading-none select-none pointer-events-none z-10"
+              style={{
+                background: "oklch(0.72 0.09 5)",
+                color: "#fff",
+              }}
+            >
+              sold out
+            </span>
+          )}
+
+          {/* Fan Favourite badge (only when not sold out) */}
+          {isFanFavourite && !isSoldOut && (
             <span
               className="absolute top-2.5 left-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-body font-medium leading-none select-none pointer-events-none"
               style={{
@@ -93,7 +115,7 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
           )}
 
           {/* New badge */}
-          {product.isNew && (
+          {product.isNew && !isSoldOut && (
             <span
               className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-body font-semibold leading-none select-none pointer-events-none"
               style={{
@@ -143,12 +165,17 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
             </span>
             <Button
               size="sm"
-              variant={added ? "secondary" : "default"}
-              className="rounded-xl text-xs h-8 px-3 gap-1 transition-smooth"
+              variant={isSoldOut ? "outline" : added ? "secondary" : "default"}
+              disabled={isSoldOut}
+              className={`rounded-xl text-xs h-8 px-3 gap-1 transition-smooth ${
+                isSoldOut ? "opacity-60 cursor-not-allowed" : ""
+              }`}
               onClick={handleAddToCart}
               data-ocid={`product.add_button.${index + 1}`}
             >
-              {added ? (
+              {isSoldOut ? (
+                "sold out"
+              ) : added ? (
                 <>
                   <Plus className="w-3 h-3" />
                   added!

@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import {
@@ -13,7 +15,7 @@ import {
   Truck,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ProductCard } from "../components/ProductCard";
 import { ReviewCard } from "../components/ReviewCard";
 import { ReviewForm } from "../components/ReviewForm";
@@ -23,8 +25,11 @@ import {
   getProductById,
   getProductsByCategory,
 } from "../data/products";
+import { useAdmin } from "../hooks/useAdmin";
 import { useCart } from "../hooks/useCart";
+import { useProductImages } from "../hooks/useProductImages";
 import { useProductReviews } from "../hooks/useQueries";
+import { useWhatsAppOptIn } from "../hooks/useWhatsAppOptIn";
 import { useWishlist } from "../hooks/useWishlist";
 
 function HeartBullet() {
@@ -83,13 +88,214 @@ function WhatsAppIcon() {
   );
 }
 
+function ViewerCount() {
+  const count = useRef(Math.floor(Math.random() * 7) + 2);
+  return (
+    <div className="flex items-center gap-2" data-ocid="product.viewer_count">
+      <span className="relative flex h-2.5 w-2.5">
+        <span
+          className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+          style={{ backgroundColor: "#D8A7B1" }}
+        />
+        <span
+          className="relative inline-flex rounded-full h-2.5 w-2.5"
+          style={{ backgroundColor: "#D8A7B1" }}
+        />
+      </span>
+      <span className="font-body text-xs text-muted-foreground">
+        {count.current} {count.current === 1 ? "person" : "people"} viewing this
+        right now
+      </span>
+    </div>
+  );
+}
+
+function CountdownBadge({
+  label,
+  endDate,
+}: { label: string; endDate: string }) {
+  const end = new Date(endDate);
+  const now = new Date();
+  const diffMs = end.getTime() - now.getTime();
+  if (diffMs <= 0) return null;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+  const timeText =
+    diffDays >= 1
+      ? `${diffDays} day${diffDays > 1 ? "s" : ""}`
+      : `${diffHours} hour${diffHours !== 1 ? "s" : ""}`;
+  return (
+    <div
+      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-body"
+      style={{ backgroundColor: "#FEF3C7", color: "#92400E" }}
+      data-ocid="product.countdown_badge"
+    >
+      <span>⏰</span>
+      <span>
+        {label} — ends in {timeText}
+      </span>
+    </div>
+  );
+}
+
+function WhatsAppOptInSection() {
+  const { subscribe, isSubscribed } = useWhatsAppOptIn();
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!phone.trim() || !agreed) return;
+    subscribe(name.trim(), phone.trim());
+    setSubmitted(true);
+  }
+
+  const alreadySubscribed = phone.trim() ? isSubscribed(phone.trim()) : false;
+
+  return (
+    <section
+      className="rounded-2xl overflow-hidden"
+      style={{
+        background: "#F7F3EE",
+        border: "1px solid rgba(216, 167, 177, 0.25)",
+      }}
+      data-ocid="product.whatsapp_optin_section"
+    >
+      <div
+        className="h-1"
+        style={{
+          background: "linear-gradient(90deg, #D8A7B1 0%, #E8DED3 100%)",
+        }}
+      />
+      <div className="p-6">
+        <div className="mb-4">
+          <h3 className="font-display text-lg font-semibold text-foreground">
+            stay updated 🌸
+          </h3>
+          <p className="font-body text-sm text-muted-foreground mt-1">
+            get notified on whatsapp when we add new products or run special
+            offers
+          </p>
+        </div>
+
+        {submitted ? (
+          <p
+            className="font-body text-sm"
+            style={{ color: "#A8B5A2" }}
+            data-ocid="product.optin_success_state"
+          >
+            you're in! we'll send you the good stuff on whatsapp 🌿
+          </p>
+        ) : alreadySubscribed ? (
+          <p
+            className="font-body text-sm"
+            style={{ color: "#D8A7B1" }}
+            data-ocid="product.optin_already_subscribed"
+          >
+            you're already subscribed! 💕
+          </p>
+        ) : (
+          <form
+            onSubmit={handleSubscribe}
+            className="space-y-3"
+            data-ocid="product.optin_form"
+          >
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1 space-y-1">
+                <Label
+                  htmlFor="optin-name"
+                  className="font-body text-xs text-muted-foreground"
+                >
+                  your name (optional)
+                </Label>
+                <Input
+                  id="optin-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. priya"
+                  className="rounded-xl font-body h-9 text-sm"
+                  data-ocid="product.optin_name_input"
+                />
+              </div>
+              <div className="flex-1 space-y-1">
+                <Label
+                  htmlFor="optin-phone"
+                  className="font-body text-xs text-muted-foreground"
+                >
+                  whatsapp number
+                </Label>
+                <div
+                  className="flex items-center rounded-xl overflow-hidden border bg-background"
+                  style={{ borderColor: "rgba(216, 167, 177, 0.5)" }}
+                >
+                  <span
+                    className="font-body text-sm px-3 h-9 flex items-center shrink-0 border-r select-none"
+                    style={{
+                      color: "#8A7A74",
+                      borderColor: "rgba(216, 167, 177, 0.4)",
+                      background: "#F7F3EE",
+                    }}
+                  >
+                    +91
+                  </span>
+                  <input
+                    id="optin-phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="98765 43210"
+                    className="flex-1 font-body text-sm px-3 h-9 outline-none bg-transparent"
+                    style={{ color: "#3A3A3A" }}
+                    data-ocid="product.optin_phone_input"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Consent checkbox */}
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded accent-pink-300 shrink-0"
+                data-ocid="product.optin_consent_checkbox"
+              />
+              <span className="font-body text-xs" style={{ color: "#8A7A74" }}>
+                yes, i want to receive offers and updates on whatsapp
+              </span>
+            </label>
+
+            <div className="flex items-center">
+              <Button
+                type="submit"
+                size="sm"
+                className="rounded-xl font-body h-9 px-5"
+                style={{ background: "#D8A7B1", color: "#fff" }}
+                disabled={!phone.trim() || !agreed}
+                data-ocid="product.optin_submit_button"
+              >
+                subscribe
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export function ProductPage() {
   const { id } = useParams({ strict: false }) as { id: string };
   const navigate = useNavigate();
   const addItem = useCart((s) => s.addItem);
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { settings } = useAdmin();
 
   const product = getProductById(id);
+  const productImages = useProductImages();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -144,8 +350,11 @@ export function ProductPage() {
   const bundleTotal = bundleSuggestions.reduce((s, i) => s + i.price, p.price);
 
   const wishlisted = isInWishlist(p.id);
+  const isSoldOut = (settings.soldOutProductIds ?? []).includes(p.id);
+  const productTimer = settings.productTimers?.[p.id];
 
   function handleAddToCart() {
+    if (isSoldOut) return;
     addItem(p, qty);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -230,57 +439,104 @@ export function ProductPage() {
 
         {/* Two-column layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-start">
-          {/* Left — View Picture */}
-          <motion.a
-            href={
-              p.pictureUrl && p.pictureUrl !== "#" ? p.pictureUrl : undefined
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-full aspect-square rounded-3xl border-2 flex flex-col items-center justify-center gap-4 cursor-pointer transition-smooth shadow-boutique-lg"
-            style={{
-              borderColor: "#D8A7B1",
-              backgroundColor: "transparent",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
-                "#D8A7B1";
-              (e.currentTarget as HTMLAnchorElement).style.color = "#fff";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
-                "transparent";
-              (e.currentTarget as HTMLAnchorElement).style.color = "";
-            }}
-            data-ocid="product.view_picture_button"
-            aria-label={`View picture of ${p.name}`}
-            onClick={
-              !p.pictureUrl || p.pictureUrl === "#"
-                ? (e) => e.preventDefault()
-                : undefined
-            }
-          >
-            <div
-              className="w-16 h-16 rounded-full border-2 flex items-center justify-center"
-              style={{ borderColor: "#D8A7B1" }}
-            >
-              <ExternalLink className="w-7 h-7" style={{ color: "#D8A7B1" }} />
-            </div>
-            <div className="text-center px-6 space-y-1">
-              <p
-                className="font-display text-xl font-semibold"
-                style={{ color: "#D8A7B1" }}
+          {/* Left — Product Image or View Picture */}
+          <div className="relative">
+            {productImages.has(p.id) ? (
+              <motion.div
+                initial={{ opacity: 0, x: -24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="w-full flex flex-col gap-3"
               >
-                View Picture
-              </p>
-              <p className="font-body text-sm text-muted-foreground">
-                Click to see the full product photo
-              </p>
-            </div>
-          </motion.a>
+                <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-boutique-lg border border-border/30">
+                  <img
+                    src={productImages.get(p.id)}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                    data-ocid="product.product_image"
+                  />
+                </div>
+                {p.pictureUrl && p.pictureUrl !== "#" && (
+                  <a
+                    href={p.pictureUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 font-body text-sm transition-smooth hover:opacity-80 self-start"
+                    style={{ color: "#D8A7B1" }}
+                    data-ocid="product.view_all_photos_link"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    view all photos →
+                  </a>
+                )}
+              </motion.div>
+            ) : (
+              <motion.a
+                href={
+                  p.pictureUrl && p.pictureUrl !== "#"
+                    ? p.pictureUrl
+                    : undefined
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, x: -24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="w-full aspect-square rounded-3xl border-2 flex flex-col items-center justify-center gap-4 cursor-pointer transition-smooth shadow-boutique-lg block"
+                style={{
+                  borderColor: "#D8A7B1",
+                  backgroundColor: "transparent",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                    "#D8A7B1";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "#fff";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                    "transparent";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "";
+                }}
+                data-ocid="product.view_picture_button"
+                aria-label={`View picture of ${p.name}`}
+                onClick={
+                  !p.pictureUrl || p.pictureUrl === "#"
+                    ? (e) => e.preventDefault()
+                    : undefined
+                }
+              >
+                <div
+                  className="w-16 h-16 rounded-full border-2 flex items-center justify-center"
+                  style={{ borderColor: "#D8A7B1" }}
+                >
+                  <ExternalLink
+                    className="w-7 h-7"
+                    style={{ color: "#D8A7B1" }}
+                  />
+                </div>
+                <div className="text-center px-6 space-y-1">
+                  <p
+                    className="font-display text-xl font-semibold"
+                    style={{ color: "#D8A7B1" }}
+                  >
+                    View Picture
+                  </p>
+                  <p className="font-body text-sm text-muted-foreground">
+                    Click to see the full product photo
+                  </p>
+                </div>
+              </motion.a>
+            )}
+            {isSoldOut && (
+              <div
+                className="absolute top-4 left-4 font-body text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{ background: "#3A3A3A", color: "#fff" }}
+                data-ocid="product.sold_out_badge"
+              >
+                sold out
+              </div>
+            )}
+          </div>
 
           {/* Right — Product Details */}
           <motion.div
@@ -297,6 +553,10 @@ export function ProductPage() {
               <h1 className="font-display text-3xl sm:text-4xl font-semibold text-foreground leading-tight">
                 {p.name}
               </h1>
+              {/* Viewer count */}
+              <div className="mt-2">
+                <ViewerCount />
+              </div>
               {/* Price in dusty rose */}
               <p
                 className="mt-3 font-body font-semibold text-2xl"
@@ -305,6 +565,15 @@ export function ProductPage() {
               >
                 ₹{p.price}
               </p>
+              {/* Countdown timer */}
+              {productTimer && (
+                <div className="mt-2">
+                  <CountdownBadge
+                    label={productTimer.label}
+                    endDate={productTimer.endDate}
+                  />
+                </div>
+              )}
               {/* Delivery estimate badge */}
               <div className="mt-3">
                 <DeliveryBadge />
@@ -376,6 +645,14 @@ export function ProductPage() {
             </div>
 
             {/* Action Buttons */}
+            {isSoldOut && (
+              <p
+                className="font-body text-sm text-muted-foreground"
+                data-ocid="product.sold_out_notice"
+              >
+                back in stock soon! 🌸
+              </p>
+            )}
             <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 type="button"
@@ -383,9 +660,12 @@ export function ProductPage() {
                 className="flex-1 rounded-2xl font-body gap-2 h-12"
                 variant={added ? "secondary" : "default"}
                 onClick={handleAddToCart}
+                disabled={isSoldOut}
                 data-ocid="product.add_to_cart_button"
               >
-                {added ? (
+                {isSoldOut ? (
+                  <>sold out</>
+                ) : added ? (
                   <>
                     <Check className="w-4 h-4" /> Added to Cart!
                   </>
@@ -499,7 +779,10 @@ export function ProductPage() {
                     >
                       <div className="aspect-square bg-muted">
                         <img
-                          src="/assets/generated/hero-crochet.dim_1600x900.jpg"
+                          src={
+                            productImages.get(item.id) ??
+                            "/assets/generated/hero-crochet.dim_1600x900.jpg"
+                          }
                           alt={item.name}
                           className="w-full h-full object-cover"
                         />
@@ -576,6 +859,11 @@ export function ProductPage() {
             </div>
           </section>
         )}
+
+        {/* ── WhatsApp Opt-In ── */}
+        <section className="mt-16" data-ocid="product.optin_section">
+          <WhatsAppOptInSection />
+        </section>
 
         {/* ── Customer Reviews ── */}
         <section className="mt-16 mb-6" data-ocid="product.reviews_section">

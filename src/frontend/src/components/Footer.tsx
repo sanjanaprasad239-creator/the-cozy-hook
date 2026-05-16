@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Mail } from "lucide-react";
+import { WhatsAppOptInBanner } from "./WhatsAppOptInBanner";
 
 const FOOTER_LINKS = [
   { label: "home", to: "/" },
@@ -60,12 +61,12 @@ export function Footer() {
             </h4>
             <div className="space-y-2">
               <a
-                href="mailto:sanjanaprasad239@gmail.com"
+                href="mailto:sanjana.prasad@thecozyhook.in"
                 className="flex items-center gap-2 text-sm font-body text-muted-foreground hover:text-foreground transition-smooth"
                 data-ocid="footer.email_link"
               >
                 <Mail className="w-4 h-4 shrink-0" />
-                sanjanaprasad239@gmail.com
+                sanjana.prasad@thecozyhook.in
               </a>
               <a
                 href="https://wa.me/918660099085"
@@ -105,7 +106,12 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-2">
+        {/* WhatsApp opt-in banner above footer bottom bar */}
+        <div className="mt-10 mb-6">
+          <WhatsAppOptInBanner />
+        </div>
+
+        <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs font-body text-muted-foreground">
             © {year} the cozy hook. all rights reserved.
           </p>

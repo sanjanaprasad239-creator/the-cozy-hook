@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { WhatsAppOptInBanner } from "../components/WhatsAppOptInBanner";
 
 export function ConfirmationPage() {
   const { name, total, itemCount } = useSearch({ from: "/order-confirmed" });
@@ -152,6 +153,23 @@ export function ConfirmationPage() {
           </div>
         </div>
 
+        {/* WhatsApp opt-in */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
+          className="mt-6"
+          data-ocid="confirmation.optin_section"
+        >
+          <p
+            className="font-display text-center text-base font-semibold mb-3"
+            style={{ color: "#3A3A3A" }}
+          >
+            want to stay in the loop?
+          </p>
+          <WhatsAppOptInBanner />
+        </motion.div>
+
         {/* Bottom note */}
         <p className="text-center text-xs font-body text-muted-foreground mt-5">
           questions? reach us on{" "}
@@ -165,7 +183,7 @@ export function ConfirmationPage() {
           </a>{" "}
           or{" "}
           <a
-            href="mailto:sanjanaprasad239@gmail.com"
+            href="mailto:sanjana.prasad@thecozyhook.in"
             className="underline underline-offset-2 hover:text-foreground transition-colors"
           >
             email

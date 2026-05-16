@@ -6,10 +6,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { CustomOrderModal } from "../components/CustomOrderModal";
 import { ProductCard } from "../components/ProductCard";
+import { SpinWheelModal } from "../components/SpinWheelModal";
 import {
   ALL_PRODUCTS,
   FEATURED_PRODUCT_IDS,
   getFeaturedProducts,
+  getProductById,
 } from "../data/products";
 import { useAdmin } from "../hooks/useAdmin";
 import { loadAllReviews } from "../hooks/useQueries";
@@ -386,6 +388,11 @@ export function HomePage() {
   const [customOrderOpen, setCustomOrderOpen] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const { settings } = useAdmin();
+  const activeBundles = (settings?.bundles ?? [])
+    .filter((b: { isActive: boolean }) => b.isActive)
+    .slice(0, 3);
+  const pressEntries = settings?.pressEntries ?? [];
+  const currentlyCrafting = settings?.currentlyCrafting ?? "";
 
   const featuredProducts = getFeaturedProducts(
     settings.featuredProductIds.length
@@ -639,6 +646,18 @@ export function HomePage() {
         </motion.div>
       </section>
 
+      {currentlyCrafting && (
+        <section className="py-6 px-4">
+          <div className="max-w-2xl mx-auto bg-[#F7F3EE] border border-[#A8B5A2]/30 rounded-xl p-6 text-center">
+            <p className="text-2xl mb-2">🧶</p>
+            <h3 className="font-display text-lg text-[#3A3A3A] mb-1">
+              currently crafting ✨
+            </h3>
+            <p className="text-sm text-[#3A3A3A]/70">{currentlyCrafting}</p>
+          </div>
+        </section>
+      )}
+
       {/* ── NEW ARRIVALS ───────────────────────────────────────────────── */}
       {newArrivals.length > 0 && (
         <section
@@ -753,6 +772,79 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      {activeBundles.length > 0 && (
+        <section className="py-12 px-4 bg-[#F7F3EE]">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="font-display text-3xl text-[#3A3A3A] text-center mb-2">
+              bundle & save
+            </h2>
+            <p className="text-center text-[#3A3A3A]/60 mb-8">
+              better together, better value
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {activeBundles.map(
+                (bundle: {
+                  id: string;
+                  name: string;
+                  savings: number;
+                  description: string;
+                  productIds?: string[];
+                  price: number;
+                }) => (
+                  <div
+                    key={bundle.id}
+                    className="bg-white rounded-2xl p-6 shadow-sm border border-[#E8DED3]"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-display text-lg text-[#3A3A3A]">
+                        {bundle.name}
+                      </h3>
+                      <span className="bg-[#D8A7B1] text-white text-xs px-2 py-1 rounded-full ml-2 whitespace-nowrap">
+                        save ₹{bundle.savings}
+                      </span>
+                    </div>
+                    <p className="text-sm text-[#3A3A3A]/60 mb-3">
+                      {bundle.description}
+                    </p>
+                    <div className="mb-4">
+                      {bundle.productIds?.map((pid: string) => {
+                        const p = getProductById(pid);
+                        return p ? (
+                          <p key={pid} className="text-xs text-[#3A3A3A]/70">
+                            • {p.name}
+                          </p>
+                        ) : null;
+                      })}
+                    </div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-lg font-semibold text-[#D8A7B1]">
+                        ₹{bundle.price}
+                      </span>
+                    </div>
+                    <a
+                      href={`https://wa.me/918660099085?text=${encodeURIComponent(`hi! i'd like to order the ${bundle.name} bundle`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full text-center bg-[#25D366] text-white py-2 rounded-full text-sm hover:bg-[#20BA5A] transition-colors"
+                    >
+                      order via whatsapp
+                    </a>
+                  </div>
+                ),
+              )}
+            </div>
+            <div className="text-center mt-6">
+              <Link
+                to="/bundles"
+                className="text-[#D8A7B1] hover:underline text-sm"
+              >
+                see all bundles →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
       <section
@@ -897,6 +989,50 @@ export function HomePage() {
         </div>
       </section>
 
+      <section className="py-8 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h3 className="text-xs uppercase tracking-widest text-[#3A3A3A]/40 mb-4">
+            as seen in
+          </h3>
+          <div className="flex flex-wrap justify-center gap-3">
+            {(pressEntries.length > 0
+              ? pressEntries
+              : [
+                  {
+                    id: "1",
+                    title: "handmade india weekly, may 2025",
+                    link: "#",
+                    date: "2025-05-01",
+                  },
+                  {
+                    id: "2",
+                    title: "top crochet shops on instagram, april 2025",
+                    link: "#",
+                    date: "2025-04-01",
+                  },
+                ]
+            ).map(
+              (entry: {
+                id: string;
+                title: string;
+                link: string;
+                date: string;
+              }) => (
+                <a
+                  key={entry.id}
+                  href={entry.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#E8DED3] text-[#3A3A3A]/70 text-sm px-4 py-2 rounded-full hover:bg-[#D8A7B1] hover:text-white transition-colors"
+                >
+                  {entry.title}
+                </a>
+              ),
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* ── CUSTOMER REVIEWS ──────────────────────────────────────────────── */}
       <section data-ocid="reviews.section" className="bg-background py-24 px-6">
         <div className="max-w-5xl mx-auto">
@@ -1033,6 +1169,7 @@ export function HomePage() {
         open={customOrderOpen}
         onClose={() => setCustomOrderOpen(false)}
       />
+      <SpinWheelModal />
     </>
   );
 }

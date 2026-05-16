@@ -56,7 +56,7 @@ export function ContactPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {/* Email */}
             <motion.a
-              href="mailto:sanjanaprasad239@gmail.com"
+              href="mailto:sanjana.prasad@thecozyhook.in"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.1 }}
@@ -71,7 +71,7 @@ export function ContactPage() {
                   Email
                 </p>
                 <p className="font-body text-sm text-muted-foreground leading-relaxed break-all">
-                  sanjanaprasad239@gmail.com
+                  sanjana.prasad@thecozyhook.in
                 </p>
               </div>
               <span className="inline-flex items-center gap-1.5 font-body text-xs font-semibold text-primary border border-primary/25 rounded-full px-4 py-1.5 group-hover:bg-primary/8 transition-smooth">

@@ -1,4 +1,4 @@
-import type { Product } from "../types/product";
+import type { Bundle, Product } from "../types/product";
 
 export const ALL_PRODUCTS: Product[] = [
   // ── Plushies ──────────────────────────────────────────────────────────────
@@ -543,6 +543,39 @@ export const ALL_PRODUCTS: Product[] = [
     ],
     imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
+  },
+];
+
+export const SAMPLE_BUNDLES: Bundle[] = [
+  {
+    id: "bundle-001",
+    name: "plushie + keychain duo",
+    description:
+      "a chubby whale plushie paired with a sweet heart keychain — perfect for gifting or treating yourself to a matching set.",
+    price: 369,
+    productIds: ["plush-002", "key-002"],
+    savings: 39,
+    isActive: true,
+  },
+  {
+    id: "bundle-002",
+    name: "gifting set",
+    description:
+      "the ultimate handmade gift: a cuddly bunny plushie, a cute bow keychain, and a soft scrunchie — all wrapped up with love.",
+    price: 479,
+    productIds: ["plush-001", "key-006", "acc-001"],
+    savings: 48,
+    isActive: true,
+  },
+  {
+    id: "bundle-003",
+    name: "wearables bundle",
+    description:
+      "a charming trio for the crochet lover — a shell-stitch hairband, a cozy scrunchie, and a sweet bow keychain to complete any look.",
+    price: 299,
+    productIds: ["hairband", "acc-001", "key-006"],
+    savings: 68,
+    isActive: true,
   },
 ];
 

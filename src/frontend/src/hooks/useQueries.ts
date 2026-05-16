@@ -43,18 +43,36 @@ export function useProduct(id: string) {
 export function useAdminSettings() {
   return useQuery<AdminSettings>({
     queryKey: ["adminSettings"],
-    queryFn: async () => ({
-      heroTitle: "The Cozy Hook",
-      heroTagline: "Handmade Crochet with Love",
-      featuredProductIds: [
-        "plush-001",
-        "plush-007",
-        "key-007",
-        "acc-009",
-        "decor-004",
-      ],
-    }),
-    staleTime: Number.POSITIVE_INFINITY,
+    queryFn: async () => {
+      const defaults: AdminSettings = {
+        heroTitle: "The Cozy Hook",
+        heroTagline: "Handmade Crochet with Love",
+        featuredProductIds: [
+          "plush-001",
+          "plush-007",
+          "key-007",
+          "acc-009",
+          "decor-004",
+        ],
+        soldOutProductIds: [],
+        bundles: [],
+        pressEntries: [],
+        currentlyCrafting: "",
+        productTimers: {},
+      };
+      try {
+        const raw = localStorage.getItem("cozy-hook-admin");
+        if (raw)
+          return {
+            ...defaults,
+            ...(JSON.parse(raw) as Partial<AdminSettings>),
+          };
+      } catch {
+        // ignore
+      }
+      return defaults;
+    },
+    staleTime: 30_000,
   });
 }
 

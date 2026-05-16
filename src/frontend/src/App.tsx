@@ -50,6 +50,22 @@ const FAQPage = lazy(() =>
 const CareGuidePage = lazy(() =>
   import("./pages/CareGuidePage").then((m) => ({ default: m.CareGuidePage })),
 );
+const CustomerGalleryPage = lazy(() =>
+  import("./pages/CustomerGalleryPage").then((m) => ({
+    default: m.CustomerGalleryPage,
+  })),
+);
+const BundlesPage = lazy(() =>
+  import("./pages/BundlesPage").then((m) => ({ default: m.BundlesPage })),
+);
+const OrderHistoryPage = lazy(() =>
+  import("./pages/OrderHistoryPage").then((m) => ({
+    default: m.OrderHistoryPage,
+  })),
+);
+const PressPage = lazy(() =>
+  import("./pages/PressPage").then((m) => ({ default: m.PressPage })),
+);
 
 function PageLoader() {
   return (
@@ -158,6 +174,30 @@ const careGuideRoute = createRoute({
   component: () => <CareGuidePage />,
 });
 
+const customerGalleryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/gallery",
+  component: () => <CustomerGalleryPage />,
+});
+
+const bundlesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/bundles",
+  component: () => <BundlesPage />,
+});
+
+const orderHistoryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/order-history",
+  component: () => <OrderHistoryPage />,
+});
+
+const pressRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/press",
+  component: () => <PressPage />,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   collectionRoute,
@@ -171,6 +211,10 @@ const routeTree = rootRoute.addChildren([
   wishlistRoute,
   faqRoute,
   careGuideRoute,
+  customerGalleryRoute,
+  bundlesRoute,
+  orderHistoryRoute,
+  pressRoute,
 ]);
 
 const router = createRouter({ routeTree });

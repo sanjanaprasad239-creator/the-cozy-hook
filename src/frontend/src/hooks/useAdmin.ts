@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import type { AdminSettings } from "../types/product";
+import { SAMPLE_BUNDLES } from "../data/products";
+import type { AdminSettings, Bundle, PressEntry } from "../types/product";
 
 const STORAGE_KEY = "cozy-hook-admin";
 const AUTH_KEY = "cozy-hook-admin-auth";
@@ -12,9 +13,15 @@ const DEFAULT_SETTINGS: AdminSettings = {
     "plush-001",
     "plush-007",
     "key-007",
-    "acc-009",
-    "decor-004",
+    "acc-001",
+    "decor-006",
   ],
+  soldOutProductIds: [],
+  bundles: SAMPLE_BUNDLES,
+  pressEntries: [],
+  currentlyCrafting:
+    "currently crafting: strawberry costumed bunny plushies this week! 🌸",
+  productTimers: {},
 };
 
 function loadSettings(): AdminSettings {
@@ -95,6 +102,86 @@ export function useAdmin() {
     setSettings((prev) => ({ ...prev, featuredProductIds: ids }));
   }, []);
 
+  const toggleSoldOut = useCallback((productId: string) => {
+    setSettings((prev) => {
+      const ids = prev.soldOutProductIds ?? [];
+      return {
+        ...prev,
+        soldOutProductIds: ids.includes(productId)
+          ? ids.filter((id) => id !== productId)
+          : [...ids, productId],
+      };
+    });
+  }, []);
+
+  const addBundle = useCallback((bundle: Bundle) => {
+    setSettings((prev) => ({
+      ...prev,
+      bundles: [...(prev.bundles ?? []), bundle],
+    }));
+  }, []);
+
+  const updateBundle = useCallback((updated: Bundle) => {
+    setSettings((prev) => ({
+      ...prev,
+      bundles: (prev.bundles ?? []).map((b) =>
+        b.id === updated.id ? updated : b,
+      ),
+    }));
+  }, []);
+
+  const removeBundle = useCallback((bundleId: string) => {
+    setSettings((prev) => ({
+      ...prev,
+      bundles: (prev.bundles ?? []).filter((b) => b.id !== bundleId),
+    }));
+  }, []);
+
+  const addPressEntry = useCallback((entry: PressEntry) => {
+    setSettings((prev) => ({
+      ...prev,
+      pressEntries: [...(prev.pressEntries ?? []), entry],
+    }));
+  }, []);
+
+  const updatePressEntry = useCallback((updated: PressEntry) => {
+    setSettings((prev) => ({
+      ...prev,
+      pressEntries: (prev.pressEntries ?? []).map((e) =>
+        e.id === updated.id ? updated : e,
+      ),
+    }));
+  }, []);
+
+  const removePressEntry = useCallback((entryId: string) => {
+    setSettings((prev) => ({
+      ...prev,
+      pressEntries: (prev.pressEntries ?? []).filter((e) => e.id !== entryId),
+    }));
+  }, []);
+
+  const updateCurrentlyCrafting = useCallback((text: string) => {
+    setSettings((prev) => ({ ...prev, currentlyCrafting: text }));
+  }, []);
+
+  const setProductTimer = useCallback(
+    (productId: string, timer: { label: string; endDate: string }) => {
+      setSettings((prev) => ({
+        ...prev,
+        productTimers: { ...(prev.productTimers ?? {}), [productId]: timer },
+      }));
+    },
+    [],
+  );
+
+  const removeProductTimer = useCallback((productId: string) => {
+    setSettings((prev) => {
+      const timers = { ...(prev.productTimers ?? {}) };
+      delete timers[productId];
+      return { ...prev, productTimers: timers };
+    });
+  }, []);
+
   return {
     settings,
     isAuthenticated,
@@ -104,5 +191,15 @@ export function useAdmin() {
     logout,
     updateHero,
     updateFeaturedProducts,
+    toggleSoldOut,
+    addBundle,
+    updateBundle,
+    removeBundle,
+    addPressEntry,
+    updatePressEntry,
+    removePressEntry,
+    updateCurrentlyCrafting,
+    setProductTimer,
+    removeProductTimer,
   };
 }

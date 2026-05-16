@@ -15,6 +15,8 @@ export interface Product {
   imagePath: string;
   pictureUrl?: string;
   isNew?: boolean;
+  isSoldOut?: boolean;
+  countdownTimer?: { label: string; endDate: string };
 }
 
 export interface CartItem {
@@ -22,10 +24,50 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface Bundle {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  productIds: string[];
+  savings: number;
+  isActive: boolean;
+}
+
+export interface PressEntry {
+  id: string;
+  title: string;
+  link: string;
+  date: string;
+}
+
+export interface WhatsAppOptIn {
+  name: string;
+  phone: string;
+  subscribedAt: string;
+}
+
+export interface OrderHistoryEntry {
+  id: string;
+  items: CartItem[];
+  subtotal: number;
+  deliveryCharge: number;
+  giftWrapping: boolean;
+  total: number;
+  customerName: string;
+  date: string;
+  notes?: string;
+}
+
 export interface AdminSettings {
   heroTitle: string;
   heroTagline: string;
   featuredProductIds: string[];
+  soldOutProductIds: string[];
+  bundles: Bundle[];
+  pressEntries: PressEntry[];
+  currentlyCrafting: string;
+  productTimers: Record<string, { label: string; endDate: string }>;
 }
 
 export interface Review {

@@ -21,6 +21,7 @@ import {
   useCart,
   useCartTotals,
 } from "../hooks/useCart";
+import { useOrderHistory } from "../hooks/useOrderHistory";
 import type { CartItem } from "../types/product";
 
 interface OrderForm {
@@ -149,6 +150,7 @@ export function CartPage() {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
   const { subtotal, delivery, itemCount } = useCartTotals();
   const navigate = useNavigate();
+  const saveOrder = useOrderHistory((s) => s.saveOrder);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
   const [saveDetails, setSaveDetails] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
@@ -230,6 +232,18 @@ export function CartPage() {
         }),
       );
     }
+    // Save to order history
+    saveOrder({
+      id: Date.now().toString(),
+      items,
+      subtotal,
+      deliveryCharge: delivery,
+      giftWrapping,
+      total,
+      customerName: form.name,
+      date: new Date().toISOString(),
+      notes: form.notes || undefined,
+    });
     setOrdered(true);
     clearCart();
     navigate({
