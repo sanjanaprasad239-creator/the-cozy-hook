@@ -415,7 +415,57 @@ actor {
       featuredProductIds.add(id);
     };
   };
+  // ─── Product Management ──────────────────────────────────────────────────
 
+  public func addProduct(
+    product : Product,
+    adminPassword : Text,
+  ) : async Bool {
+    if (adminPassword != "cozyhook2025") {
+      return false;
+    };
+
+    products.add(product.id, product);
+    true
+  };
+
+  public func updateProduct(
+    product : Product,
+    adminPassword : Text,
+  ) : async Bool {
+    if (adminPassword != "cozyhook2025") {
+      return false;
+    };
+
+    switch (products.get(product.id)) {
+      case (null) {
+        false
+      };
+      case (?_) {
+        products.add(product.id, product);
+        true
+      };
+    }
+  };
+
+  public func deleteProduct(
+    productId : Text,
+    adminPassword : Text,
+  ) : async Bool {
+    if (adminPassword != "cozyhook2025") {
+      return false;
+    };
+
+    switch (products.get(productId)) {
+      case (null) {
+        false
+      };
+      case (?_) {
+        products.remove(productId);
+        true
+      };
+    }
+  };
   // ─── Reviews ─────────────────────────────────────────────────────────────
 
   public func addReview(productId : Text, rating : Nat, reviewText : Text, authorName : Text) : async Nat {
