@@ -36,4 +36,7 @@ service : {
   getReviewsByProduct: (productId: text) -> (vec Review) query;
   setFeaturedProducts: (ids: vec text) -> ();
   updateHeroText: (title: text, tagline: text) -> ();
+  addProduct: (product: Product, adminPassword: text) -> (bool);
+  updateProduct: (product: Product, adminPassword: text) -> (bool);
+  deleteProduct: (productId: text, adminPassword: text) -> (bool);
 }
