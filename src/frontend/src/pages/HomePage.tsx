@@ -394,10 +394,11 @@ export function HomePage() {
   const pressEntries = settings?.pressEntries ?? [];
   const currentlyCrafting = settings?.currentlyCrafting ?? "";
 
+  // Guard against a partial settings shape while backend settings load — the
+  // hook falls back to DEFAULT_ADMIN_SETTINGS, so this never renders blank.
+  const featuredIds = settings.featuredProductIds ?? [];
   const featuredProducts = getFeaturedProducts(
-    settings.featuredProductIds.length
-      ? settings.featuredProductIds
-      : FEATURED_PRODUCT_IDS,
+    featuredIds.length ? featuredIds : FEATURED_PRODUCT_IDS,
   );
 
   const newArrivals = ALL_PRODUCTS.filter((p) => p.isNew);

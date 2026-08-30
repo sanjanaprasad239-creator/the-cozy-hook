@@ -117,7 +117,9 @@ function CountdownBadge({
   const end = new Date(endDate);
   const now = new Date();
   const diffMs = end.getTime() - now.getTime();
-  if (diffMs <= 0) return null;
+  // Guard against invalid/expired backend timestamps so we never render
+  // "NaN hours" while settings load or when a timer has ended.
+  if (Number.isNaN(diffMs) || diffMs <= 0) return null;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
   const timeText =

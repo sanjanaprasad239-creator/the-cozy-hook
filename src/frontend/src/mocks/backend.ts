@@ -1,7 +1,14 @@
-import type { backendInterface } from "../backend";
+import type {
+  backendInterface,
+  Bundle,
+  PressEntry,
+  ProductImage,
+  ProductTimer,
+  WhatsappSubscriber,
+} from "../backend";
 
 export const mockBackend: backendInterface = {
-  adminLogin: async (_password: string) => false,
+  adminLogin: async (password: string) => password === "cozyhook2025",
   getAdminSettings: async () => ({
     heroTitle: "The Cozy Hook",
     heroTagline: "Handmade Crochet with Love",
@@ -12,6 +19,13 @@ export const mockBackend: backendInterface = {
       "wearable-cat-ear-beanie",
       "decor-flower-bouquets",
     ],
+    soldOutProductIds: [],
+    bundles: [],
+    pressEntries: [],
+    currentlyCrafting:
+      "currently crafting: strawberry costumed bunny plushies this week! 🌸",
+    productTimers: [],
+    whatsappSubscribers: [],
   }),
   getProductById: async (id: string) => ({
     id,
@@ -153,8 +167,30 @@ export const mockBackend: backendInterface = {
   ],
   setFeaturedProducts: async (_ids: Array<string>) => undefined,
   updateHeroText: async (_title: string, _tagline: string) => undefined,
-  addReview: async (_productId: string, _rating: bigint, _reviewText: string, _authorName: string): Promise<bigint> => BigInt(1),
-  deleteReview: async (_reviewId: bigint, _adminPassword: string): Promise<boolean> => false,
+  setBundles: async (_bundles: Array<Bundle>) => undefined,
+  setCurrentlyCrafting: async (_text: string) => undefined,
+  setPressEntries: async (_entries: Array<PressEntry>) => undefined,
+  setProductTimers: async (_timers: Array<ProductTimer>) => undefined,
+  setSoldOutProducts: async (_ids: Array<string>) => undefined,
+  setWhatsappSubscribers: async (
+    _subscribers: Array<WhatsappSubscriber>,
+  ) => undefined,
+  addReview: async (
+    _productId: string,
+    _rating: bigint,
+    _reviewText: string,
+    _authorName: string,
+  ): Promise<bigint> => BigInt(1),
+  deleteReview: async (
+    _reviewId: bigint,
+    _adminPassword: string,
+  ): Promise<boolean> => false,
   getAllReviews: async () => [],
   getReviewsByProduct: async (_productId: string) => [],
+  getProductImage: async (_productId: string): Promise<string | null> => null,
+  getProductImages: async (): Promise<Array<ProductImage>> => [],
+  setProductImage: async (_productId: string, _imageUrl: string) => undefined,
+  schema: async () => "",
+  execute: async (_qJson: string) => ({ hasMore: false, rows: [] }),
+  getApiDoc: async () => "",
 };

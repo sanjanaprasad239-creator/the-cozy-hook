@@ -1,14 +1,91 @@
-// Version: 1.0.0
-type Data__791452850<K, V> =
-  {var count : Nat__490723111; kvs : [var ?(K, V)]};
-type Internal__8484328<K, V> =
-  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
-type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
-type Nat__490723111 = Nat__920180692;
+// Version: 4.0.0
+type Bundle__37208392 =
+  {
+    badge : Text;
+    description : Text;
+    id : Text;
+    imageUrl : Text;
+    name : Text;
+    price : Nat;
+    productIds : [Text]
+  };
+type Bundle__894855616 =
+  {
+    badge : Text;
+    description : Text;
+    id : Text;
+    imageUrl : Text;
+    name : Text;
+    price : Nat;
+    productIds : [Text]
+  };
+type Data__265875254<K, V> = {var count : Nat__58649523; kvs : [var ?(K, V)]};
+type Internal__161573640<K, V> =
+  {children : [var ?Node__430031793<K, V>]; data : Data__265875254<K, V>};
+type Leaf__1045638083<K, V> = {data : Data__265875254<K, V>};
+type List__1004628775<T> =
+  {
+    var blockIndex : Nat__58649523;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__58649523
+  };
+type List__89170296<T> = List__1004628775<T>;
+type Map__13625999<K, V> =
+  {var root : Node__430031793<K, V>; var size : Nat__58649523};
+type Map__386906547<K, V> = Map__670138087<K, V>;
+type Map__670138087<K, V> = Map__13625999<K, V>;
+type Nat__58649523 = Nat__920180692;
 type Nat__920180692 = Nat;
-type Node__46230540<K, V> =
-  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type NewActor__523652053 =
+  {
+    adminSettings :
+      {
+        var adminPassword : Text;
+        bundles : List__89170296<Bundle__894855616>;
+        var currentlyCrafting : Text;
+        featuredProductIds : List__89170296<Text>;
+        var heroTagline : Text;
+        var heroTitle : Text;
+        pressEntries : List__89170296<PressEntry__787699331>;
+        productTimers : List__89170296<ProductTimer__975826033>;
+        soldOutProductIds : List__89170296<Text>;
+        whatsappSubscribers : List__89170296<WhatsappSubscriber__263620583>
+      };
+    productImages : Map__386906547<Text, Text>;
+    products : Map__386906547<Text, Product__990777416>;
+    reviewCounter : {var nextReviewId : Nat};
+    reviews : List__89170296<Review__802791655>
+  };
+type Node__430031793<K, V> =
+  {#internal : Internal__161573640<K, V>; #leaf : Leaf__1045638083<K, V>};
+type OldActor__693436424 =
+  {
+    featuredProductIds : List__89170296<Text>;
+    var heroTagline : Text;
+    var heroTitle : Text;
+    var nextReviewId : Nat;
+    products : Map__386906547<Text, Product__990777416>;
+    reviews : List__89170296<Review__802791655>
+  };
+type PressEntry__46974673 =
+  {date : Text; id : Text; outlet : Text; title : Text; url : Text};
+type PressEntry__787699331 =
+  {date : Text; id : Text; outlet : Text; title : Text; url : Text};
+type ProductTimer__131767876 =
+  {caption : Text; endTimestamp : Int; productId : Text};
+type ProductTimer__975826033 =
+  {caption : Text; endTimestamp : Int; productId : Text};
 type Product__853085059 =
+  {
+    category : Text;
+    description : Text;
+    features : [Text];
+    id : Text;
+    imagePath : Text;
+    name : Text;
+    price : Nat
+  };
+type Product__990777416 =
   {
     category : Text;
     description : Text;
@@ -27,25 +104,48 @@ type Review__422344017 =
     reviewText : Text;
     timestamp : Int
   };
-actor {
-  stable featuredProductIds :
+type Review__802791655 =
+  {
+    authorName : Text;
+    id : Nat;
+    productId : Text;
+    rating : Nat;
+    reviewText : Text;
+    timestamp : Int
+  };
+type WhatsappSubscriber__263620583 =
+  {id : Text; name : Text; phone : Text; subscribedAt : Int};
+type WhatsappSubscriber__814340408 =
+  {id : Text; name : Text; phone : Text; subscribedAt : Int};
+{
+  "20260830_000002" : (old : OldActor__693436424) -> NewActor__523652053
+}
+actor  {
+  stable adminSettings :
     {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?Text]];
-      var elementIndex : Nat__490723111
+      var adminPassword : Text;
+      bundles : List__89170296<Bundle__37208392>;
+      var currentlyCrafting : Text;
+      featuredProductIds : List__89170296<Text>;
+      var heroTagline : Text;
+      var heroTitle : Text;
+      pressEntries : List__89170296<PressEntry__46974673>;
+      productTimers : List__89170296<ProductTimer__131767876>;
+      soldOutProductIds : List__89170296<Text>;
+      whatsappSubscribers : List__89170296<WhatsappSubscriber__814340408>
     };
-  stable var heroTagline : Text;
-  stable var heroTitle : Text;
-  stable var nextReviewId : Nat;
+  stable productImages :
+    {var root : Node__430031793<Text, Text>; var size : Nat__58649523};
   stable products :
     {
-      var root : Node__46230540<Text, Product__853085059>;
-      var size : Nat__490723111
+      var root : Node__430031793<Text, Product__853085059>;
+      var size : Nat__58649523
     };
+  stable reviewCounter : {var nextReviewId : Nat};
   stable reviews :
     {
-      var blockIndex : Nat__490723111;
+      var blockIndex : Nat__58649523;
       var blocks : [var [var ?Review__422344017]];
-      var elementIndex : Nat__490723111
+      var elementIndex : Nat__58649523
     }
 };

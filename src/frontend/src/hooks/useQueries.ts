@@ -1,6 +1,13 @@
+import { createActor } from "@/backend";
+import type {
+  AdminSettings as BackendAdminSettings,
+  Bundle as BackendBundle,
+} from "@/backend";
+import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ALL_PRODUCTS,
+  SAMPLE_BUNDLES,
   getProductById,
   getProductsByCategory,
 } from "../data/products";
@@ -11,8 +18,99 @@ import type {
   ReviewInput,
 } from "../types/product";
 
-// These hooks wrap local data but are shaped to match the backend interface.
-// Reviews are persisted in localStorage until the canister is live.
+// ── Admin settings (backend-backed) ─────────────────────────────────────────
+
+export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
+  heroTitle: "The Cozy Hook",
+  heroTagline: "Handmade Crochet with Love",
+  featuredProductIds: [
+    "plush-001",
+    "plush-007",
+    "key-007",
+    "acc-001",
+    "decor-006",
+  ],
+  soldOutProductIds: [],
+  bundles: SAMPLE_BUNDLES,
+  pressEntries: [],
+  currentlyCrafting:
+    "currently crafting: strawberry costumed bunny plushies this week! 🌸",
+  productTimers: {},
+  whatsappSubscribers: [],
+};
+
+// Backend timestamps are nanosecond bigints — convert through one shared helper.
+function timestampToDateString(timestamp: bigint): string {
+  const date = new Date(Number(timestamp / 1_000_000n));
+  if (Number.isNaN(date.getTime())) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function computeBundleSavings(bundle: BackendBundle): number {
+  const total = bundle.productIds.reduce(
+    (sum, pid) => sum + (getProductById(pid)?.price ?? 0),
+    0,
+  );
+  return Math.max(0, total - Number(bundle.price));
+}
+
+// Map the backend AdminSettings record to the page-facing shape consumed by
+// pages: productTimers keyed by product id, bundles with savings/isActive.
+function toPageSettings(backend: BackendAdminSettings): AdminSettings {
+  const productTimers: Record<string, { label: string; endDate: string }> = {};
+  for (const timer of backend.productTimers ?? []) {
+    productTimers[timer.productId] = {
+      label: timer.caption,
+      endDate: timestampToDateString(timer.endTimestamp),
+    };
+  }
+  return {
+    heroTitle: backend.heroTitle,
+    heroTagline: backend.heroTagline,
+    featuredProductIds: backend.featuredProductIds ?? [],
+    soldOutProductIds: backend.soldOutProductIds ?? [],
+    bundles: (backend.bundles ?? []).map((b) => ({
+      id: b.id,
+      name: b.name,
+      description: b.description,
+      price: Number(b.price),
+      productIds: b.productIds,
+      savings: computeBundleSavings(b),
+      isActive: true,
+      imageUrl: b.imageUrl,
+      badge: b.badge,
+    })),
+    pressEntries: (backend.pressEntries ?? []).map((e) => ({
+      id: e.id,
+      title: e.title,
+      link: e.url,
+      date: e.date,
+      url: e.url,
+      outlet: e.outlet,
+    })),
+    currentlyCrafting: backend.currentlyCrafting ?? "",
+    productTimers,
+    whatsappSubscribers: backend.whatsappSubscribers ?? [],
+  };
+}
+
+export function useAdminSettings() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery<AdminSettings>({
+    queryKey: ["adminSettings"],
+    queryFn: async () => {
+      if (!actor) return DEFAULT_ADMIN_SETTINGS;
+      return toPageSettings(await actor.getAdminSettings());
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+// ── Products (source catalog) ───────────────────────────────────────────────
 
 export function useProducts() {
   return useQuery<Product[]>({
@@ -37,42 +135,6 @@ export function useProduct(id: string) {
     queryFn: async () => getProductById(id),
     staleTime: Number.POSITIVE_INFINITY,
     enabled: !!id,
-  });
-}
-
-export function useAdminSettings() {
-  return useQuery<AdminSettings>({
-    queryKey: ["adminSettings"],
-    queryFn: async () => {
-      const defaults: AdminSettings = {
-        heroTitle: "The Cozy Hook",
-        heroTagline: "Handmade Crochet with Love",
-        featuredProductIds: [
-          "plush-001",
-          "plush-007",
-          "key-007",
-          "acc-009",
-          "decor-004",
-        ],
-        soldOutProductIds: [],
-        bundles: [],
-        pressEntries: [],
-        currentlyCrafting: "",
-        productTimers: {},
-      };
-      try {
-        const raw = localStorage.getItem("cozy-hook-admin");
-        if (raw)
-          return {
-            ...defaults,
-            ...(JSON.parse(raw) as Partial<AdminSettings>),
-          };
-      } catch {
-        // ignore
-      }
-      return defaults;
-    },
-    staleTime: 30_000,
   });
 }
 

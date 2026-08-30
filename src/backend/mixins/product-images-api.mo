@@ -1,23 +1,23 @@
-import Debug "mo:core/Debug";
 import Map "mo:core/Map";
 import Types "../types/product-images";
+import ProductImagesLib "../lib/product-images";
 
 mixin (productImages : Map.Map<Text, Text>) {
 
-  /// Admin: upload the image URL returned by object-storage for a given product.
-  /// The frontend should call the object-storage uploadFile first, then pass
-  /// the resulting URL here to associate it with the product.
+  /// Admin: associate an image URL with a product. The frontend passes the
+  /// image path/URL (e.g. /assets/products/whale-plushie.jpg) to store as the
+  /// override for that product.
   public func setProductImage(productId : Text, imageUrl : Text) : async () {
-    Debug.todo()
+    ProductImagesLib.setProductImage(productImages, productId, imageUrl);
   };
 
   /// Returns all stored (productId, imageUrl) pairs.
   public query func getProductImages() : async [Types.ProductImage] {
-    Debug.todo()
+    ProductImagesLib.getProductImages(productImages)
   };
 
-  /// Returns the stored image URL for a specific product, or null if none uploaded yet.
+  /// Returns the stored image URL for a specific product, or null if none set.
   public query func getProductImage(productId : Text) : async ?Text {
-    Debug.todo()
+    ProductImagesLib.getProductImage(productImages, productId)
   };
 };

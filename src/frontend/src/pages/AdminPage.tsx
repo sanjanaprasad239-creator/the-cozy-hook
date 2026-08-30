@@ -1,13 +1,18 @@
+import { createActor } from "@/backend";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useActor } from "@caffeineai/core-infrastructure";
 import {
+  AlertTriangle,
   CheckCircle2,
+  CloudOff,
   Eye,
   EyeOff,
   ImageIcon,
+  Loader2,
   Lock,
   LogOut,
   Plus,
@@ -17,12 +22,13 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ALL_PRODUCTS } from "../data/products";
 import { useAdmin } from "../hooks/useAdmin";
-import type { ProductCategory } from "../types/product";
+import { useAdminSettings } from "../hooks/useQueries";
+import type { ProductCategory, WhatsappSubscriber } from "../types/product";
 
 const CATEGORY_ORDER: ProductCategory[] = [
   "plushies",
@@ -39,6 +45,17 @@ const CATEGORY_COLORS: Record<ProductCategory, string> = {
   "home decor": "bg-muted text-muted-foreground",
   accessories: "bg-primary/5 text-primary",
 };
+
+// Backend timestamps are nanosecond bigints — convert through one shared helper.
+function timestampToDateString(timestamp: bigint): string {
+  const date = new Date(Number(timestamp / 1_000_000n));
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 // ── Product Images Storage (localStorage-backed) ────────────────────────────
 const PRODUCT_IMAGES_KEY = "cozy-hook-product-images";
@@ -278,24 +295,18 @@ function ProductImagesSection() {
   );
 }
 
-function WhatsAppSubscribersSection() {
-  const [subscribers, setSubscribers] = useState<
-    { name: string; phone: string; subscribedAt: string }[]
-  >([]);
+function WhatsAppSubscribersSection({
+  subscribers,
+  isLoading,
+  onRemove,
+  onClearAll,
+}: {
+  subscribers: WhatsappSubscriber[];
+  isLoading: boolean;
+  onRemove: (id: string) => void;
+  onClearAll: () => void;
+}) {
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("cozy-hook-whatsapp-optins");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const list = parsed?.state?.subscribers ?? [];
-        setSubscribers(list);
-      }
-    } catch {
-      // ignore parse errors
-    }
-  }, []);
 
   function handleCopyNumbers() {
     const numbers = subscribers.map((s) => s.phone).join(", ");
@@ -313,7 +324,7 @@ function WhatsAppSubscribersSection() {
       className="bg-card border border-border rounded-3xl overflow-hidden shadow-soft"
       data-ocid="admin.whatsapp_subscribers_section"
     >
-      <div className="px-7 py-5 border-b border-border bg-muted/30 flex items-center justify-between">
+      <div className="px-7 py-5 border-b border-border bg-muted/30 flex items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-lg font-semibold text-foreground">
             whatsapp subscribers
@@ -324,27 +335,48 @@ function WhatsAppSubscribersSection() {
           </p>
         </div>
         {subscribers.length > 0 && (
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="rounded-xl font-body gap-1.5 text-xs"
-            onClick={handleCopyNumbers}
-            data-ocid="admin.whatsapp_copy_numbers_button"
-          >
-            {copied ? (
-              <>
-                <CheckCircle2 className="w-3.5 h-3.5 text-primary" /> copied!
-              </>
-            ) : (
-              "copy all numbers"
-            )}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-xl font-body gap-1.5 text-xs"
+              onClick={handleCopyNumbers}
+              data-ocid="admin.whatsapp_copy_numbers_button"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" /> copied!
+                </>
+              ) : (
+                "copy all numbers"
+              )}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="rounded-xl font-body gap-1.5 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              onClick={onClearAll}
+              data-ocid="admin.whatsapp_clear_button"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              clear all
+            </Button>
+          </div>
         )}
       </div>
 
       <div className="px-7 py-6">
-        {subscribers.length === 0 ? (
+        {isLoading ? (
+          <div
+            className="flex items-center justify-center gap-2 py-6 text-muted-foreground"
+            data-ocid="admin.whatsapp_subscribers_loading_state"
+          >
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span className="font-body text-sm">loading subscribers…</span>
+          </div>
+        ) : subscribers.length === 0 ? (
           <p
             className="font-body text-sm text-muted-foreground py-4 text-center"
             data-ocid="admin.whatsapp_subscribers_empty_state"
@@ -365,15 +397,18 @@ function WhatsAppSubscribersSection() {
                   <th className="text-left text-xs text-muted-foreground font-medium pb-2 pr-4">
                     phone
                   </th>
-                  <th className="text-left text-xs text-muted-foreground font-medium pb-2">
+                  <th className="text-left text-xs text-muted-foreground font-medium pb-2 pr-4">
                     subscribed on
+                  </th>
+                  <th className="text-right text-xs text-muted-foreground font-medium pb-2">
+                    <span className="sr-only">actions</span>
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
                 {subscribers.map((s, i) => (
                   <tr
-                    key={s.phone}
+                    key={s.id}
                     className="hover:bg-muted/20 transition-colors"
                     data-ocid={`admin.whatsapp_subscriber.item.${i + 1}`}
                   >
@@ -383,14 +418,19 @@ function WhatsAppSubscribersSection() {
                       )}
                     </td>
                     <td className="py-2.5 pr-4 text-foreground">{s.phone}</td>
-                    <td className="py-2.5 text-muted-foreground text-xs">
-                      {s.subscribedAt
-                        ? new Date(s.subscribedAt).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
-                        : "—"}
+                    <td className="py-2.5 pr-4 text-muted-foreground text-xs">
+                      {timestampToDateString(s.subscribedAt) || "—"}
+                    </td>
+                    <td className="py-2.5 text-right">
+                      <button
+                        type="button"
+                        onClick={() => onRemove(s.id)}
+                        className="p-1.5 text-muted-foreground hover:text-destructive transition-smooth"
+                        aria-label={`Remove ${s.name || s.phone} from subscribers`}
+                        data-ocid={`admin.whatsapp_subscriber_remove.${i + 1}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -400,6 +440,46 @@ function WhatsAppSubscribersSection() {
         )}
       </div>
     </motion.section>
+  );
+}
+
+function SyncStatusPill({
+  hasBackend,
+  fetching,
+  hasError,
+}: {
+  hasBackend: boolean;
+  fetching: boolean;
+  hasError: boolean;
+}) {
+  let label: string;
+  let className: string;
+  let icon: React.ReactNode;
+  if (!hasBackend) {
+    label = "offline — changes won't persist";
+    className = "bg-destructive/8 text-destructive border-destructive/20";
+    icon = <CloudOff className="w-3 h-3" />;
+  } else if (fetching) {
+    label = "syncing with backend…";
+    className = "bg-muted text-muted-foreground border-border";
+    icon = <Loader2 className="w-3 h-3 animate-spin" />;
+  } else if (hasError) {
+    label = "sync error — retrying…";
+    className = "bg-destructive/8 text-destructive border-destructive/20";
+    icon = <AlertTriangle className="w-3 h-3" />;
+  } else {
+    label = "all changes saved to backend";
+    className = "bg-primary/8 text-primary border-primary/20";
+    icon = <CheckCircle2 className="w-3 h-3" />;
+  }
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 font-body text-xs px-2.5 py-1 rounded-full border ${className}`}
+      data-ocid="admin.sync_status"
+    >
+      {icon}
+      {label}
+    </span>
   );
 }
 
@@ -421,7 +501,13 @@ export function AdminPage() {
     updateCurrentlyCrafting,
     setProductTimer,
     removeProductTimer,
+    setWhatsappSubscribers,
   } = useAdmin();
+
+  // Backend availability + settings sync state (shared query, deduped).
+  const { actor } = useActor(createActor);
+  const { isFetching: settingsFetching, isError: settingsError } =
+    useAdminSettings();
 
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -448,6 +534,21 @@ export function AdminPage() {
 
   // Currently crafting
   const [craftingText, setCraftingText] = useState(settings.currentlyCrafting);
+
+  // Hydrate form drafts once from backend-loaded settings. Settings arrive
+  // asynchronously, so initialize the drafts when the settings object changes
+  // from the initial default — never overwrite a draft the user is editing.
+  const initialSettingsRef = useRef(settings);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    if (hydrated) return;
+    if (settings === initialSettingsRef.current) return;
+    setHeroTitle(settings.heroTitle);
+    setHeroTagline(settings.heroTagline);
+    setSelectedIds(settings.featuredProductIds);
+    setCraftingText(settings.currentlyCrafting);
+    setHydrated(true);
+  }, [settings, hydrated]);
 
   // Timer
   const [newTimer, setNewTimer] = useState({
@@ -534,6 +635,17 @@ export function AdminPage() {
     toast.success("Timer set!");
   }
 
+  function handleRemoveSubscriber(id: string) {
+    const next = settings.whatsappSubscribers.filter((s) => s.id !== id);
+    setWhatsappSubscribers(next);
+    toast.success("Subscriber removed.");
+  }
+
+  function handleClearSubscribers() {
+    setWhatsappSubscribers([]);
+    toast.success("Subscriber list cleared.");
+  }
+
   // ─── Login Screen ─────────────────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
@@ -547,12 +659,7 @@ export function AdminPage() {
           <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-secondary/10 blur-3xl" />
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          className="relative bg-card border border-border rounded-3xl shadow-boutique-lg p-10 w-full max-w-sm"
-        >
+        <div className="relative bg-card border border-border rounded-3xl shadow-boutique-lg p-10 w-full max-w-sm">
           {/* Logo area */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -603,19 +710,14 @@ export function AdminPage() {
               </div>
             </div>
 
-            <AnimatePresence>
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-sm font-body text-destructive bg-destructive/8 px-3 py-2 rounded-lg"
-                  data-ocid="admin.login_error_state"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </AnimatePresence>
+            {error && (
+              <p
+                className="text-sm font-body text-destructive bg-destructive/8 px-3 py-2 rounded-lg"
+                data-ocid="admin.login_error_state"
+              >
+                {error}
+              </p>
+            )}
 
             <Button
               type="submit"
@@ -630,7 +732,7 @@ export function AdminPage() {
           <p className="text-center text-xs text-muted-foreground mt-6 font-body">
             This area is restricted to the shop owner.
           </p>
-        </motion.div>
+        </div>
       </div>
     );
   }
@@ -648,7 +750,7 @@ export function AdminPage() {
     >
       {/* Dashboard Header */}
       <div className="bg-card border-b border-border sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-primary" />
@@ -662,17 +764,24 @@ export function AdminPage() {
               </p>
             </div>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="rounded-xl font-body gap-2"
-            onClick={logout}
-            data-ocid="admin.logout_button"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <SyncStatusPill
+              hasBackend={!!actor}
+              fetching={settingsFetching}
+              hasError={settingsError}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-xl font-body gap-2"
+              onClick={logout}
+              data-ocid="admin.logout_button"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Logout
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -1312,7 +1421,12 @@ export function AdminPage() {
         </motion.section>
 
         {/* Section 9 — WhatsApp Subscribers */}
-        <WhatsAppSubscribersSection />
+        <WhatsAppSubscribersSection
+          subscribers={settings.whatsappSubscribers}
+          isLoading={settingsFetching}
+          onRemove={handleRemoveSubscriber}
+          onClearAll={handleClearSubscribers}
+        />
 
         {/* Save Bar */}
         <motion.div

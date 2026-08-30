@@ -1,3 +1,19 @@
+type WhatsappSubscriber = 
+ record {
+   id: text;
+   name: text;
+   phone: text;
+   subscribedAt: int;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
 type Review = 
  record {
    authorName: text;
@@ -6,6 +22,22 @@ type Review =
    rating: nat;
    reviewText: text;
    timestamp: int;
+ };
+type Result = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type ProductTimer = 
+ record {
+   caption: text;
+   endTimestamp: int;
+   productId: text;
+ };
+type ProductImage = 
+ record {
+   imageUrl: text;
+   productId: text;
  };
 type Product = 
  record {
@@ -17,23 +49,64 @@ type Product =
    name: text;
    price: nat;
  };
+type PressEntry = 
+ record {
+   date: text;
+   id: text;
+   outlet: text;
+   title: text;
+   url: text;
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+type Bundle = 
+ record {
+   badge: text;
+   description: text;
+   id: text;
+   imageUrl: text;
+   name: text;
+   price: nat;
+   productIds: vec text;
+ };
 type AdminSettings = 
  record {
+   bundles: vec Bundle;
+   currentlyCrafting: text;
    featuredProductIds: vec text;
    heroTagline: text;
    heroTitle: text;
+   pressEntries: vec PressEntry;
+   productTimers: vec ProductTimer;
+   soldOutProductIds: vec text;
+   whatsappSubscribers: vec WhatsappSubscriber;
  };
 service : {
   addReview: (productId: text, rating: nat, reviewText: text, authorName:
    text) -> (nat);
   adminLogin: (password: text) -> (bool);
   deleteReview: (reviewId: nat, adminPassword: text) -> (bool);
+  execute: (qJson: text) -> (Result) query;
   getAdminSettings: () -> (AdminSettings) query;
   getAllReviews: () -> (vec Review) query;
+  getApiDoc: () -> (text) query;
   getProductById: (id: text) -> (opt Product) query;
+  getProductImage: (productId: text) -> (opt text) query;
+  getProductImages: () -> (vec ProductImage) query;
   getProducts: () -> (vec Product) query;
   getProductsByCategory: (category: text) -> (vec Product) query;
   getReviewsByProduct: (productId: text) -> (vec Review) query;
+  schema: () -> (text) query;
+  setBundles: (bundles: vec Bundle) -> ();
+  setCurrentlyCrafting: ("text": text) -> ();
   setFeaturedProducts: (ids: vec text) -> ();
+  setPressEntries: (entries: vec PressEntry) -> ();
+  setProductImage: (productId: text, imageUrl: text) -> ();
+  setProductTimers: (timers: vec ProductTimer) -> ();
+  setSoldOutProducts: (ids: vec text) -> ();
+  setWhatsappSubscribers: (subscribers: vec WhatsappSubscriber) -> ();
   updateHeroText: (title: text, tagline: text) -> ();
 }
