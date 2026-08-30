@@ -15,7 +15,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Approx. 18 cm long",
       "Hypoallergenic stuffing",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/whale-plushie.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
