@@ -31,7 +31,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Durable cotton yarn",
       "Approx. 22 cm",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/octopus-plushie.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
@@ -47,7 +47,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Approx. 19 cm tall",
       "Safe wire-free construction",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/bear-plushie.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
@@ -63,7 +63,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Approx. 17 cm",
       "Hypoallergenic fill",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/frog-plushie.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
@@ -79,7 +79,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Approx. 20 cm tall",
       "Collector's edition colourway",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/cowboy-duck-plushie.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
@@ -95,7 +95,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Embroidered nose & eyes",
       "Approx. 20 cm tall",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/bear-plushie.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
@@ -111,7 +111,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Approx. 21 cm",
       "Extra huggable design",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/strawberry-bunny.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
     isNew: true,
   },
@@ -130,7 +130,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Gold-tone ring",
       "Approx. 7 cm with ring",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/mini-bouquet-keychain.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
@@ -243,7 +243,7 @@ export const ALL_PRODUCTS: Product[] = [
       "Stainless steel clasp",
       "Approx. 5 cm",
     ],
-    imagePath: "/assets/generated/hero-crochet.dim_1600x900.jpg",
+    imagePath: "/assets/products/heart-keychain.jpg",
     pictureUrl: "https://the-cozy-hook.my.canva.site/product-images",
   },
   {
