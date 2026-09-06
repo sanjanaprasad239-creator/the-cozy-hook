@@ -1,5 +1,5 @@
-import { r as reactExports, j as jsxRuntimeExports, d as cn } from "./index-BoTxUwZ-.js";
-import { P as Primitive } from "./textarea-DWxEL2Ol.js";
+import { r as reactExports, j as jsxRuntimeExports, d as cn } from "./index-DyHb857Q.js";
+import { P as Primitive } from "./textarea-Ci4bRYP3.js";
 var NAME = "Separator";
 var DEFAULT_ORIENTATION = "horizontal";
 var ORIENTATIONS = ["horizontal", "vertical"];

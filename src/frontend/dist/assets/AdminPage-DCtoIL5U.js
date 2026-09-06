@@ -1,12 +1,12 @@
-import { a as createLucideIcon, r as reactExports, j as jsxRuntimeExports, B as Button, m as motion, n as CircleCheck } from "./index-BoTxUwZ-.js";
-import { u as useAdmin, e as useActor, f as useAdminSettings, A as ALL_PRODUCTS, h as createActor } from "./useAdmin-B3vJ_ioq.js";
-import { F } from "./useAdmin-B3vJ_ioq.js";
-import { L as Label, I as Input, T as Textarea } from "./textarea-DWxEL2Ol.js";
-import { S as Separator } from "./separator-Dfm9D-Qb.js";
-import { u as ue } from "./index-BBHuiaQf.js";
-import { T as Trash2 } from "./trash-2-Crps7xDJ.js";
-import { P as Plus } from "./plus-DjR5uMEn.js";
-import { R as RotateCcw } from "./rotate-ccw-CnkwbR3R.js";
+import { a as createLucideIcon, r as reactExports, j as jsxRuntimeExports, B as Button, m as motion, n as CircleCheck } from "./index-DyHb857Q.js";
+import { u as useAdmin, e as useActor, f as useAdminSettings, A as ALL_PRODUCTS, h as createActor } from "./useAdmin-BbfrO95Z.js";
+import { F } from "./useAdmin-BbfrO95Z.js";
+import { L as Label, I as Input, T as Textarea } from "./textarea-Ci4bRYP3.js";
+import { S as Separator } from "./separator-6g5LNLUs.js";
+import { u as ue } from "./index-BCFOUiys.js";
+import { T as Trash2 } from "./trash-2-m98MTh1F.js";
+import { P as Plus } from "./plus-DT5yqPje.js";
+import { R as RotateCcw } from "./rotate-ccw-CYXKItP6.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -571,7 +571,7 @@ function AdminPage() {
     removeProductTimer,
     setWhatsappSubscribers
   } = useAdmin();
-  const { actor } = useActor(createActor);
+  const { actor, isFetching: actorFetching } = useActor(createActor);
   const { isFetching: settingsFetching, isError: settingsError } = useAdminSettings();
   const [password, setPassword] = reactExports.useState("");
   const [showPass, setShowPass] = reactExports.useState(false);
@@ -747,9 +747,9 @@ function AdminPage() {
                 {
                   type: "submit",
                   className: "w-full rounded-xl font-body h-11",
-                  disabled: isLoading || !password,
+                  disabled: isLoading || !password || actorFetching,
                   "data-ocid": "admin.login_submit_button",
-                  children: isLoading ? "Verifying…" : "Login"
+                  children: isLoading ? "Verifying…" : actorFetching ? "Connecting…" : "Login"
                 }
               )
             ] }),

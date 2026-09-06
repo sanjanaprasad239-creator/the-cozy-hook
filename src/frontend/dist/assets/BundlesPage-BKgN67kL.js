@@ -1,5 +1,5 @@
-import { j as jsxRuntimeExports, m as motion, L as Link } from "./index-BoTxUwZ-.js";
-import { u as useAdmin, A as ALL_PRODUCTS } from "./useAdmin-B3vJ_ioq.js";
+import { j as jsxRuntimeExports, m as motion, L as Link } from "./index-DyHb857Q.js";
+import { u as useAdmin, A as ALL_PRODUCTS } from "./useAdmin-BbfrO95Z.js";
 const WA_NUMBER = "918660099085";
 function buildWaLink(bundleName, items) {
   const msg = [

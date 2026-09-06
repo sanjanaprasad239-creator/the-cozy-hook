@@ -7,7 +7,7 @@ var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot
 var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
 var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
 var _client, _currentQuery, _currentQueryInitialState, _currentResult, _currentResultState, _currentResultOptions, _currentThenable, _selectError, _selectFn, _selectResult, _lastQueryWithDefinedData, _staleTimeoutId, _refetchIntervalId, _currentRefetchInterval, _trackedProps, _QueryObserver_instances, executeFetch_fn, updateStaleTimeout_fn, computeRefetchInterval_fn, updateRefetchInterval_fn, updateTimers_fn, clearStaleTimeout_fn, clearRefetchInterval_fn, updateQuery_fn, notify_fn, _a, _client2, _currentResult2, _currentMutation, _mutateOptions, _MutationObserver_instances, updateResult_fn, notify_fn2, _b;
-import { P as ProtocolError, T as TimeoutWaitingForResponseErrorCode, t as utf8ToBytes, w as ExternalError, x as MissingRootKeyErrorCode, y as Certificate, z as lookupResultToBuffer, R as RequestStatusResponseStatus, U as UnknownError, G as RequestStatusDoneNoReplyErrorCode, I as RejectError, J as CertifiedRejectErrorCode, K as UNREACHABLE_ERROR, N as InputError, O as InvalidReadStateRequestErrorCode, Q as ReadRequestType, V as Principal, Y as IDL, Z as MissingCanisterIdErrorCode, _ as HttpAgent, $ as encode, a0 as QueryResponseStatus, a1 as UncertifiedRejectErrorCode, a2 as isV3ResponseBody, a3 as isV2ResponseBody, a4 as UncertifiedRejectUpdateErrorCode, a5 as UnexpectedErrorCode, a6 as decode, a7 as Subscribable, a8 as pendingThenable, a9 as resolveEnabled, aa as shallowEqualObjects, ab as resolveStaleTime, ac as noop, ad as environmentManager, ae as isValidTimeout, af as timeUntilStale, ag as timeoutManager, ah as focusManager, ai as fetchState, aj as replaceData, ak as notifyManager, al as hashKey, am as getDefaultState, r as reactExports, an as shouldThrowError, ao as useQueryClient, ap as useInternetIdentity, aq as createActorWithConfig, ar as Variant, as as Record, at as Vec, au as Service, av as Func, aw as Text, ax as Opt, ay as Null, az as Bool, aA as Float64, aB as Nat, aC as Int } from "./index-BoTxUwZ-.js";
+import { P as ProtocolError, T as TimeoutWaitingForResponseErrorCode, t as utf8ToBytes, w as ExternalError, x as MissingRootKeyErrorCode, y as Certificate, z as lookupResultToBuffer, R as RequestStatusResponseStatus, U as UnknownError, G as RequestStatusDoneNoReplyErrorCode, I as RejectError, J as CertifiedRejectErrorCode, K as UNREACHABLE_ERROR, N as InputError, O as InvalidReadStateRequestErrorCode, Q as ReadRequestType, V as Principal, Y as IDL, Z as MissingCanisterIdErrorCode, _ as HttpAgent, $ as encode, a0 as QueryResponseStatus, a1 as UncertifiedRejectErrorCode, a2 as isV3ResponseBody, a3 as isV2ResponseBody, a4 as UncertifiedRejectUpdateErrorCode, a5 as UnexpectedErrorCode, a6 as decode, a7 as Subscribable, a8 as pendingThenable, a9 as resolveEnabled, aa as shallowEqualObjects, ab as resolveStaleTime, ac as noop, ad as environmentManager, ae as isValidTimeout, af as timeUntilStale, ag as timeoutManager, ah as focusManager, ai as fetchState, aj as replaceData, ak as notifyManager, al as hashKey, am as getDefaultState, r as reactExports, an as shouldThrowError, ao as useQueryClient, ap as useInternetIdentity, aq as createActorWithConfig, ar as Variant, as as Record, at as Vec, au as Service, av as Func, aw as Text, ax as Opt, ay as Null, az as Bool, aA as Float64, aB as Nat, aC as Int } from "./index-DyHb857Q.js";
 const FIVE_MINUTES_IN_MSEC = 5 * 60 * 1e3;
 function defaultStrategy() {
   return chain(conditionalDelay(once(), 1e3), backoff(1e3, 1.2), timeout(FIVE_MINUTES_IN_MSEC));
@@ -2574,7 +2574,7 @@ function toBackendTimers(timers) {
   }));
 }
 function useAdmin() {
-  const { actor } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActor);
   const queryClient = useQueryClient();
   const [settings, setSettings] = reactExports.useState(
     DEFAULT_ADMIN_SETTINGS
@@ -2586,6 +2586,10 @@ function useAdmin() {
   reactExports.useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
+  const actorRef = reactExports.useRef(actor);
+  reactExports.useEffect(() => {
+    actorRef.current = actor;
+  }, [actor]);
   const { data: backendSettings } = useAdminSettings();
   reactExports.useEffect(() => {
     if (backendSettings) setSettings(backendSettings);
@@ -2607,11 +2611,23 @@ function useAdmin() {
       setIsLoading(true);
       setError(null);
       try {
-        if (!actor) {
+        if (!actor && isFetching) {
+          await new Promise((resolve) => {
+            const check = () => {
+              if (actorRef.current) {
+                resolve();
+              } else {
+                setTimeout(check, 50);
+              }
+            };
+            check();
+          });
+        }
+        if (!actorRef.current) {
           setError("Backend is not available yet. Please try again later.");
           return false;
         }
-        const ok = await actor.adminLogin(password);
+        const ok = await actorRef.current.adminLogin(password);
         if (ok) {
           setIsAuthenticated(true);
         } else {
@@ -2625,7 +2641,7 @@ function useAdmin() {
         setIsLoading(false);
       }
     },
-    [actor]
+    [actor, isFetching]
   );
   const logout = reactExports.useCallback(() => {
     setIsAuthenticated(false);

@@ -505,7 +505,7 @@ export function AdminPage() {
   } = useAdmin();
 
   // Backend availability + settings sync state (shared query, deduped).
-  const { actor } = useActor(createActor);
+  const { actor, isFetching: actorFetching } = useActor(createActor);
   const { isFetching: settingsFetching, isError: settingsError } =
     useAdminSettings();
 
@@ -722,10 +722,14 @@ export function AdminPage() {
             <Button
               type="submit"
               className="w-full rounded-xl font-body h-11"
-              disabled={isLoading || !password}
+              disabled={isLoading || !password || actorFetching}
               data-ocid="admin.login_submit_button"
             >
-              {isLoading ? "Verifying…" : "Login"}
+              {isLoading
+                ? "Verifying…"
+                : actorFetching
+                  ? "Connecting…"
+                  : "Login"}
             </Button>
           </form>
 

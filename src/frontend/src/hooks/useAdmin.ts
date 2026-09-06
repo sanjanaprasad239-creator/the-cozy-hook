@@ -56,7 +56,7 @@ function toBackendTimers(
 }
 
 export function useAdmin() {
-  const { actor } = useActor(createActor);
+  const { actor, isFetching } = useActor(createActor);
   const queryClient = useQueryClient();
   const [settings, setSettings] = useState<AdminSettings>(
     DEFAULT_ADMIN_SETTINGS,
@@ -71,6 +71,13 @@ export function useAdmin() {
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
+
+  // Keep the latest actor available to the login readiness poll without
+  // re-creating the callback on every actor change.
+  const actorRef = useRef(actor);
+  useEffect(() => {
+    actorRef.current = actor;
+  }, [actor]);
 
   // Load settings from the backend canister (shared query key with
   // useAdminSettings). Falls back to defaults while the actor is unavailable so
@@ -98,11 +105,26 @@ export function useAdmin() {
       setIsLoading(true);
       setError(null);
       try {
-        if (!actor) {
+        // The actor is created asynchronously by useActor(createActor). If it
+        // is still initializing, wait for it to become available instead of
+        // surfacing a hard "backend not available" error.
+        if (!actor && isFetching) {
+          await new Promise<void>((resolve) => {
+            const check = () => {
+              if (actorRef.current) {
+                resolve();
+              } else {
+                setTimeout(check, 50);
+              }
+            };
+            check();
+          });
+        }
+        if (!actorRef.current) {
           setError("Backend is not available yet. Please try again later.");
           return false;
         }
-        const ok = await actor.adminLogin(password);
+        const ok = await actorRef.current.adminLogin(password);
         if (ok) {
           setIsAuthenticated(true);
         } else {
@@ -116,7 +138,7 @@ export function useAdmin() {
         setIsLoading(false);
       }
     },
-    [actor],
+    [actor, isFetching],
   );
 
   const logout = useCallback(() => {

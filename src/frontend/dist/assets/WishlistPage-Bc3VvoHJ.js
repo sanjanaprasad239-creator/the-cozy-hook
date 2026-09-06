@@ -1,8 +1,8 @@
-import { g as useWishlist, u as useNavigate, j as jsxRuntimeExports, m as motion, H as Heart, B as Button, L as Link, A as AnimatePresence } from "./index-BoTxUwZ-.js";
-import { P as ProductCard } from "./ProductCard-CNdAoURi.js";
-import { T as Trash2 } from "./trash-2-Crps7xDJ.js";
-import "./useAdmin-B3vJ_ioq.js";
-import "./plus-DjR5uMEn.js";
+import { g as useWishlist, u as useNavigate, j as jsxRuntimeExports, m as motion, H as Heart, B as Button, L as Link, A as AnimatePresence } from "./index-DyHb857Q.js";
+import { P as ProductCard } from "./ProductCard-C4y1rsHU.js";
+import { T as Trash2 } from "./trash-2-m98MTh1F.js";
+import "./useAdmin-BbfrO95Z.js";
+import "./plus-DT5yqPje.js";
 function WishlistPage() {
   const { wishlistItems, removeFromWishlist, clearWishlist } = useWishlist();
   const navigate = useNavigate();

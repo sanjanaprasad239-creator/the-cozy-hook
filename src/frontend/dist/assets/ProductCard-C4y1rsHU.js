@@ -1,6 +1,6 @@
-import { r as reactExports, f as useCart, g as useWishlist, j as jsxRuntimeExports, m as motion, H as Heart, B as Button, S as ShoppingBag } from "./index-BoTxUwZ-.js";
-import { u as useAdmin } from "./useAdmin-B3vJ_ioq.js";
-import { P as Plus } from "./plus-DjR5uMEn.js";
+import { r as reactExports, f as useCart, g as useWishlist, j as jsxRuntimeExports, m as motion, H as Heart, B as Button, S as ShoppingBag } from "./index-DyHb857Q.js";
+import { u as useAdmin } from "./useAdmin-BbfrO95Z.js";
+import { P as Plus } from "./plus-DT5yqPje.js";
 const STORAGE_KEY = "cozy-hook-product-images";
 function readFromStorage() {
   try {
