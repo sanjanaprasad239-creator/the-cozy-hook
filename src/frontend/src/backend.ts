@@ -94,6 +94,10 @@ export interface Bundle {
     badge: string;
     price: bigint;
 }
+export interface BackInStockSubscription {
+    subscribedAt: bigint;
+    email: string;
+}
 export interface AdminSettings {
     currentlyCrafting: string;
     whatsappSubscribers: Array<WhatsappSubscriber>;
@@ -147,12 +151,14 @@ export interface backendInterface {
     getAdminSettings(): Promise<AdminSettings>;
     getAllReviews(): Promise<Array<Review>>;
     getApiDoc(): Promise<string>;
+    getBackInStockSubscribers(productId: string): Promise<Array<BackInStockSubscription>>;
     getProductById(id: string): Promise<Product | null>;
     getProductImage(productId: string): Promise<string | null>;
     getProductImages(): Promise<Array<ProductImage>>;
     getProducts(): Promise<Array<Product>>;
     getProductsByCategory(category: string): Promise<Array<Product>>;
     getReviewsByProduct(productId: string): Promise<Array<Review>>;
+    notifyBackInStock(productId: string, adminPassword: string): Promise<void>;
     schema(): Promise<string>;
     setBundles(bundles: Array<Bundle>): Promise<void>;
     setCurrentlyCrafting(text: string): Promise<void>;
@@ -162,6 +168,7 @@ export interface backendInterface {
     setProductTimers(timers: Array<ProductTimer>): Promise<void>;
     setSoldOutProducts(ids: Array<string>): Promise<void>;
     setWhatsappSubscribers(subscribers: Array<WhatsappSubscriber>): Promise<void>;
+    subscribeBackInStock(productId: string, email: string): Promise<void>;
     updateHeroText(title: string, tagline: string): Promise<void>;
 }
 import type { Cell as _Cell, Product as _Product, Result as _Result, Value as _Value } from "./declarations/backend.did.d.ts";
@@ -265,6 +272,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getBackInStockSubscribers(arg0: string): Promise<Array<BackInStockSubscription>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getBackInStockSubscribers(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getBackInStockSubscribers(arg0);
+            return result;
+        }
+    }
     async getProductById(arg0: string): Promise<Product | null> {
         if (this.processError) {
             try {
@@ -346,6 +367,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getReviewsByProduct(arg0);
+            return result;
+        }
+    }
+    async notifyBackInStock(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.notifyBackInStock(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.notifyBackInStock(arg0, arg1);
             return result;
         }
     }
@@ -472,6 +507,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.setWhatsappSubscribers(arg0);
+            return result;
+        }
+    }
+    async subscribeBackInStock(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.subscribeBackInStock(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.subscribeBackInStock(arg0, arg1);
             return result;
         }
     }

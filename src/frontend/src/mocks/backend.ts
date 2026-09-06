@@ -193,4 +193,8 @@ export const mockBackend: backendInterface = {
   schema: async () => "",
   execute: async (_qJson: string) => ({ hasMore: false, rows: [] }),
   getApiDoc: async () => "",
+  subscribeBackInStock: async (_productId: string, _email: string) => undefined,
+  getBackInStockSubscribers: async (_productId: string) => [],
+  notifyBackInStock: async (_productId: string, _adminPassword: string) =>
+    undefined,
 };

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { AddToCartConfetti } from "./AddToCartConfetti";
 import { ChatAssistant } from "./ChatAssistant";
 import { Footer } from "./Footer";
+import { HeartCursorTrail } from "./HeartCursorTrail";
 import { Navbar } from "./Navbar";
 
 interface LayoutProps {
@@ -14,6 +16,8 @@ export function Layout({ children }: LayoutProps) {
       <main className="flex-1">{children}</main>
       <Footer />
       <ChatAssistant />
+      <HeartCursorTrail />
+      <AddToCartConfetti />
     </div>
   );
 }

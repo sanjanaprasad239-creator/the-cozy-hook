@@ -10,9 +10,11 @@ import NatValue "mo:caffeineai-oql/NatValue";
 import TextValue "mo:caffeineai-oql/TextValue";
 import IntValue "mo:caffeineai-oql/IntValue";
 import Types "types/admin-settings";
+import BackInStockTypes "types/back-in-stock";
 import AdminSettingsApi "mixins/admin-settings-api";
 import ReviewsApi "mixins/reviews-api";
 import ProductImagesApi "mixins/product-images-api";
+import BackInStockApi "mixins/back-in-stock-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -49,9 +51,12 @@ actor {
 
   let productImages : Map.Map<Text, Text>;
 
+  let backInStockSubscriptions : Map.Map<Text, List.List<BackInStockTypes.BackInStockSubscription>>;
+
   include AdminSettingsApi(adminSettings);
   include ReviewsApi(reviews, reviewCounter);
   include ProductImagesApi(productImages);
+  include BackInStockApi(backInStockSubscriptions);
 
   // ─── OQL exposure ─────────────────────────────────────────────────────────
   // Every persisted collection that holds queryable data is exposed as an OQL

@@ -60,6 +60,22 @@
     --sidebar-accent-foreground: 0.22 0.02 40;
     --sidebar-border: 0.88 0.015 70;
     --sidebar-ring: 0.72 0.09 5;
+
+    /* ---- new feature tokens (extend, never replace) ---- */
+    /* soft pastel dusty rose — heart trail, confetti petals, ribbons */
+    --rose-soft: 0.82 0.06 5;
+    --rose-pale: 0.9 0.04 5;
+    /* soft pastel sage — heart trail alt, category banners, care guide */
+    --sage-soft: 0.82 0.05 145;
+    --sage-pale: 0.9 0.04 145;
+    /* warm beige tint for printable card surfaces */
+    --beige-soft: 0.93 0.016 70;
+    /* success — loyalty points, order confirmation */
+    --success: 0.62 0.09 145;
+    --success-foreground: 0.98 0.005 40;
+    /* warning — live "viewing" indicator */
+    --warning: 0.78 0.08 75;
+    --warning-foreground: 0.22 0.02 40;
   }
 
   * {
@@ -135,6 +151,267 @@
 
   .shadow-soft {
     box-shadow: 0 2px 8px rgba(58, 58, 58, 0.04);
+  }
+
+  /* ---- new feature utilities ---- */
+
+  /* heart cursor trail particle */
+  .heart-trail-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 60;
+    font-size: 16px;
+    line-height: 1;
+    will-change: transform, opacity;
+    animation: heart-trail 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  }
+
+  /* soft pastel confetti / petal burst on add-to-cart */
+  .petal-burst-particle {
+    position: absolute;
+    pointer-events: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50% 50% 50% 50%;
+    will-change: transform, opacity;
+    animation: petal-burst 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+  }
+  .petal-burst-particle.petal {
+    border-radius: 60% 40% 55% 45% / 55% 50% 50% 45%;
+  }
+
+  /* new arrivals ribbon badge */
+  .ribbon-new {
+    position: absolute;
+    top: 0.75rem;
+    left: -2rem;
+    transform: rotate(-45deg);
+    transform-origin: center;
+    background: linear-gradient(135deg, oklch(0.82 0.06 5), oklch(0.9 0.04 5));
+    color: oklch(0.22 0.02 40);
+    padding: 0.3rem 2.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+    box-shadow: 0 2px 6px rgba(58, 58, 58, 0.14);
+    animation: ribbon-shimmer 3s ease-in-out infinite;
+  }
+
+  /* live "X people viewing this" indicator */
+  .live-viewing {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: oklch(0.5 0.02 40);
+  }
+  .live-viewing .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: oklch(0.62 0.09 145);
+    animation: live-pulse 1.6s ease-in-out infinite;
+  }
+
+  /* loyalty points badge */
+  .loyalty-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 9999px;
+    background: oklch(0.9 0.04 145);
+    color: oklch(0.3 0.04 145);
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background-image: linear-gradient(
+      110deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 45%,
+      transparent 60%
+    );
+    background-size: 200% 100%;
+    animation: loyalty-shimmer 3.5s ease-in-out infinite;
+  }
+
+  /* printable care guide / product card */
+  .printable-card {
+    background: oklch(0.995 0.005 75);
+    border: 1px solid oklch(0.88 0.015 70);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+  .printable-card h3 {
+    font-family: var(--font-display);
+    margin-bottom: 0.5rem;
+  }
+  .printable-card table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .printable-card th,
+  .printable-card td {
+    border: 1px solid oklch(0.88 0.015 70);
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-size: 0.85rem;
+  }
+  .printable-card th {
+    background: oklch(0.9 0.018 70);
+    font-weight: 600;
+  }
+
+  /* printable care guide sheet layout */
+  .printable-sheet {
+    color: #000;
+    font-family: var(--font-body);
+  }
+  .printable-sheet-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .printable-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  .printable-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .printable-tagline {
+    font-size: 0.75rem;
+    max-width: 22rem;
+    text-align: right;
+  }
+  .printable-section {
+    margin-bottom: 1.25rem;
+  }
+  .printable-section-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-bottom: 1px solid #000;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .printable-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .printable-block {
+    margin-top: 0.6rem;
+  }
+  .printable-block-title {
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+  .printable-block ul {
+    margin: 0;
+    padding-left: 1rem;
+  }
+  .printable-block li {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    margin-bottom: 0.15rem;
+  }
+  .printable-tip {
+    font-size: 0.75rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+  .printable-product-card {
+    max-width: 100%;
+  }
+  .printable-product-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .printable-product-sub {
+    font-size: 0.75rem;
+    margin: 0;
+  }
+  .printable-product-note {
+    font-size: 0.72rem;
+    max-width: 16rem;
+    text-align: right;
+  }
+  .printable-product-foot {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+}
+
+/* ---- new feature keyframes ---- */
+
+@keyframes heart-trail {
+  0% {
+    transform: translate(0, 0) scale(0.6) rotate(-10deg);
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(0, -46px) scale(1) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+@keyframes petal-burst {
+  0% {
+    transform: translate(0, 0) scale(0.4) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx, 0), var(--ty, -90px)) scale(1)
+      rotate(var(--tr, 120deg));
+    opacity: 0;
+  }
+}
+
+@keyframes ribbon-shimmer {
+  0%,
+  100% {
+    box-shadow: 0 2px 6px rgba(58, 58, 58, 0.14);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(58, 58, 58, 0.24);
+  }
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.62 0.09 145 / 0.55);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 5px oklch(0.62 0.09 145 / 0);
+    transform: scale(1.15);
+  }
+}
+
+@keyframes loyalty-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 

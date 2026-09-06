@@ -48,6 +48,10 @@ export interface Bundle {
     badge: string;
     price: bigint;
 }
+export interface BackInStockSubscription {
+    subscribedAt: bigint;
+    email: string;
+}
 export interface AdminSettings {
     currentlyCrafting: string;
     whatsappSubscribers: Array<WhatsappSubscriber>;
@@ -101,12 +105,14 @@ export interface backendInterface {
     getAdminSettings(): Promise<AdminSettings>;
     getAllReviews(): Promise<Array<Review>>;
     getApiDoc(): Promise<string>;
+    getBackInStockSubscribers(productId: string): Promise<Array<BackInStockSubscription>>;
     getProductById(id: string): Promise<Product | null>;
     getProductImage(productId: string): Promise<string | null>;
     getProductImages(): Promise<Array<ProductImage>>;
     getProducts(): Promise<Array<Product>>;
     getProductsByCategory(category: string): Promise<Array<Product>>;
     getReviewsByProduct(productId: string): Promise<Array<Review>>;
+    notifyBackInStock(productId: string, adminPassword: string): Promise<void>;
     schema(): Promise<string>;
     setBundles(bundles: Array<Bundle>): Promise<void>;
     setCurrentlyCrafting(text: string): Promise<void>;
@@ -116,5 +122,6 @@ export interface backendInterface {
     setProductTimers(timers: Array<ProductTimer>): Promise<void>;
     setSoldOutProducts(ids: Array<string>): Promise<void>;
     setWhatsappSubscribers(subscribers: Array<WhatsappSubscriber>): Promise<void>;
+    subscribeBackInStock(productId: string, email: string): Promise<void>;
     updateHeroText(title: string, tagline: string): Promise<void>;
 }

@@ -21,6 +21,13 @@ import {
   useCart,
   useCartTotals,
 } from "../hooks/useCart";
+import {
+  LOYALTY_REDEEM_POINTS,
+  LOYALTY_REDEEM_VALUE,
+  discountForPoints,
+  pointsForOrder,
+  useLoyaltyPointsStore,
+} from "../hooks/useLoyaltyPoints";
 import { useOrderHistory } from "../hooks/useOrderHistory";
 import type { CartItem } from "../types/product";
 
@@ -59,6 +66,7 @@ function buildFullWhatsAppMessage(
   total: number,
   form: OrderForm,
   giftWrapping: boolean,
+  loyaltyDiscount: number,
 ): string {
   const itemLines = items.map(
     (item) =>
@@ -80,6 +88,9 @@ function buildFullWhatsAppMessage(
     `subtotal: ₹${subtotal}`,
     delivery === 0 ? "delivery: free 🎉" : `delivery: ₹${delivery}`,
     ...(giftWrapping ? [`gift wrapping: ₹${GIFT_WRAP_CHARGE} 🎁`] : []),
+    ...(loyaltyDiscount > 0
+      ? [`loyalty discount: -₹${loyaltyDiscount} ✨`]
+      : []),
     `*total: ₹${total}*`,
     "",
     ...(form.deliveryDate
@@ -151,12 +162,20 @@ export function CartPage() {
   const { subtotal, delivery, itemCount } = useCartTotals();
   const navigate = useNavigate();
   const saveOrder = useOrderHistory((s) => s.saveOrder);
+  const loyaltyPoints = useLoyaltyPointsStore((s) => s.points);
+  const redeemLoyalty = useLoyaltyPointsStore((s) => s.redeem);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
   const [saveDetails, setSaveDetails] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
   const [giftWrapping, setGiftWrapping] = useState(false);
+  const [redeemLoyaltyOn, setRedeemLoyaltyOn] = useState(false);
   const giftWrapCharge = giftWrapping ? GIFT_WRAP_CHARGE : 0;
-  const total = subtotal + delivery + giftWrapCharge;
+  const preDiscountTotal = subtotal + delivery + giftWrapCharge;
+  const loyaltyDiscount = redeemLoyaltyOn
+    ? Math.min(discountForPoints(loyaltyPoints), preDiscountTotal)
+    : 0;
+  const total = preDiscountTotal - loyaltyDiscount;
+  const pointsEarned = pointsForOrder(preDiscountTotal);
   const [form, setForm] = useState<OrderForm>({
     name: "",
     address: "",
@@ -220,6 +239,7 @@ export function CartPage() {
       total,
       form,
       giftWrapping,
+      loyaltyDiscount,
     );
     window.open(url, "_blank");
     if (saveDetails) {
@@ -230,6 +250,17 @@ export function CartPage() {
           phone: form.phone,
           address: form.address,
         }),
+      );
+    }
+    // Redeem loyalty points used for this order's discount
+    if (loyaltyDiscount > 0) {
+      redeemLoyalty(
+        Math.min(
+          Math.ceil(
+            (loyaltyDiscount / LOYALTY_REDEEM_VALUE) * LOYALTY_REDEEM_POINTS,
+          ),
+          loyaltyPoints,
+        ),
       );
     }
     // Save to order history
@@ -252,6 +283,7 @@ export function CartPage() {
         name: form.name,
         total,
         itemCount,
+        pointsEarned,
       },
     });
   }
@@ -820,6 +852,96 @@ export function CartPage() {
                 <span>₹{GIFT_WRAP_CHARGE}</span>
               </div>
             )}
+
+            {/* Loyalty points redemption */}
+            <div
+              className="rounded-xl border border-border/50 px-3 py-3"
+              style={{ background: "oklch(0.9 0.04 145 / 0.14)" }}
+              data-ocid="cart.loyalty_panel"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-1.5 font-body text-xs text-foreground/80">
+                  <span className="loyalty-chip">✨ {loyaltyPoints} pts</span>
+                  <span>loyalty points</span>
+                </span>
+                <label
+                  htmlFor="loyalty-redeem-checkbox"
+                  className="flex items-center gap-2 cursor-pointer select-none"
+                >
+                  <input
+                    id="loyalty-redeem-checkbox"
+                    type="checkbox"
+                    className="sr-only"
+                    checked={redeemLoyaltyOn}
+                    onChange={(e) => setRedeemLoyaltyOn(e.target.checked)}
+                    disabled={loyaltyPoints < LOYALTY_REDEEM_POINTS}
+                    data-ocid="cart.loyalty_redeem_checkbox"
+                  />
+                  <span
+                    className="rounded flex items-center justify-center border-2 transition-all duration-200"
+                    style={{
+                      width: 18,
+                      height: 18,
+                      borderColor:
+                        redeemLoyaltyOn &&
+                        loyaltyPoints >= LOYALTY_REDEEM_POINTS
+                          ? "#A8B5A2"
+                          : "#D1C4BC",
+                      background:
+                        redeemLoyaltyOn &&
+                        loyaltyPoints >= LOYALTY_REDEEM_POINTS
+                          ? "#A8B5A2"
+                          : "transparent",
+                    }}
+                  >
+                    {redeemLoyaltyOn &&
+                      loyaltyPoints >= LOYALTY_REDEEM_POINTS && (
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="#fff"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="w-2.5 h-2.5"
+                          aria-hidden="true"
+                        >
+                          <polyline points="2 6 5 9 10 3" />
+                        </svg>
+                      )}
+                  </span>
+                  <span className="font-body text-xs text-foreground/80">
+                    redeem
+                  </span>
+                </label>
+              </div>
+
+              {loyaltyPoints >= LOYALTY_REDEEM_POINTS ? (
+                <p className="text-xs font-body text-muted-foreground mt-2 leading-relaxed">
+                  {Math.floor(loyaltyPoints / LOYALTY_REDEEM_POINTS) *
+                    LOYALTY_REDEEM_VALUE >
+                  0
+                    ? `redeem ${Math.floor(loyaltyPoints / LOYALTY_REDEEM_POINTS) * LOYALTY_REDEEM_POINTS} pts for ₹${Math.floor(loyaltyPoints / LOYALTY_REDEEM_POINTS) * LOYALTY_REDEEM_VALUE} off`
+                    : `redeem ${LOYALTY_REDEEM_POINTS} pts for ₹${LOYALTY_REDEEM_VALUE} off`}
+                </p>
+              ) : (
+                <p className="text-xs font-body text-muted-foreground mt-2 leading-relaxed">
+                  earn {LOYALTY_REDEEM_POINTS} pts to unlock a ₹
+                  {LOYALTY_REDEEM_VALUE} discount — you're{" "}
+                  {LOYALTY_REDEEM_POINTS - loyaltyPoints} pts away
+                </p>
+              )}
+
+              {redeemLoyaltyOn && loyaltyDiscount > 0 && (
+                <div
+                  className="flex justify-between text-xs font-body font-semibold mt-2"
+                  style={{ color: "#5E7A5A" }}
+                >
+                  <span>loyalty discount</span>
+                  <span>-₹{loyaltyDiscount}</span>
+                </div>
+              )}
+            </div>
           </div>
 
           <Separator />

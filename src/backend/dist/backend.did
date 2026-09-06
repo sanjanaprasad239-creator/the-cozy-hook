@@ -72,6 +72,11 @@ type Bundle =
    price: nat;
    productIds: vec text;
  };
+type BackInStockSubscription = 
+ record {
+   email: text;
+   subscribedAt: int;
+ };
 type AdminSettings = 
  record {
    bundles: vec Bundle;
@@ -93,12 +98,15 @@ service : {
   getAdminSettings: () -> (AdminSettings) query;
   getAllReviews: () -> (vec Review) query;
   getApiDoc: () -> (text) query;
+  getBackInStockSubscribers: (productId: text) ->
+   (vec BackInStockSubscription) query;
   getProductById: (id: text) -> (opt Product) query;
   getProductImage: (productId: text) -> (opt text) query;
   getProductImages: () -> (vec ProductImage) query;
   getProducts: () -> (vec Product) query;
   getProductsByCategory: (category: text) -> (vec Product) query;
   getReviewsByProduct: (productId: text) -> (vec Review) query;
+  notifyBackInStock: (productId: text, adminPassword: text) -> ();
   schema: () -> (text) query;
   setBundles: (bundles: vec Bundle) -> ();
   setCurrentlyCrafting: ("text": text) -> ();
@@ -108,5 +116,6 @@ service : {
   setProductTimers: (timers: vec ProductTimer) -> ();
   setSoldOutProducts: (ids: vec text) -> ();
   setWhatsappSubscribers: (subscribers: vec WhatsappSubscriber) -> ();
+  subscribeBackInStock: (productId: text, email: text) -> ();
   updateHeroText: (title: text, tagline: text) -> ();
 }

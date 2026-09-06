@@ -1,5 +1,14 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { PackageOpen, Search, X } from "lucide-react";
+import {
+  Gem,
+  Home,
+  KeyRound,
+  PackageOpen,
+  PawPrint,
+  Search,
+  Shirt,
+  X,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useRef, useState } from "react";
 import { ProductCard } from "../components/ProductCard";
@@ -9,6 +18,60 @@ import type { ProductCategory } from "../types/product";
 type FilterCategory = "All" | ProductCategory;
 
 const TABS: FilterCategory[] = ["All", ...CATEGORIES];
+
+// Pastel category banner config — hand-drawn-style icon + soft pastel tint per
+// category, using the design system's pastel feature tokens.
+interface CategoryBanner {
+  category: FilterCategory;
+  label: string;
+  icon: typeof PawPrint;
+  tint: string; // pastel background
+  tintBorder: string; // matching border
+  iconColor: string; // deeper accent for the icon
+}
+
+const CATEGORY_BANNERS: CategoryBanner[] = [
+  {
+    category: "plushies",
+    label: "plushies",
+    icon: PawPrint,
+    tint: "bg-rose-pale",
+    tintBorder: "border-rose-soft",
+    iconColor: "text-primary",
+  },
+  {
+    category: "keychains",
+    label: "keychains",
+    icon: KeyRound,
+    tint: "bg-sage-pale",
+    tintBorder: "border-sage-soft",
+    iconColor: "text-secondary",
+  },
+  {
+    category: "wearables",
+    label: "wearables",
+    icon: Shirt,
+    tint: "bg-rose-pale",
+    tintBorder: "border-rose-soft",
+    iconColor: "text-primary",
+  },
+  {
+    category: "home decor",
+    label: "home decor",
+    icon: Home,
+    tint: "bg-beige-soft",
+    tintBorder: "border-muted",
+    iconColor: "text-foreground",
+  },
+  {
+    category: "accessories",
+    label: "accessories",
+    icon: Gem,
+    tint: "bg-sage-pale",
+    tintBorder: "border-sage-soft",
+    iconColor: "text-secondary",
+  },
+];
 
 const PRICE_MIN = 79;
 const PRICE_MAX = 499;
@@ -141,6 +204,45 @@ export function CollectionPage() {
             </span>
           </motion.p>
         )}
+      </div>
+
+      {/* Pastel category banners */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"
+          data-ocid="collection.category_banners"
+        >
+          {CATEGORY_BANNERS.map((banner, i) => {
+            const Icon = banner.icon;
+            const isActive = active === banner.category;
+            return (
+              <motion.button
+                key={banner.category}
+                type="button"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 + i * 0.06, duration: 0.4 }}
+                onClick={() => selectTab(banner.category)}
+                aria-pressed={isActive}
+                className={`group flex flex-col items-center gap-2.5 rounded-2xl border px-4 py-5 text-center transition-all duration-200 ${
+                  isActive
+                    ? `${banner.tint} ${banner.tintBorder} shadow-soft ring-2 ring-primary/20`
+                    : `${banner.tint} ${banner.tintBorder} hover:-translate-y-0.5 hover:shadow-soft`
+                }`}
+                data-ocid="collection.category_banner"
+              >
+                <span
+                  className={`flex h-12 w-12 items-center justify-center rounded-full bg-card shadow-soft transition-transform duration-200 group-hover:scale-105 ${banner.iconColor}`}
+                >
+                  <Icon className="h-6 w-6" strokeWidth={1.75} />
+                </span>
+                <span className="font-body text-sm font-medium text-foreground leading-tight">
+                  {banner.label}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Category filter tabs + price range */}

@@ -1,4 +1,29 @@
 // Version: 4.0.0
+type AdminSettings__229826004 =
+  {
+    var adminPassword : Text;
+    bundles : List__89170296<Bundle__197530736>;
+    var currentlyCrafting : Text;
+    featuredProductIds : List__89170296<Text>;
+    var heroTagline : Text;
+    var heroTitle : Text;
+    pressEntries : List__89170296<PressEntry__108521305>;
+    productTimers : List__89170296<ProductTimer__427622390>;
+    soldOutProductIds : List__89170296<Text>;
+    whatsappSubscribers : List__89170296<WhatsappSubscriber__197676326>
+  };
+type BackInStockSubscription__421426347 = {email : Text; subscribedAt : Int};
+type BackInStockSubscription__568666515 = {email : Text; subscribedAt : Int};
+type Bundle__197530736 =
+  {
+    badge : Text;
+    description : Text;
+    id : Text;
+    imageUrl : Text;
+    name : Text;
+    price : Nat;
+    productIds : [Text]
+  };
 type Bundle__37208392 =
   {
     badge : Text;
@@ -56,6 +81,16 @@ type NewActor__523652053 =
     reviewCounter : {var nextReviewId : Nat};
     reviews : List__89170296<Review__802791655>
   };
+type NewActor__681552274 =
+  {
+    adminSettings : AdminSettings__229826004;
+    backInStockSubscriptions :
+      Map__386906547<Text, List__89170296<BackInStockSubscription__421426347>>;
+    productImages : Map__386906547<Text, Text>;
+    products : Map__386906547<Text, Product__160079144>;
+    reviewCounter : {var nextReviewId : Nat};
+    reviews : List__89170296<Review__96938321>
+  };
 type Node__430031793<K, V> =
   {#internal : Internal__161573640<K, V>; #leaf : Leaf__1045638083<K, V>};
 type OldActor__693436424 =
@@ -67,14 +102,36 @@ type OldActor__693436424 =
     products : Map__386906547<Text, Product__990777416>;
     reviews : List__89170296<Review__802791655>
   };
+type OldActor__916314435 =
+  {
+    adminSettings : AdminSettings__229826004;
+    productImages : Map__386906547<Text, Text>;
+    products : Map__386906547<Text, Product__160079144>;
+    reviewCounter : {var nextReviewId : Nat};
+    reviews : List__89170296<Review__96938321>
+  };
+type PressEntry__108521305 =
+  {date : Text; id : Text; outlet : Text; title : Text; url : Text};
 type PressEntry__46974673 =
   {date : Text; id : Text; outlet : Text; title : Text; url : Text};
 type PressEntry__787699331 =
   {date : Text; id : Text; outlet : Text; title : Text; url : Text};
 type ProductTimer__131767876 =
   {caption : Text; endTimestamp : Int; productId : Text};
+type ProductTimer__427622390 =
+  {caption : Text; endTimestamp : Int; productId : Text};
 type ProductTimer__975826033 =
   {caption : Text; endTimestamp : Int; productId : Text};
+type Product__160079144 =
+  {
+    category : Text;
+    description : Text;
+    features : [Text];
+    id : Text;
+    imagePath : Text;
+    name : Text;
+    price : Nat
+  };
 type Product__853085059 =
   {
     category : Text;
@@ -113,12 +170,24 @@ type Review__802791655 =
     reviewText : Text;
     timestamp : Int
   };
+type Review__96938321 =
+  {
+    authorName : Text;
+    id : Nat;
+    productId : Text;
+    rating : Nat;
+    reviewText : Text;
+    timestamp : Int
+  };
+type WhatsappSubscriber__197676326 =
+  {id : Text; name : Text; phone : Text; subscribedAt : Int};
 type WhatsappSubscriber__263620583 =
   {id : Text; name : Text; phone : Text; subscribedAt : Int};
 type WhatsappSubscriber__814340408 =
   {id : Text; name : Text; phone : Text; subscribedAt : Int};
 {
-  "20260830_000002" : (old : OldActor__693436424) -> NewActor__523652053
+  "20260830_000002" : (old : OldActor__693436424) -> NewActor__523652053;
+  "20260906_000000" : (old : OldActor__916314435) -> NewActor__681552274
 }
 actor  {
   stable adminSettings :
@@ -133,6 +202,13 @@ actor  {
       productTimers : List__89170296<ProductTimer__131767876>;
       soldOutProductIds : List__89170296<Text>;
       whatsappSubscribers : List__89170296<WhatsappSubscriber__814340408>
+    };
+  stable backInStockSubscriptions :
+    {
+      var root :
+        Node__430031793<Text,
+                         List__89170296<BackInStockSubscription__568666515>>;
+      var size : Nat__58649523
     };
   stable productImages :
     {var root : Node__430031793<Text, Text>; var size : Nat__58649523};

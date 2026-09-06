@@ -14,6 +14,7 @@ import {
 import type {
   AdminSettings,
   Product,
+  ProductImage,
   Review,
   ReviewInput,
 } from "../types/product";
@@ -110,6 +111,73 @@ export function useAdminSettings() {
   });
 }
 
+// ── Product images (backend-backed) ─────────────────────────────────────────
+// The backend is the source of truth for product images. localStorage is kept
+// only as a fallback cache so the admin dashboard still shows saved images
+// while the actor is initializing.
+
+const PRODUCT_IMAGES_KEY = "cozy-hook-product-images";
+
+function loadLocalProductImages(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(PRODUCT_IMAGES_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveLocalProductImages(map: Record<string, string>) {
+  try {
+    localStorage.setItem(PRODUCT_IMAGES_KEY, JSON.stringify(map));
+  } catch {
+    // ignore
+  }
+}
+
+// Read all product images from the backend, falling back to the local cache
+// while the actor is unavailable so the dashboard never renders blank.
+export function useProductImages() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery<Record<string, string>>({
+    queryKey: ["productImages"],
+    queryFn: async () => {
+      if (!actor) return loadLocalProductImages();
+      const images = await actor.getProductImages();
+      const map: Record<string, string> = {};
+      for (const img of images) {
+        if (img.imageUrl) map[img.productId] = img.imageUrl;
+      }
+      return map;
+    },
+    enabled: !isFetching,
+    staleTime: 30_000,
+  });
+}
+
+// Persist a product image to the backend. On success the local cache is updated
+// and the shared query is invalidated so the dashboard reflects the change.
+export function useSetProductImage() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, ProductImage>({
+    mutationFn: async ({ productId, imageUrl }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      await actor.setProductImage(productId, imageUrl);
+    },
+    onSuccess: (_data, { productId, imageUrl }) => {
+      const cache = loadLocalProductImages();
+      if (imageUrl) {
+        cache[productId] = imageUrl;
+      } else {
+        delete cache[productId];
+      }
+      saveLocalProductImages(cache);
+      void queryClient.invalidateQueries({ queryKey: ["productImages"] });
+    },
+  });
+}
+
 // ── Products (source catalog) ───────────────────────────────────────────────
 
 export function useProducts() {
@@ -195,6 +263,18 @@ export function useCreateReview() {
       queryClient.invalidateQueries({
         queryKey: ["reviews", variables.productId],
       });
+    },
+  });
+}
+
+// ── Back-in-stock notifications (backend-backed) ────────────────────────────
+
+export function useSubscribeBackInStock() {
+  const { actor } = useActor(createActor);
+  return useMutation<void, Error, { productId: string; email: string }>({
+    mutationFn: async ({ productId, email }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      await actor.subscribeBackInStock(productId, email);
     },
   });
 }

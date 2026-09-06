@@ -63,6 +63,14 @@ export interface OrderHistoryEntry {
   notes?: string;
 }
 
+// Backend-aligned product image — matches the canister's ProductImage record
+// (productId + imageUrl). The admin dashboard reads and writes these through
+// the backend so image edits persist across devices and reloads.
+export interface ProductImage {
+  productId: string;
+  imageUrl: string;
+}
+
 // Backend-aligned product timer — matches the canister's ProductTimer record
 // (caption + nanosecond endTimestamp). useAdmin maps these to the page-facing
 // { label, endDate } record keyed by product id.

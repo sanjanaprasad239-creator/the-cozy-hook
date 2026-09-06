@@ -55,10 +55,19 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.08, ease: "easeOut" }}
-      className="group cursor-pointer"
+      className="group cursor-pointer relative"
       onClick={onClick}
       data-ocid={`product.card.${index + 1}`}
     >
+      {/* New arrivals ribbon badge */}
+      {product.isNew && !isSoldOut && (
+        <span
+          className="ribbon-new"
+          data-ocid={`product.new_ribbon.${index + 1}`}
+        >
+          new arrivals
+        </span>
+      )}
       <div
         className="bg-card rounded-2xl overflow-hidden border border-border/50 flex flex-col shadow-soft"
         style={{
@@ -101,7 +110,7 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
           {/* Fan Favourite badge (only when not sold out) */}
           {isFanFavourite && !isSoldOut && (
             <span
-              className="absolute top-2.5 left-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-body font-medium leading-none select-none pointer-events-none"
+              className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-body font-medium leading-none select-none pointer-events-none"
               style={{
                 background: "oklch(0.97 0.015 5 / 0.92)",
                 color: "oklch(0.56 0.12 5)",
@@ -111,19 +120,6 @@ export function ProductCard({ product, onClick, index = 0 }: ProductCardProps) {
               }}
             >
               ✨ fan favourite
-            </span>
-          )}
-
-          {/* New badge */}
-          {product.isNew && !isSoldOut && (
-            <span
-              className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-body font-semibold leading-none select-none pointer-events-none"
-              style={{
-                background: "#D8A7B1",
-                color: "#fff",
-              }}
-            >
-              new
             </span>
           )}
 

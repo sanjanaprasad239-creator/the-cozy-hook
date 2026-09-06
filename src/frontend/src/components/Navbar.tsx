@@ -10,6 +10,7 @@ import { CustomOrderModal } from "./CustomOrderModal";
 const NAV_LINKS = [
   { label: "home", to: "/" },
   { label: "collection", to: "/collection" },
+  { label: "size guide", to: "/size-guide" },
   { label: "our story", to: "/our-story" },
   { label: "journal", to: "/journal" },
   { label: "contact", to: "/contact" },

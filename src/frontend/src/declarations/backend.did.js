@@ -67,6 +67,10 @@ export const Review = IDL.Record({
   'timestamp' : IDL.Int,
   'rating' : IDL.Nat,
 });
+export const BackInStockSubscription = IDL.Record({
+  'subscribedAt' : IDL.Int,
+  'email' : IDL.Text,
+});
 export const Product = IDL.Record({
   'id' : IDL.Text,
   'features' : IDL.Vec(IDL.Text),
@@ -93,12 +97,18 @@ export const idlService = IDL.Service({
   'getAdminSettings' : IDL.Func([], [AdminSettings], ['query']),
   'getAllReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
   'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
+  'getBackInStockSubscribers' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(BackInStockSubscription)],
+      ['query'],
+    ),
   'getProductById' : IDL.Func([IDL.Text], [IDL.Opt(Product)], ['query']),
   'getProductImage' : IDL.Func([IDL.Text], [IDL.Opt(IDL.Text)], ['query']),
   'getProductImages' : IDL.Func([], [IDL.Vec(ProductImage)], ['query']),
   'getProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getProductsByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], ['query']),
   'getReviewsByProduct' : IDL.Func([IDL.Text], [IDL.Vec(Review)], ['query']),
+  'notifyBackInStock' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'schema' : IDL.Func([], [IDL.Text], ['query']),
   'setBundles' : IDL.Func([IDL.Vec(Bundle)], [], []),
   'setCurrentlyCrafting' : IDL.Func([IDL.Text], [], []),
@@ -108,6 +118,7 @@ export const idlService = IDL.Service({
   'setProductTimers' : IDL.Func([IDL.Vec(ProductTimer)], [], []),
   'setSoldOutProducts' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
   'setWhatsappSubscribers' : IDL.Func([IDL.Vec(WhatsappSubscriber)], [], []),
+  'subscribeBackInStock' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'updateHeroText' : IDL.Func([IDL.Text, IDL.Text], [], []),
 });
 
@@ -173,6 +184,10 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : IDL.Int,
     'rating' : IDL.Nat,
   });
+  const BackInStockSubscription = IDL.Record({
+    'subscribedAt' : IDL.Int,
+    'email' : IDL.Text,
+  });
   const Product = IDL.Record({
     'id' : IDL.Text,
     'features' : IDL.Vec(IDL.Text),
@@ -199,6 +214,11 @@ export const idlFactory = ({ IDL }) => {
     'getAdminSettings' : IDL.Func([], [AdminSettings], ['query']),
     'getAllReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
     'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
+    'getBackInStockSubscribers' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(BackInStockSubscription)],
+        ['query'],
+      ),
     'getProductById' : IDL.Func([IDL.Text], [IDL.Opt(Product)], ['query']),
     'getProductImage' : IDL.Func([IDL.Text], [IDL.Opt(IDL.Text)], ['query']),
     'getProductImages' : IDL.Func([], [IDL.Vec(ProductImage)], ['query']),
@@ -209,6 +229,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getReviewsByProduct' : IDL.Func([IDL.Text], [IDL.Vec(Review)], ['query']),
+    'notifyBackInStock' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'schema' : IDL.Func([], [IDL.Text], ['query']),
     'setBundles' : IDL.Func([IDL.Vec(Bundle)], [], []),
     'setCurrentlyCrafting' : IDL.Func([IDL.Text], [], []),
@@ -218,6 +239,7 @@ export const idlFactory = ({ IDL }) => {
     'setProductTimers' : IDL.Func([IDL.Vec(ProductTimer)], [], []),
     'setSoldOutProducts' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
     'setWhatsappSubscribers' : IDL.Func([IDL.Vec(WhatsappSubscriber)], [], []),
+    'subscribeBackInStock' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'updateHeroText' : IDL.Func([IDL.Text, IDL.Text], [], []),
   });
 };

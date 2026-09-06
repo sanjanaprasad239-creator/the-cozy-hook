@@ -21,6 +21,10 @@ export interface AdminSettings {
   'heroTitle' : string,
   'heroTagline' : string,
 }
+export interface BackInStockSubscription {
+  'subscribedAt' : bigint,
+  'email' : string,
+}
 export interface Bundle {
   'id' : string,
   'productIds' : Array<string>,
@@ -82,12 +86,17 @@ export interface _SERVICE {
   'getAdminSettings' : ActorMethod<[], AdminSettings>,
   'getAllReviews' : ActorMethod<[], Array<Review>>,
   'getApiDoc' : ActorMethod<[], string>,
+  'getBackInStockSubscribers' : ActorMethod<
+    [string],
+    Array<BackInStockSubscription>
+  >,
   'getProductById' : ActorMethod<[string], [] | [Product]>,
   'getProductImage' : ActorMethod<[string], [] | [string]>,
   'getProductImages' : ActorMethod<[], Array<ProductImage>>,
   'getProducts' : ActorMethod<[], Array<Product>>,
   'getProductsByCategory' : ActorMethod<[string], Array<Product>>,
   'getReviewsByProduct' : ActorMethod<[string], Array<Review>>,
+  'notifyBackInStock' : ActorMethod<[string, string], undefined>,
   'schema' : ActorMethod<[], string>,
   'setBundles' : ActorMethod<[Array<Bundle>], undefined>,
   'setCurrentlyCrafting' : ActorMethod<[string], undefined>,
@@ -100,6 +109,7 @@ export interface _SERVICE {
     [Array<WhatsappSubscriber>],
     undefined
   >,
+  'subscribeBackInStock' : ActorMethod<[string, string], undefined>,
   'updateHeroText' : ActorMethod<[string, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

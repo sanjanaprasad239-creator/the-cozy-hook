@@ -32,3 +32,5 @@ args = [ "-W=M0235,M0223,M0236,M0237,M0254", "-A=M0241", "--default-persistent-a
 core = "2.6.1"
 ic = "4.2.0"
 caffeineai-oql = "0.5.3"
+caffeineai-email = "0.2.0"
+base = "0.16.0"

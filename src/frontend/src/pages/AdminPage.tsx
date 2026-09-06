@@ -27,7 +27,11 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ALL_PRODUCTS } from "../data/products";
 import { useAdmin } from "../hooks/useAdmin";
-import { useAdminSettings } from "../hooks/useQueries";
+import {
+  useAdminSettings,
+  useProductImages,
+  useSetProductImage,
+} from "../hooks/useQueries";
 import type { ProductCategory, WhatsappSubscriber } from "../types/product";
 
 const CATEGORY_ORDER: ProductCategory[] = [
@@ -57,34 +61,25 @@ function timestampToDateString(timestamp: bigint): string {
   });
 }
 
-// ── Product Images Storage (localStorage-backed) ────────────────────────────
-const PRODUCT_IMAGES_KEY = "cozy-hook-product-images";
-
-function loadProductImages(): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(PRODUCT_IMAGES_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, string>) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveProductImages(map: Record<string, string>) {
-  try {
-    localStorage.setItem(PRODUCT_IMAGES_KEY, JSON.stringify(map));
-  } catch {
-    // ignore
-  }
-}
+// ── Product Images (backend-backed) ─────────────────────────────────────────
+// The backend is the source of truth for product images. The section reads from
+// actor.getProductImages() and writes through actor.setProductImage() so edits
+// persist across devices and reloads. localStorage is kept only as a fallback
+// cache while the actor is initializing.
 
 const HEART_PLACEHOLDER = "/assets/images/heart-placeholder.jpg";
 
 function ProductImagesSection() {
-  const [imageMap, setImageMap] =
-    useState<Record<string, string>>(loadProductImages);
+  const { data: backendImages, isFetching: imagesFetching } =
+    useProductImages();
+  const setProductImage = useSetProductImage();
   const [uploading, setUploading] = useState<string | null>(null);
   const [justUploaded, setJustUploaded] = useState<string | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // Backend images are the source of truth; fall back to the local cache while
+  // the query is still loading so the dashboard never renders blank.
+  const imageMap = backendImages ?? {};
 
   function handleUploadClick(productId: string) {
     fileInputRefs.current[productId]?.click();
@@ -116,19 +111,16 @@ function ProductImagesSection() {
         reader.readAsDataURL(file);
       });
 
-      const updated = { ...imageMap, [productId]: dataUrl };
-      setImageMap(updated);
-      saveProductImages(updated);
-      window.dispatchEvent(
-        new StorageEvent("storage", { key: "cozy-hook-product-images" }),
-      );
+      // Persist to the backend so the image survives reloads and shows on
+      // other devices. The mutation also updates the local cache on success.
+      await setProductImage.mutateAsync({ productId, imageUrl: dataUrl });
 
       setJustUploaded(productId);
       setTimeout(
         () => setJustUploaded((prev) => (prev === productId ? null : prev)),
         3000,
       );
-      toast.success("image saved!");
+      toast.success("image saved to backend!");
     } catch {
       toast.error("upload failed — please try again.");
     } finally {
@@ -140,15 +132,14 @@ function ProductImagesSection() {
     }
   }
 
-  function handleRemove(productId: string) {
-    const updated = { ...imageMap };
-    delete updated[productId];
-    setImageMap(updated);
-    saveProductImages(updated);
-    window.dispatchEvent(
-      new StorageEvent("storage", { key: "cozy-hook-product-images" }),
-    );
-    toast.success("image removed — placeholder restored.");
+  async function handleRemove(productId: string) {
+    try {
+      // Clear the backend image (empty string restores the placeholder).
+      await setProductImage.mutateAsync({ productId, imageUrl: "" });
+      toast.success("image removed — placeholder restored.");
+    } catch {
+      toast.error("could not remove image — please try again.");
+    }
   }
 
   const grouped = CATEGORY_ORDER.map((cat) => ({
@@ -287,8 +278,9 @@ function ProductImagesSection() {
         ))}
 
         <p className="font-body text-xs text-muted-foreground bg-muted/30 rounded-xl px-4 py-3">
-          💡 images are stored locally on this device. supported formats: jpg,
-          png, webp, gif — max 5 mb each.
+          {imagesFetching
+            ? "💡 syncing images with the backend…"
+            : "💡 images are saved to the backend and appear across devices. supported formats: jpg, png, webp, gif — max 5 mb each."}
         </p>
       </div>
     </motion.section>

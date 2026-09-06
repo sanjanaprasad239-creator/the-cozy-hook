@@ -1,10 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useEffect, useRef } from "react";
 import { WhatsAppOptInBanner } from "../components/WhatsAppOptInBanner";
+import {
+  LOYALTY_REDEEM_POINTS,
+  LOYALTY_REDEEM_VALUE,
+  pointsForOrder,
+  useLoyaltyPointsStore,
+} from "../hooks/useLoyaltyPoints";
 
 export function ConfirmationPage() {
-  const { name, total, itemCount } = useSearch({ from: "/order-confirmed" });
+  const { name, total, itemCount, pointsEarned } = useSearch({
+    from: "/order-confirmed",
+  });
+  const award = useLoyaltyPointsStore((s) => s.award);
+  const balance = useLoyaltyPointsStore((s) => s.points);
+  const awardedRef = useRef(false);
+
+  // Award loyalty points for this order exactly once.
+  useEffect(() => {
+    if (awardedRef.current) return;
+    awardedRef.current = true;
+    const earned = pointsEarned > 0 ? pointsEarned : pointsForOrder(total);
+    if (earned > 0) award(earned);
+  }, [award, pointsEarned, total]);
 
   function handlePrint() {
     window.print();
@@ -113,6 +133,45 @@ export function ConfirmationPage() {
               </div>
             </motion.div>
           ) : null}
+
+          {/* Loyalty points earned */}
+          {pointsEarned > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.42, duration: 0.4 }}
+              className="mx-6 mb-6 rounded-2xl border border-border overflow-hidden"
+              style={{ background: "oklch(0.9 0.04 145 / 0.14)" }}
+              data-ocid="confirmation.loyalty_panel"
+            >
+              <div className="px-5 py-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: "oklch(0.82 0.05 145 / 0.35)" }}
+                  >
+                    <span className="text-lg" aria-hidden="true">
+                      ✨
+                    </span>
+                  </div>
+                  <div>
+                    <p
+                      className="font-display text-sm font-semibold"
+                      style={{ color: "#3A3A3A" }}
+                    >
+                      you earned {pointsEarned} loyalty points!
+                    </p>
+                    <p className="text-xs font-body text-muted-foreground mt-0.5">
+                      new balance: {balance} pts · redeem{" "}
+                      {LOYALTY_REDEEM_POINTS} pts for ₹{LOYALTY_REDEEM_VALUE}{" "}
+                      off your next order
+                    </p>
+                  </div>
+                </div>
+                <span className="loyalty-chip shrink-0">{balance} pts</span>
+              </div>
+            </motion.div>
+          )}
 
           {/* Delivery info */}
           <div

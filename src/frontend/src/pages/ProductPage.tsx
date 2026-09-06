@@ -28,7 +28,10 @@ import {
 import { useAdmin } from "../hooks/useAdmin";
 import { useCart } from "../hooks/useCart";
 import { useProductImages } from "../hooks/useProductImages";
-import { useProductReviews } from "../hooks/useQueries";
+import {
+  useProductReviews,
+  useSubscribeBackInStock,
+} from "../hooks/useQueries";
 import { useWhatsAppOptIn } from "../hooks/useWhatsAppOptIn";
 import { useWishlist } from "../hooks/useWishlist";
 
@@ -91,18 +94,9 @@ function WhatsAppIcon() {
 function ViewerCount() {
   const count = useRef(Math.floor(Math.random() * 7) + 2);
   return (
-    <div className="flex items-center gap-2" data-ocid="product.viewer_count">
-      <span className="relative flex h-2.5 w-2.5">
-        <span
-          className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-          style={{ backgroundColor: "#D8A7B1" }}
-        />
-        <span
-          className="relative inline-flex rounded-full h-2.5 w-2.5"
-          style={{ backgroundColor: "#D8A7B1" }}
-        />
-      </span>
-      <span className="font-body text-xs text-muted-foreground">
+    <div className="live-viewing" data-ocid="product.viewer_count">
+      <span className="live-dot" aria-hidden="true" />
+      <span className="font-body text-xs">
         {count.current} {count.current === 1 ? "person" : "people"} viewing this
         right now
       </span>
@@ -286,6 +280,71 @@ function WhatsAppOptInSection() {
         )}
       </div>
     </section>
+  );
+}
+
+function BackInStockNotify({ productId }: { productId: string }) {
+  const subscribe = useSubscribeBackInStock();
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const value = email.trim();
+    if (!value) return;
+    subscribe.mutate({ productId, email: value });
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <div
+        className="flex items-center gap-2 font-body text-sm"
+        style={{ color: "#A8B5A2" }}
+        data-ocid="product.back_in_stock_success_state"
+      >
+        <Check className="w-4 h-4 shrink-0" aria-hidden="true" />
+        <span>you're on the list! we'll email you the moment it's back 🌸</span>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col sm:flex-row gap-2"
+      data-ocid="product.back_in_stock_form"
+    >
+      <div className="flex-1 space-y-1">
+        <Label
+          htmlFor="back-in-stock-email"
+          className="font-body text-xs text-muted-foreground"
+        >
+          your email
+        </Label>
+        <Input
+          id="back-in-stock-email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          className="rounded-xl font-body h-9 text-sm"
+          data-ocid="product.back_in_stock_email_input"
+        />
+      </div>
+      <div className="flex items-end">
+        <Button
+          type="submit"
+          size="sm"
+          className="rounded-xl font-body h-9 px-5"
+          style={{ background: "#D8A7B1", color: "#fff" }}
+          disabled={!email.trim() || subscribe.isPending}
+          data-ocid="product.back_in_stock_submit_button"
+        >
+          {subscribe.isPending ? "saving…" : "notify me"}
+        </Button>
+      </div>
+    </form>
   );
 }
 
@@ -648,12 +707,23 @@ export function ProductPage() {
 
             {/* Action Buttons */}
             {isSoldOut && (
-              <p
-                className="font-body text-sm text-muted-foreground"
-                data-ocid="product.sold_out_notice"
+              <div
+                className="space-y-3 rounded-2xl p-4"
+                style={{
+                  background: "#F7F3EE",
+                  border: "1px solid rgba(216, 167, 177, 0.25)",
+                }}
+                data-ocid="product.back_in_stock_section"
               >
-                back in stock soon! 🌸
-              </p>
+                <p
+                  className="font-body text-sm text-muted-foreground"
+                  data-ocid="product.sold_out_notice"
+                >
+                  back in stock soon! 🌸 leave your email and we'll let you know
+                  the moment it's available again.
+                </p>
+                <BackInStockNotify productId={p.id} />
+              </div>
             )}
             <div className="flex flex-col sm:flex-row gap-3">
               <Button

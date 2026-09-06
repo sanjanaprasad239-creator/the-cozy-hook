@@ -66,6 +66,9 @@ const OrderHistoryPage = lazy(() =>
 const PressPage = lazy(() =>
   import("./pages/PressPage").then((m) => ({ default: m.PressPage })),
 );
+const SizeGuidePage = lazy(() =>
+  import("./pages/SizeGuidePage").then((m) => ({ default: m.SizeGuidePage })),
+);
 
 function PageLoader() {
   return (
@@ -152,6 +155,8 @@ const confirmationRoute = createRoute({
     name: typeof search.name === "string" ? search.name : "",
     total: typeof search.total === "number" ? search.total : 0,
     itemCount: typeof search.itemCount === "number" ? search.itemCount : 0,
+    pointsEarned:
+      typeof search.pointsEarned === "number" ? search.pointsEarned : 0,
   }),
   component: () => <ConfirmationPage />,
 });
@@ -198,6 +203,12 @@ const pressRoute = createRoute({
   component: () => <PressPage />,
 });
 
+const sizeGuideRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/size-guide",
+  component: () => <SizeGuidePage />,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   collectionRoute,
@@ -215,6 +226,7 @@ const routeTree = rootRoute.addChildren([
   bundlesRoute,
   orderHistoryRoute,
   pressRoute,
+  sizeGuideRoute,
 ]);
 
 // Top-level client-side routes. Used to detect the deployment base path so the
@@ -236,6 +248,7 @@ const TOP_LEVEL_ROUTES = [
   "bundles",
   "order-history",
   "press",
+  "size-guide",
 ];
 
 function detectBasePath(): string {
