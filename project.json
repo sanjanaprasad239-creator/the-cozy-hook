@@ -1,24 +1,17 @@
 {
-  "overview": "The Cozy Hook is a premium handmade crochet e-commerce boutique featuring 43 products across 5 categories, a soft pastel aesthetic, WhatsApp-based checkout, floating chat assistant, and an admin dashboard for managing featured products.",
+  "overview": "The Cozy Hook is a handcrafted crochet shop with a product catalog, cart, WhatsApp checkout, and an admin dashboard for managing products, featured items, hero content, orders, and settings.",
   "features": [
-    "43 handmade crochet products across Plushies, Keychains, Wearables, Home Decor, and Accessories",
-    "Slide-out cart drawer with localStorage persistence and WhatsApp checkout",
-    "Floating chat assistant with 17+ question types and quick-reply buttons",
-    "Password-protected admin dashboard to edit featured products and hero text",
-    "Custom orders via Google Form with WhatsApp confirmation",
-    "Premium pastel boutique design with Playfair Display + Poppins typography",
-    "Fully responsive mobile-first layout with smooth hover animations",
-    "Product detail pages with quantity selector and WhatsApp order button"
+    "Browse handcrafted crochet products and collections",
+    "Add items to cart and check out via WhatsApp",
+    "Chat assistant for customer help",
+    "Admin dashboard at /admin for managing products, featured items, hero, orders, and settings"
   ],
-  "category": "e-commerce",
+  "category": "ecommerce",
   "tags": [
+    "ecommerce",
     "crochet",
     "handmade",
-    "e-commerce",
-    "boutique",
-    "pastel",
-    "whatsapp-checkout",
-    "artisan"
+    "admin"
   ],
-  "last_updated": "2026-04-29T13:32:11.774Z"
+  "last_updated": "2026-09-06T06:14:19.526Z"
 }

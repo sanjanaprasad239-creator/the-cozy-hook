@@ -217,7 +217,52 @@ const routeTree = rootRoute.addChildren([
   pressRoute,
 ]);
 
-const router = createRouter({ routeTree });
+// Top-level client-side routes. Used to detect the deployment base path so the
+// router strips it from the URL whether the app is served from the domain root
+// (Caffeine live deployment) or a GitHub Pages subpath (username.github.io/repo/).
+const TOP_LEVEL_ROUTES = [
+  "admin",
+  "cart",
+  "collection",
+  "product",
+  "our-story",
+  "journal",
+  "contact",
+  "order-confirmed",
+  "wishlist",
+  "faq",
+  "care-guide",
+  "gallery",
+  "bundles",
+  "order-history",
+  "press",
+];
+
+function detectBasePath(): string {
+  if (typeof window === "undefined") return "/";
+  // Prefer the runtime <base> tag set by index.html so the router base path is
+  // always consistent with the asset base path.
+  const baseEl = document.querySelector("base");
+  const href = baseEl?.getAttribute("href");
+  if (href) {
+    return href.startsWith("/") ? href : `/${href}`;
+  }
+  // Fallback: mirror the index.html inline-script heuristic. The first segment
+  // is the repo name when it is not a known route, or when it is a known route
+  // but the second segment is also a known route (repo name colliding with a
+  // route name, e.g. a repo named "cart").
+  const segments = window.location.pathname.split("/").filter(Boolean);
+  if (segments.length === 0) return "/";
+  const first = segments[0];
+  const second = segments[1];
+  const firstIsRoute = TOP_LEVEL_ROUTES.includes(first);
+  const secondIsRoute =
+    second !== undefined && TOP_LEVEL_ROUTES.includes(second);
+  if (!firstIsRoute || (firstIsRoute && secondIsRoute)) return `/${first}/`;
+  return "/";
+}
+
+const router = createRouter({ routeTree, basepath: detectBasePath() });
 
 declare module "@tanstack/react-router" {
   interface Register {

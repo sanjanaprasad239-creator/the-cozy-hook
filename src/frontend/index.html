@@ -3,6 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Compute the deployment root at runtime and pin it as the document base so
+      // relative asset URLs (base:'./') resolve from the deployment root on deep
+      // client-side routes (e.g. /product/123) served via SPA fallback on both the
+      // IC asset canister and GitHub Pages. Root hosting -> '/', GitHub Pages
+      // subpath (username.github.io/repo/) -> '/repo/'.
+      (function () {
+        var TOP_LEVEL_ROUTES = ["admin","cart","collection","product","our-story","journal","contact","order-confirmed","wishlist","faq","care-guide","gallery","bundles","order-history","press"];
+        var segments = window.location.pathname.split("/").filter(Boolean);
+        var base = "/";
+        if (segments.length > 0) {
+          var first = segments[0];
+          var second = segments[1];
+          var firstIsRoute = TOP_LEVEL_ROUTES.indexOf(first) !== -1;
+          var secondIsRoute = second !== undefined && TOP_LEVEL_ROUTES.indexOf(second) !== -1;
+          // The first segment is the repo name when it is not a known route, or
+          // when it is a known route but the second segment is also a known route
+          // (repo name colliding with a route name, e.g. a repo named "cart").
+          if (!firstIsRoute || (firstIsRoute && secondIsRoute)) {
+            base = "/" + first + "/";
+          }
+        }
+        var baseEl = document.createElement("base");
+        baseEl.href = base;
+        document.head.appendChild(baseEl);
+      })();
+    </script>
     <title>the cozy hook — handmade crochet with love</title>
     <meta name="description" content="premium handmade crochet plushies, keychains, wearables, home decor and accessories. made with love." />
     <meta property="og:title" content="the cozy hook" />

@@ -1,4 +1,4 @@
-import { b as useSearch, j as jsxRuntimeExports, m as motion, B as Button, L as Link, W as WhatsAppOptInBanner } from "./index-DLT9PHCj.js";
+import { b as useSearch, j as jsxRuntimeExports, m as motion, B as Button, L as Link, W as WhatsAppOptInBanner } from "./index-BoTxUwZ-.js";
 function ConfirmationPage() {
   const { name, total, itemCount } = useSearch({ from: "/order-confirmed" });
   function handlePrint() {

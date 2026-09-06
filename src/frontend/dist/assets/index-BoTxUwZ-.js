@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/HomePage-WSTiaoso.js","assets/ProductCard-DVlu0rYU.js","assets/useAdmin-CB8D1pSa.js","assets/plus-ktS6b2MN.js","assets/CollectionPage-CfS-3vDM.js","assets/ProductPage-7ARfuDlM.js","assets/textarea-Dz_u7pxN.js","assets/index-7pPBioE5.js","assets/minus-WpPDzlCj.js","assets/AdminPage-QYaCwf8e.js","assets/separator-CbxpbEkx.js","assets/trash-2-DWIccA65.js","assets/rotate-ccw-BMZhHDRZ.js","assets/CartPage-DwaWzSpG.js","assets/useOrderHistory-B10vi3qu.js","assets/WishlistPage-XA7jAl9U.js","assets/BundlesPage-doTZkHdA.js","assets/OrderHistoryPage-B_oHeVTk.js","assets/PressPage-CQLWwMr4.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./HomePage-CF500N1W.js","./ProductCard-CNdAoURi.js","./useAdmin-B3vJ_ioq.js","./plus-DjR5uMEn.js","./CollectionPage-TIpV5R8d.js","./ProductPage-CwYwRYKM.js","./textarea-DWxEL2Ol.js","./index-BBHuiaQf.js","./minus-Qgt82J-M.js","./AdminPage-DmhJfYgx.js","./separator-Dfm9D-Qb.js","./trash-2-Crps7xDJ.js","./rotate-ccw-CnkwbR3R.js","./CartPage-Com01LPk.js","./useOrderHistory-BHexG4QR.js","./WishlistPage-BqVV4iRW.js","./BundlesPage-D7Y0GUTU.js","./OrderHistoryPage-CpimcAB8.js","./PressPage-DRJSgZcS.js"])))=>i.map(i=>d[i]);
 var __defProp = Object.defineProperty;
 var __typeError = (msg) => {
   throw TypeError(msg);
@@ -26221,26 +26221,34 @@ function checkDCE() {
 var clientExports = client.exports;
 const ReactDOM = /* @__PURE__ */ getDefaultExportFromCjs(clientExports);
 const scriptRel = "modulepreload";
-const assetsURL = function(dep) {
-  return "/" + dep;
+const assetsURL = function(dep, importerUrl) {
+  return new URL(dep, importerUrl).href;
 };
 const seen = {};
 const __vitePreload = function preload2(baseModule, deps, importerUrl) {
   let promise = Promise.resolve();
   if (deps && deps.length > 0) {
-    document.getElementsByTagName("link");
+    const links = document.getElementsByTagName("link");
     const cspNonceMeta = document.querySelector(
       "meta[property=csp-nonce]"
     );
     const cspNonce = (cspNonceMeta == null ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta == null ? void 0 : cspNonceMeta.getAttribute("nonce"));
     promise = Promise.allSettled(
       deps.map((dep) => {
-        dep = assetsURL(dep);
+        dep = assetsURL(dep, importerUrl);
         if (dep in seen) return;
         seen[dep] = true;
         const isCss = dep.endsWith(".css");
         const cssSelector = isCss ? '[rel="stylesheet"]' : "";
-        if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
+        const isBaseRelative = !!importerUrl;
+        if (isBaseRelative) {
+          for (let i = links.length - 1; i >= 0; i--) {
+            const link2 = links[i];
+            if (link2.href === dep && (!isCss || link2.rel === "stylesheet")) {
+              return;
+            }
+          }
+        } else if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
           return;
         }
         const link = document.createElement("link");
@@ -46713,60 +46721,60 @@ function Layout({ children }) {
   ] });
 }
 const HomePage = reactExports.lazy(
-  () => __vitePreload(() => import("./HomePage-WSTiaoso.js"), true ? __vite__mapDeps([0,1,2,3]) : void 0).then((m2) => ({ default: m2.HomePage }))
+  () => __vitePreload(() => import("./HomePage-CF500N1W.js"), true ? __vite__mapDeps([0,1,2,3]) : void 0, import.meta.url).then((m2) => ({ default: m2.HomePage }))
 );
 const CollectionPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CollectionPage-CfS-3vDM.js"), true ? __vite__mapDeps([4,1,2,3]) : void 0).then((m2) => ({
+  () => __vitePreload(() => import("./CollectionPage-TIpV5R8d.js"), true ? __vite__mapDeps([4,1,2,3]) : void 0, import.meta.url).then((m2) => ({
     default: m2.CollectionPage
   }))
 );
 const ProductPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ProductPage-7ARfuDlM.js"), true ? __vite__mapDeps([5,6,1,2,3,7,8]) : void 0).then((m2) => ({ default: m2.ProductPage }))
+  () => __vitePreload(() => import("./ProductPage-CwYwRYKM.js"), true ? __vite__mapDeps([5,6,1,2,3,7,8]) : void 0, import.meta.url).then((m2) => ({ default: m2.ProductPage }))
 );
 const OurStoryPage = reactExports.lazy(
-  () => __vitePreload(() => import("./OurStoryPage-DN02lGZ7.js"), true ? [] : void 0).then((m2) => ({ default: m2.OurStoryPage }))
+  () => __vitePreload(() => import("./OurStoryPage-KajhGyNg.js"), true ? [] : void 0, import.meta.url).then((m2) => ({ default: m2.OurStoryPage }))
 );
 const JournalPage = reactExports.lazy(
-  () => __vitePreload(() => import("./JournalPage-BSQxdIl5.js"), true ? [] : void 0).then((m2) => ({ default: m2.JournalPage }))
+  () => __vitePreload(() => import("./JournalPage-lqOlpIBM.js"), true ? [] : void 0, import.meta.url).then((m2) => ({ default: m2.JournalPage }))
 );
 const ContactPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ContactPage-DICF3Vbf.js"), true ? [] : void 0).then((m2) => ({ default: m2.ContactPage }))
+  () => __vitePreload(() => import("./ContactPage-CibmCIbj.js"), true ? [] : void 0, import.meta.url).then((m2) => ({ default: m2.ContactPage }))
 );
 const AdminPage = reactExports.lazy(
-  () => __vitePreload(() => import("./AdminPage-QYaCwf8e.js"), true ? __vite__mapDeps([9,2,6,10,7,11,3,12]) : void 0).then((m2) => ({ default: m2.AdminPage }))
+  () => __vitePreload(() => import("./AdminPage-DmhJfYgx.js"), true ? __vite__mapDeps([9,2,6,10,7,11,3,12]) : void 0, import.meta.url).then((m2) => ({ default: m2.AdminPage }))
 );
 const CartPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CartPage-DwaWzSpG.js"), true ? __vite__mapDeps([13,6,10,14,11,8,3]) : void 0).then((m2) => ({ default: m2.CartPage }))
+  () => __vitePreload(() => import("./CartPage-Com01LPk.js"), true ? __vite__mapDeps([13,6,10,14,11,8,3]) : void 0, import.meta.url).then((m2) => ({ default: m2.CartPage }))
 );
 const ConfirmationPage = reactExports.lazy(
-  () => __vitePreload(() => import("./ConfirmationPage-D3Hs8RfF.js"), true ? [] : void 0).then((m2) => ({
+  () => __vitePreload(() => import("./ConfirmationPage-B_cq21Pb.js"), true ? [] : void 0, import.meta.url).then((m2) => ({
     default: m2.ConfirmationPage
   }))
 );
 const WishlistPage = reactExports.lazy(
-  () => __vitePreload(() => import("./WishlistPage-XA7jAl9U.js"), true ? __vite__mapDeps([15,1,2,3,11]) : void 0).then((m2) => ({ default: m2.WishlistPage }))
+  () => __vitePreload(() => import("./WishlistPage-BqVV4iRW.js"), true ? __vite__mapDeps([15,1,2,3,11]) : void 0, import.meta.url).then((m2) => ({ default: m2.WishlistPage }))
 );
 const FAQPage = reactExports.lazy(
-  () => __vitePreload(() => import("./FAQPage-CyEFD6_U.js"), true ? [] : void 0).then((m2) => ({ default: m2.FAQPage }))
+  () => __vitePreload(() => import("./FAQPage-Dkaz7SOS.js"), true ? [] : void 0, import.meta.url).then((m2) => ({ default: m2.FAQPage }))
 );
 const CareGuidePage = reactExports.lazy(
-  () => __vitePreload(() => import("./CareGuidePage-DioZyN07.js"), true ? [] : void 0).then((m2) => ({ default: m2.CareGuidePage }))
+  () => __vitePreload(() => import("./CareGuidePage-B37CX9H1.js"), true ? [] : void 0, import.meta.url).then((m2) => ({ default: m2.CareGuidePage }))
 );
 const CustomerGalleryPage = reactExports.lazy(
-  () => __vitePreload(() => import("./CustomerGalleryPage-B5XJBsQw.js"), true ? [] : void 0).then((m2) => ({
+  () => __vitePreload(() => import("./CustomerGalleryPage-BpR5N8k-.js"), true ? [] : void 0, import.meta.url).then((m2) => ({
     default: m2.CustomerGalleryPage
   }))
 );
 const BundlesPage = reactExports.lazy(
-  () => __vitePreload(() => import("./BundlesPage-doTZkHdA.js"), true ? __vite__mapDeps([16,2]) : void 0).then((m2) => ({ default: m2.BundlesPage }))
+  () => __vitePreload(() => import("./BundlesPage-D7Y0GUTU.js"), true ? __vite__mapDeps([16,2]) : void 0, import.meta.url).then((m2) => ({ default: m2.BundlesPage }))
 );
 const OrderHistoryPage = reactExports.lazy(
-  () => __vitePreload(() => import("./OrderHistoryPage-B_oHeVTk.js"), true ? __vite__mapDeps([17,14,11,12]) : void 0).then((m2) => ({
+  () => __vitePreload(() => import("./OrderHistoryPage-CpimcAB8.js"), true ? __vite__mapDeps([17,14,11,12]) : void 0, import.meta.url).then((m2) => ({
     default: m2.OrderHistoryPage
   }))
 );
 const PressPage = reactExports.lazy(
-  () => __vitePreload(() => import("./PressPage-CQLWwMr4.js"), true ? __vite__mapDeps([18,2]) : void 0).then((m2) => ({ default: m2.PressPage }))
+  () => __vitePreload(() => import("./PressPage-DRJSgZcS.js"), true ? __vite__mapDeps([18,2]) : void 0, import.meta.url).then((m2) => ({ default: m2.PressPage }))
 );
 function PageLoader() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center min-h-[40vh]", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-1.5", children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -46887,7 +46895,40 @@ const routeTree = rootRoute.addChildren([
   orderHistoryRoute,
   pressRoute
 ]);
-const router = createRouter({ routeTree });
+const TOP_LEVEL_ROUTES = [
+  "admin",
+  "cart",
+  "collection",
+  "product",
+  "our-story",
+  "journal",
+  "contact",
+  "order-confirmed",
+  "wishlist",
+  "faq",
+  "care-guide",
+  "gallery",
+  "bundles",
+  "order-history",
+  "press"
+];
+function detectBasePath() {
+  if (typeof window === "undefined") return "/";
+  const baseEl = document.querySelector("base");
+  const href = baseEl == null ? void 0 : baseEl.getAttribute("href");
+  if (href) {
+    return href.startsWith("/") ? href : `/${href}`;
+  }
+  const segments = window.location.pathname.split("/").filter(Boolean);
+  if (segments.length === 0) return "/";
+  const first = segments[0];
+  const second = segments[1];
+  const firstIsRoute = TOP_LEVEL_ROUTES.includes(first);
+  const secondIsRoute = second !== void 0 && TOP_LEVEL_ROUTES.includes(second);
+  if (!firstIsRoute || firstIsRoute && secondIsRoute) return `/${first}/`;
+  return "/";
+}
+const router = createRouter({ routeTree, basepath: detectBasePath() });
 function App() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(RouterProvider, { router });
 }
