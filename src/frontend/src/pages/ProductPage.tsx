@@ -442,47 +442,103 @@ export function ProductPage() {
         {/* Two-column layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-start">
           {/* Left — Product Image or View Picture */}
-           <div className="relative">
-  <motion.div
-    initial={{ opacity: 0, x: -24 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.5, ease: "easeOut" }}
-    className="w-full flex flex-col gap-3"
-  >
-    <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-boutique-lg border border-border/30">
-      <img
-        src={productImages.get(p.id) || p.imagePath}
-        alt={p.name}
-        className="w-full h-full object-cover"
-        data-ocid="product.product_image"
-      />
-    </div>
-
-    {p.pictureUrl && p.pictureUrl !== "#" && (
-      <a
-        href={p.pictureUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-1.5 font-body text-sm transition-smooth hover:opacity-80 self-start"
-        style={{ color: "#D8A7B1" }}
-        data-ocid="product.view_all_photos_link"
-      >
-        <ExternalLink className="w-3.5 h-3.5" />
-        view all photos →
-      </a>
-    )}
-  </motion.div>
-
-  {isSoldOut && (
-    <div
-      className="absolute top-4 left-4 font-body text-xs font-semibold px-3 py-1.5 rounded-full"
-      style={{ background: "#3A3A3A", color: "#fff" }}
-      data-ocid="product.sold_out_badge"
-    >
-      sold out
-    </div>
-  )}
-</div>
+          <div className="relative">
+            {productImages.has(p.id) ? (
+              <motion.div
+                initial={{ opacity: 0, x: -24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="w-full flex flex-col gap-3"
+              >
+                <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-boutique-lg border border-border/30">
+                  <img
+                    src={productImages.get(p.id)}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                    data-ocid="product.product_image"
+                  />
+                </div>
+                {p.pictureUrl && p.pictureUrl !== "#" && (
+                  <a
+                    href={p.pictureUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 font-body text-sm transition-smooth hover:opacity-80 self-start"
+                    style={{ color: "#D8A7B1" }}
+                    data-ocid="product.view_all_photos_link"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    view all photos →
+                  </a>
+                )}
+              </motion.div>
+            ) : (
+              <motion.a
+                href={
+                  p.pictureUrl && p.pictureUrl !== "#"
+                    ? p.pictureUrl
+                    : undefined
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, x: -24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="w-full aspect-square rounded-3xl border-2 flex flex-col items-center justify-center gap-4 cursor-pointer transition-smooth shadow-boutique-lg block"
+                style={{
+                  borderColor: "#D8A7B1",
+                  backgroundColor: "transparent",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                    "#D8A7B1";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "#fff";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                    "transparent";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "";
+                }}
+                data-ocid="product.view_picture_button"
+                aria-label={`View picture of ${p.name}`}
+                onClick={
+                  !p.pictureUrl || p.pictureUrl === "#"
+                    ? (e) => e.preventDefault()
+                    : undefined
+                }
+              >
+                <div
+                  className="w-16 h-16 rounded-full border-2 flex items-center justify-center"
+                  style={{ borderColor: "#D8A7B1" }}
+                >
+                  <ExternalLink
+                    className="w-7 h-7"
+                    style={{ color: "#D8A7B1" }}
+                  />
+                </div>
+                <div className="text-center px-6 space-y-1">
+                  <p
+                    className="font-display text-xl font-semibold"
+                    style={{ color: "#D8A7B1" }}
+                  >
+                    View Picture
+                  </p>
+                  <p className="font-body text-sm text-muted-foreground">
+                    Click to see the full product photo
+                  </p>
+                </div>
+              </motion.a>
+            )}
+            {isSoldOut && (
+              <div
+                className="absolute top-4 left-4 font-body text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{ background: "#3A3A3A", color: "#fff" }}
+                data-ocid="product.sold_out_badge"
+              >
+                sold out
+              </div>
+            )}
+          </div>
 
           {/* Right — Product Details */}
           <motion.div
