@@ -1,0 +1,4 @@
+# Single-page-app fallback: serve the shell for any unmatched client-side route
+# (e.g. /admin, /cart, /product/...) so direct requests and refreshes boot the
+# TanStack Router instead of returning 404. Status 200 makes this a rewrite.
+/*  /index.html  200
